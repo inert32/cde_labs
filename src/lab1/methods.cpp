@@ -29,7 +29,7 @@ double quadrants::calc(const func_base* fn, const size_t count, const double fro
     const double step = (to - from) / (double)count;
     double sum = 0.0;
     for (size_t i = 0; i < count; i++)
-        sum = sum + fn->calc(step * i);
+        sum = sum + fn->calc(from + step * i);
 
     return step * sum;
 }
