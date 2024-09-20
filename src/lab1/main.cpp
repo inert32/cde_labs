@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <random>
+#include <cmath>
 #include "../build.h"
 
 // Функции
@@ -10,10 +11,28 @@ class functions {
 public:
     virtual double calc(const double x) const = 0;
 };
+class func1 : public functions {
+public:
+    double calc(const double x) const {
+        return 1.0 / x;
+    }
+};
+class func2 : public functions {
+public:
+    double calc(const double x) const {
+        return sin(x) / x;
+    }
+};
 class func3 : public functions {
 public:
     double calc(const double x) const {
         return 1.0 / (x * x + x + 1);
+    }
+};
+class func4 : public functions {
+public:
+    double calc(const double x) const {
+        return 1.0 / (x * x - x - 1);
     }
 };
 
