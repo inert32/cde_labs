@@ -34,14 +34,25 @@ double quadrants::calc(const func_base* fn, const size_t count, const double fro
     return step * sum;
 }
 
-methods_base* method_select([[maybe_unused]] const bool threads) {
-    return new monte_carlo;
+double trapezoid::calc(const func_base* fn, const size_t count, const double from, const double to) const {
+    std::cout << "Using trapezoid method" << std::endl;
+
+    const double step = (to - from) / (double)count;
+    const double borders = 0.5 * (fn->calc(from) + fn->calc(to));
+
+    double sum = 0.0;
+    for (size_t i = 1; i < count - 1; i++)
+        sum = sum + fn->calc(from + step * i);
+
+    return step * (sum + borders);
 }
+
 methods_base* method_select(const cli_map& cli, [[maybe_unused]] const bool threads) {
     try {
         const auto name = cli.at("method");
 
         if (name == "quad") return new quadrants;
+        else if (name == "trapez") return new trapezoid;
         else throw std::exception();
     }
     catch (const std::exception&) {

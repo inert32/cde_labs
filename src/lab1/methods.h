@@ -26,6 +26,12 @@ public:
     double calc(const func_base* fn, const size_t count, const double from, const double to) const;
 };
 
+// Метод трапеций
+class trapezoid : public methods_base {
+public:
+    double calc(const func_base* fn, const size_t count, const double from, const double to) const;
+};
+
 // Выбор метода с помощью командной строки
 methods_base* method_select(const cli_map& cli, const bool threads = false);
 
