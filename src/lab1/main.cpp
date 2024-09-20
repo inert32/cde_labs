@@ -63,9 +63,7 @@ int main(int argc, char** argv) {
         }
     } else fn = new func4;
 
-    // Выбор метода
-    it = cli.find("method");
-    method = (it != cli.end()) ? method_select(it->second) : method_select();
+    method = method_select(cli);
 
     std::cout << method->calc(fn, iter_count, from, to) << std::endl;
     return 0;

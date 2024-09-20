@@ -26,8 +26,7 @@ public:
     double calc(const func_base* fn, const size_t count, const double from, const double to) const;
 };
 
-// Выбор метода
-methods_base* method_select(const bool threads = false);
-methods_base* method_select(const std::string& name, const bool threads = false);
+// Выбор метода с помощью командной строки
+methods_base* method_select(const cli_map& cli, const bool threads = false);
 
 #endif /* __METHODS_H__ */

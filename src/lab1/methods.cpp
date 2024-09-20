@@ -37,7 +37,14 @@ double quadrants::calc(const func_base* fn, const size_t count, const double fro
 methods_base* method_select([[maybe_unused]] const bool threads) {
     return new monte_carlo;
 }
-methods_base* method_select(const std::string& name, [[maybe_unused]] const bool threads) {
-    if (name == "quad") return new quadrants;
-    else return new monte_carlo;
+methods_base* method_select(const cli_map& cli, [[maybe_unused]] const bool threads) {
+    try {
+        const auto name = cli.at("method");
+
+        if (name == "quad") return new quadrants;
+        else throw std::exception();
+    }
+    catch (const std::exception&) {
+        return new monte_carlo;
+    }
 }

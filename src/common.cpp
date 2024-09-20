@@ -4,8 +4,8 @@
 #include "common.h"
 
 // Разбор аргументов командной строки
-std::map<std::string, std::string, std::less<>> parse_cli(int argc, char** argv) {
-    std::map<std::string, std::string, std::less<>> ret;
+cli_map parse_cli(int argc, char** argv) {
+    cli_map ret;
     for (int i = 1; i < argc; i++) {
         // Разделяем аргумент на "ключ=значение"
         const std::string arg(argv[i]);
