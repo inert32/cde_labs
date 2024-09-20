@@ -55,13 +55,28 @@ public:
         std::uniform_real_distribution nums(from, to);
 
         // Расчет попаданий
-        double sum = 0;
+        double sum = 0.0;
         for (size_t i = 0; i < count; i++)
             sum = sum + fn->calc(nums(gen));
 
         const double mult = (to - from) / (double)count;
 
         return sum * mult;
+    }
+};
+
+// Метод прямоугольников
+class quadrants : public methods_base {
+public:
+    double calc(const functions* fn, const size_t count, const double from, const double to) const {
+        std::cout << "Using quadrants method" << std::endl;
+
+        const double step = (to - from) / (double)count;
+        double sum = 0.0;
+        for (size_t i = 0; i < count; i++)
+            sum = sum + fn->calc(step * i);
+
+        return step * sum;
     }
 };
 
@@ -94,9 +109,10 @@ int main(int argc, char** argv) {
     } else fn = new func4;
 
     // Выбор метода
-    it = cli.find("func");
+    it = cli.find("method");
     if (it != cli.end()) {
         if (it->second == "mt") method = new monte_carlo;
+        else if (it->second == "quad") method = new quadrants;
         else method = new monte_carlo;
     } else method = new monte_carlo;
 
