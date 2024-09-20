@@ -1,0 +1,9 @@
+#ifndef __BUILD_H__
+#define __BUILD_H__
+
+#include <string_view>
+
+inline constexpr std::string_view build_version  = "v@PROJECT_VERSION@";
+inline constexpr std::string_view build_git = "@GIT_DATA@";
+
+#endif /* __BUILD_H__ */
