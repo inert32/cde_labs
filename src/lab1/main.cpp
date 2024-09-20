@@ -9,7 +9,6 @@
 #include "methods.h"
 
 // Функции
-class func_base;
 class func1 : public func_base {
 public:
     double calc(const double x) const {
@@ -35,6 +34,21 @@ public:
     }
 };
 
+func_base* func_select(const cli_map& cli) {
+    try {
+        switch (std::stoi(cli.at("func"))) {
+            case 1: return new func1;
+            case 2: return new func2;
+            case 3: return new func3;
+            case 4: [[fallthrough]];
+            default: throw std::exception();
+        }
+    }
+    catch (const std::exception&) {
+        return new func4;
+    }
+}
+
 int main(int argc, char** argv) {
     std::cout << "Lab1 " << build_version << " " << build_git << std::endl;
 
@@ -52,17 +66,7 @@ int main(int argc, char** argv) {
     if (it != cli.end()) to = std::stod(it->second);
 
     // Выбор функции
-    it = cli.find("func");
-    if (it != cli.end()) {
-        switch (std::stoi(it->second)) {
-            case 1: fn = new func1; break;
-            case 2: fn = new func2; break;
-            case 3: fn = new func3; break;
-            case 4:
-            default: fn = new func4; break;
-        }
-    } else fn = new func4;
-
+    fn = func_select(cli);
     method = method_select(cli);
 
     std::cout << method->calc(fn, iter_count, from, to) << std::endl;
