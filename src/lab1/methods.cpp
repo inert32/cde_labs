@@ -5,7 +5,6 @@
 #include <random>
 #include "methods.h"
 
-// Метод Монте-Карло
 double monte_carlo::calc(const func_base* fn, const size_t count, const double from, const double to) const {
     std::cout << "Using Monte-Carlo method" << std::endl;
 
@@ -24,7 +23,6 @@ double monte_carlo::calc(const func_base* fn, const size_t count, const double f
     return sum * mult;
 }
 
-// Метод прямоугольников
 double quadrants::calc(const func_base* fn, const size_t count, const double from, const double to) const {
     std::cout << "Using quadrants method" << std::endl;
 
@@ -34,4 +32,12 @@ double quadrants::calc(const func_base* fn, const size_t count, const double fro
         sum = sum + fn->calc(step * i);
 
     return step * sum;
+}
+
+methods_base* method_select([[maybe_unused]] const bool threads) {
+    return new monte_carlo;
+}
+methods_base* method_select(const std::string& name, [[maybe_unused]] const bool threads) {
+    if (name == "quad") return new quadrants;
+    else return new monte_carlo;
 }

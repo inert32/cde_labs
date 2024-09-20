@@ -65,11 +65,7 @@ int main(int argc, char** argv) {
 
     // Выбор метода
     it = cli.find("method");
-    if (it != cli.end()) {
-        if (it->second == "mt") method = new monte_carlo;
-        else if (it->second == "quad") method = new quadrants;
-        else method = new monte_carlo;
-    } else method = new monte_carlo;
+    method = (it != cli.end()) ? method_select(it->second) : method_select();
 
     std::cout << method->calc(fn, iter_count, from, to) << std::endl;
     return 0;
