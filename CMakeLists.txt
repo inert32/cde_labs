@@ -62,6 +62,7 @@ if(PVS_CHECK)
 endif()
 
 if(BUILD_LAB1)
-    add_executable(lab1 src/lab1/main.cpp src/build.h)
+    add_executable(lab1 src/lab1/main.cpp src/common.cpp
+                        src/common.h src/build.h)
     configure_target(lab1)
 endif()

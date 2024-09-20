@@ -5,6 +5,7 @@
 #include <random>
 #include <cmath>
 #include "../build.h"
+#include "../common.h"
 
 // Функции
 class functions {
@@ -57,13 +58,34 @@ double monte_carlo(const functions* fn, const size_t count, const double from, c
     return sum * mult;
 }
 
-int main() {
+int main(int argc, char** argv) {
     std::cout << "Lab1 " << build_version << " " << build_git << std::endl;
 
+    // Разбор параметров
     size_t iter_count = 1000;
     double from = 0, to = 1;
+    functions* fn;
 
-    functions* fn = new func3;
+    const auto cli = parse_cli(argc, argv);
+    auto it = cli.find("count");
+    if (it != cli.end()) iter_count = std::stoi(it->second);
+    it = cli.find("from");
+    if (it != cli.end()) from = std::stod(it->second);
+    it = cli.find("to");
+    if (it != cli.end()) to = std::stod(it->second);
+
+    // Выбор функции
+    it = cli.find("func");
+    if (it != cli.end()) {
+        switch (std::stoi(it->second)) {
+            case 1: fn = new func1; break;
+            case 2: fn = new func2; break;
+            case 3: fn = new func3; break;
+            case 4:
+            default: fn = new func4; break;
+        }
+    } else fn = new func4;
+
     std::cout << monte_carlo(fn, iter_count, from, to) << std::endl;
     return 0;
 }
