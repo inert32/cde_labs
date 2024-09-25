@@ -6,6 +6,7 @@
 class func_base {
 public:
     virtual double calc(const double x) const = 0;
+    static constexpr double limit = 0.0;
 };
 
 // Методы

@@ -20,6 +20,7 @@ public:
     double calc(const double x) const {
         return sin(x) / x;
     }
+    static constexpr double limit = 1.0;
 };
 class func3 : public func_base {
 public:
