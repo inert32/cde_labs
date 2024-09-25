@@ -12,26 +12,34 @@
 class func1 : public func_base {
 public:
     double calc(const double x) const {
-        return 1.0 / x;
+        const double ret = 1.0 / x;
+        if (std::isnan(ret) || std::isinf(ret)) return limit;
+        else return ret;
     }
 };
 class func2 : public func_base {
 public:
     double calc(const double x) const {
-        return sin(x) / x;
+        const double ret = sin(x) / x;
+        if (std::isnan(ret) || std::isinf(ret)) return limit;
+        else return ret;
     }
     static constexpr double limit = 1.0;
 };
 class func3 : public func_base {
 public:
     double calc(const double x) const {
-        return 1.0 / (x * x + x + 1);
+        const double ret = 1.0 / (x * x + x + 1);
+        if (std::isnan(ret) || std::isinf(ret)) return limit;
+        else return ret;
     }
 };
 class func4 : public func_base {
 public:
     double calc(const double x) const {
-        return 1.0 / (x * x - x - 1);
+        const double ret = 1.0 / (x * x - x - 1);
+        if (std::isnan(ret) || std::isinf(ret)) return limit;
+        else return ret;
     }
 };
 
