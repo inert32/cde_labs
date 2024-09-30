@@ -17,7 +17,7 @@ function(configure_target target)
 
     # Запуск статического анализа
     if(PVS_CHECK)
-        pvs_studio_add_target(TARGET analyze ALL
+        pvs_studio_add_target(TARGET analyze_${target} ALL
                           OUTPUT
                           FORMAT tasklist
                           ANALYZE ${target}
@@ -26,7 +26,7 @@ function(configure_target target)
     endif()
 endfunction()
 
-project(cde_labs VERSION 0.1.1)
+project(cde_labs VERSION 0.2.0)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
@@ -51,6 +51,7 @@ configure_file(src/build.h.in ${cde_labs_SOURCE_DIR}/src/build.h)
 # Выбор работ
 option(PVS_CHECK "Perform static analysis with PVS-Studio" ON)
 option(BUILD_LAB1 "Build lab no.1" ON)
+option(BUILD_LAB2 "Build lab no.1" ON)
 
 if(PVS_CHECK)
     include(FetchContent)
@@ -65,4 +66,10 @@ if(BUILD_LAB1)
     add_executable(lab1 src/lab1/main.cpp src/lab1/methods.cpp src/common.cpp
                         src/common.h src/build.h src/lab1/methods.h)
     configure_target(lab1)
+endif()
+
+if(BUILD_LAB2)
+    add_executable(lab2 src/lab2/main.cpp
+                        src/common.h src/build.h)
+    configure_target(lab2)
 endif()
