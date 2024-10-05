@@ -62,19 +62,13 @@ int main(int argc, char** argv) {
     std::cout << "Lab1 " << build_version << " " << build_git << std::endl;
 
     // Разбор параметров
-    size_t iter_count = 1000;
-    double from = 0, to = 1;
-    func_base* fn; methods_base* method;
-
     const auto cli = parse_cli(argc, argv);
-    auto it = cli.find("count");
-    if (it != cli.end()) iter_count = std::stoi(it->second);
-    it = cli.find("from");
-    if (it != cli.end()) from = std::stod(it->second);
-    it = cli.find("to");
-    if (it != cli.end()) to = std::stod(it->second);
+    size_t iter_count = sizet_from_cli_map(cli, "count", 1000);
+    double from = double_from_cli_map(cli, "from", 0.0);
+    double to = double_from_cli_map(cli, "to", 1.0);
 
     // Выбор функции
+    func_base* fn; methods_base* method;
     fn = func_select(cli);
     method = method_select(cli);
 

@@ -69,7 +69,7 @@ if(BUILD_LAB1)
 endif()
 
 if(BUILD_LAB2)
-    add_executable(lab2 src/lab2/main.cpp
+    add_executable(lab2 src/lab2/main.cpp src/common.cpp
                         src/common.h src/build.h)
     configure_target(lab2)
 endif()

@@ -18,3 +18,18 @@ cli_map parse_cli(int argc, char** argv) {
 
     return ret;
 }
+
+double double_from_cli_map(const cli_map& cli, const std::string& key, const double default_value) {
+    const auto it = cli.find(key);
+    return (it != cli.end()) ? std::stod(it->second) : default_value;
+}
+
+size_t sizet_from_cli_map(const cli_map& cli, const std::string& key, const size_t default_value) {
+    const auto it = cli.find(key);
+    return (it != cli.end()) ? std::stoul(it->second) : default_value;
+}
+
+std::string str_from_cli_map(const cli_map& cli, const std::string& key, const std::string& default_value) {
+    const auto it = cli.find(key);
+    return (it != cli.end()) ? it->second : default_value;
+}

@@ -65,7 +65,7 @@ double simpson::calc(const func_base* fn, const size_t count, const double from,
     return step / 3.0 * (fn->calc(from) + fn->calc(to) + sum1 + sum2);
 }
 
-methods_base* method_select(const cli_map& cli, [[maybe_unused]] const bool threads) {
+methods_base* method_select(const cli_map& cli) {
     try {
         const auto name = cli.at("method");
 

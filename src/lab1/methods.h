@@ -40,6 +40,6 @@ public:
 };
 
 // Выбор метода с помощью командной строки
-methods_base* method_select(const cli_map& cli, const bool threads = false);
+methods_base* method_select(const cli_map& cli);
 
 #endif /* __METHODS_H__ */
