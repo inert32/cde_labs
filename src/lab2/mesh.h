@@ -1,5 +1,5 @@
-#ifndef __LAB2__MESH_H__
-#define __LAB2__MESH_H__
+#ifndef __MESH_H__
+#define __MESH_H__
 
 #include <stddef.h>
 
@@ -34,4 +34,4 @@ private:
     size_t _x_size, _t_size;
 };
 
-#endif /* __LAB2__MESH_H__ */
+#endif /* __MESH_H__ */

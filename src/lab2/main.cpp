@@ -7,6 +7,7 @@
 #include "../build.h"
 #include "../common.h"
 #include "mesh.h"
+#include "display.h"
 
 double func1(const double x) {
     if (x > 2.0 && x < 5.0) return 1.0;
@@ -34,6 +35,8 @@ int main(int argc, char** argv) {
     const double t_step = double_from_cli_map(cli, "t_step", 0.1);
     const double speed = double_from_cli_map(cli, "speed", 0.9);
     const std::string output_path = str_from_cli_map(cli, "output", "lab2.txt");
+
+    const size_t run_sdl = sizet_from_cli_map(cli, "graph", 0);
 
     // Расчет размера сетки
     const double courant = speed * x_step / t_step;
@@ -68,6 +71,16 @@ int main(int argc, char** argv) {
             write_line(output, mesh[t], x_size, t);
         }
         std::cout << "done." << std::endl;
+
+        if (run_sdl > 0) {
+        try {
+            sdl_display disp;
+            disp.start_window();
+        }
+        catch (const std::exception& e) {
+            std::cerr << "disp: error: " << e.what() << std::endl;
+        }
+    }
     }
     catch (const std::bad_alloc&) { // Слишком большая сетка
         unsigned long long int req_gbytes = sizeof(double) * x_size * t_size / 1024 / 1024 / 1024;

@@ -53,7 +53,7 @@ option(PVS_CHECK "Perform static analysis with PVS-Studio" OFF)
 option(BUILD_LAB1 "Build lab no.1" ON)
 option(BUILD_LAB2 "Build lab no.1" ON)
 
-option(ENABLE_SDL "Enable graph functionaliti with SDL library" OFF)
+option(ENABLE_SDL "Enable graph functionality with SDL library" OFF)
 
 if(PVS_CHECK)
     include(FetchContent)
@@ -63,6 +63,10 @@ if(PVS_CHECK)
     FetchContent_MakeAvailable(PVS_CMakeModule)
     include("${pvs_cmakemodule_SOURCE_DIR}/PVS-Studio.cmake")
 endif()
+if(ENABLE_SDL)
+    find_package(SDL2 REQUIRED)
+    include_directories(${SDL2_INCLUDE_DIRS})
+endif()
 
 if(BUILD_LAB1)
     add_executable(lab1 src/lab1/main.cpp src/lab1/methods.cpp src/common.cpp
@@ -71,10 +75,9 @@ if(BUILD_LAB1)
 endif()
 
 if(BUILD_LAB2)
-    add_executable(lab2 src/lab2/main.cpp src/common.cpp
-                        src/lab2/mesh.h src/common.h src/build.h)
+    add_executable(lab2 src/lab2/main.cpp src/common.cpp src/lab2/display.cpp
+                        src/lab2/mesh.h src/common.h src/build.h src/lab2/display.h)
     if(ENABLE_SDL)
-        find_package(SDL2 REQUIRED)
         target_link_libraries(lab2 ${SDL2_LIBRARIES})
     endif()
     configure_target(lab2)
