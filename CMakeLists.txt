@@ -72,7 +72,7 @@ endif()
 
 if(BUILD_LAB2)
     add_executable(lab2 src/lab2/main.cpp src/common.cpp
-                        src/common.h src/build.h)
+                        src/lab2/mesh.h src/common.h src/build.h)
     if(ENABLE_SDL)
         find_package(SDL2 REQUIRED)
         target_link_libraries(lab2 ${SDL2_LIBRARIES})
