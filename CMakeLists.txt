@@ -26,7 +26,7 @@ function(configure_target target)
     endif()
 endfunction()
 
-project(cde_labs VERSION 0.2.0)
+project(cde_labs VERSION 0.2.1)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
@@ -49,9 +49,11 @@ endif()
 configure_file(src/build.h.in ${cde_labs_SOURCE_DIR}/src/build.h)
 
 # Выбор работ
-option(PVS_CHECK "Perform static analysis with PVS-Studio" ON)
+option(PVS_CHECK "Perform static analysis with PVS-Studio" OFF)
 option(BUILD_LAB1 "Build lab no.1" ON)
 option(BUILD_LAB2 "Build lab no.1" ON)
+
+option(ENABLE_SDL "Enable graph functionaliti with SDL library" OFF)
 
 if(PVS_CHECK)
     include(FetchContent)
@@ -71,5 +73,9 @@ endif()
 if(BUILD_LAB2)
     add_executable(lab2 src/lab2/main.cpp src/common.cpp
                         src/common.h src/build.h)
+    if(ENABLE_SDL)
+        find_package(SDL2 REQUIRED)
+        target_link_libraries(lab2 ${SDL2_LIBRARIES})
+    endif()
     configure_target(lab2)
 endif()
