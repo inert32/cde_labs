@@ -75,10 +75,10 @@ int main(int argc, char** argv) {
         if (run_sdl > 0) {
         try {
             sdl_display disp;
-            disp.start_window();
+            while (handle_kbd() != sdl_events::quit) disp.show_frame();
         }
         catch (const std::exception& e) {
-            std::cerr << "disp: error: " << e.what() << std::endl;
+            std::cerr << "SDL: Error: " << e.what() << std::endl;
         }
     }
     }

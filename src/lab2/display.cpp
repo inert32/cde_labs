@@ -14,6 +14,8 @@ sdl_display::sdl_display() {
         throw std::runtime_error(err);
     }
     surf = SDL_GetWindowSurface(window);
+    SDL_FillRect(surf, nullptr, SDL_MapRGB(surf->format, 0x7F, 0x7F, 0x7F));
+    SDL_UpdateWindowSurface(window);
 }
 
 sdl_display::~sdl_display() {
@@ -22,8 +24,15 @@ sdl_display::~sdl_display() {
     SDL_Quit();
 }
 
-void sdl_display::start_window() {
-    SDL_FillRect(surf, nullptr, SDL_MapRGB(surf->format, 0x7F, 0x7F, 0x7F));
-    SDL_UpdateWindowSurface( window );
-    SDL_Event e; bool quit = false; while( quit == false ){ while( SDL_PollEvent( &e ) ){ if( e.type == SDL_QUIT ) quit = true; } }
+void sdl_display::show_frame() {
+
+}
+
+sdl_events handle_kbd() {
+    SDL_Event e;
+    while (SDL_PollEvent(&e)) {
+        if (e.type == SDL_QUIT) return sdl_events::quit;
+        if (e.type == SDL_KEYDOWN) return sdl_events::quit;
+    }
+    return sdl_events::none;
 }
