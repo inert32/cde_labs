@@ -35,8 +35,7 @@ int main(int argc, char** argv) {
     const double t_step = double_from_cli_map(cli, "t_step", 0.1);
     const double speed = double_from_cli_map(cli, "speed", 0.9);
     const std::string output_path = str_from_cli_map(cli, "output", "lab2.txt");
-
-    const size_t run_sdl = sizet_from_cli_map(cli, "graph", 0);
+    const bool run_sdl = bool_from_cli_map(cli, "graph", false);
 
     // Расчет размера сетки
     const double courant = speed * x_step / t_step;
@@ -72,7 +71,7 @@ int main(int argc, char** argv) {
         }
         std::cout << "done." << std::endl;
 
-        if (run_sdl > 0) {
+        if (run_sdl) {
         try {
             sdl_display disp;
             bool run = true;

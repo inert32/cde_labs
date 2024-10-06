@@ -33,3 +33,12 @@ std::string str_from_cli_map(const cli_map& cli, const std::string& key, const s
     const auto it = cli.find(key);
     return (it != cli.end()) ? it->second : default_value;
 }
+
+bool bool_from_cli_map(const cli_map& cli, const std::string& key, const bool default_value) {
+    const auto it = cli.find(key);
+    if (it != cli.end()) {
+        const auto val = it->second;
+        return (val == "On" || val == "on" || val == "True" || val == "true") ? true : false;
+    }
+    else return default_value;
+}
