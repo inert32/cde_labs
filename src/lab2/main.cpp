@@ -75,7 +75,25 @@ int main(int argc, char** argv) {
         if (run_sdl > 0) {
         try {
             sdl_display disp;
-            while (handle_kbd() != sdl_events::quit) disp.show_frame();
+            bool run = true;
+            size_t frame = 0;
+
+            while (run) {
+                auto event = handle_kbd();
+                switch (event) {
+                case sdl_events::quit:
+                    run = false;
+                    break;
+                case sdl_events::previous:
+                    if (frame != 0) frame--;
+                    break;
+                case sdl_events::next:
+                    if (frame != x_size) frame++;
+                    break;
+                default: continue;
+                }
+                disp.show_frame(frame);
+            }
         }
         catch (const std::exception& e) {
             std::cerr << "SDL: Error: " << e.what() << std::endl;

@@ -2,9 +2,7 @@
 #define __DISPLAY_H__
 
 #include <stdexcept>
-#include <string>
-#include <SDL.h>
-#include "mesh.h"
+#include <SDL2/SDL.h>
 
 enum class sdl_events {
     none,
@@ -13,17 +11,19 @@ enum class sdl_events {
     next
 };
 
+// Отображение графика на экране
 class sdl_display {
 public:
     sdl_display();
     ~sdl_display();
 
-    void show_frame();
+    // Выбор слоя сетки (curr) для отображения
+    void show_frame(const size_t curr);
 
 private:
     const size_t len_x = 1024, len_y = 768;
     SDL_Window* window = nullptr;
-    SDL_Surface* surf = nullptr;
+    SDL_Renderer* rend = nullptr;
 };
 
 sdl_events handle_kbd();
