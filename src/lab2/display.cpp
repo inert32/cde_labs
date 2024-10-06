@@ -1,8 +1,8 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
+#include <iostream>
 #include <stdexcept>
-#include <string>
 #include <SDL2/SDL.h>
 #include "display.h"
 
@@ -28,16 +28,23 @@ sdl_display::~sdl_display() {
     SDL_Quit();
 }
 
-void sdl_display::show_frame(const size_t curr) {
+void sdl_display::show_frame(const mesh_t& mesh, const size_t curr) {
     clear_screen();
     SDL_SetRenderDrawColor(rend, 255, 0, 0, 255);
-    SDL_FPoint points[10];
-    for (int i = 0; i < 10; i++) {
-        float x = (float)(10 + curr + i);
-        float y = 1.1f * i;
+
+    // Создаем точки
+    auto size = mesh.get_size().x;
+    SDL_FPoint* points = new SDL_FPoint[size];
+
+    auto abs = mesh.get_layer_x();
+    auto layer = mesh.get_layer(curr);
+
+    for (size_t i = 0; i < size; i++) {
+        float x = (float)abs[i] * 50.0f;
+        float y = (float)layer[i] * 50.0f;
         points[i] = {x, y};
     }
-    if (SDL_RenderDrawPointsF(rend, points, 9) < 0) throw std::runtime_error(SDL_GetError());
+    if (SDL_RenderDrawLinesF(rend, points, size) < 0) throw std::runtime_error(SDL_GetError());
     SDL_RenderPresent(rend);
 }
 

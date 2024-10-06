@@ -77,16 +77,16 @@ int main(int argc, char** argv) {
             size_t frame = 0;
 
             while (run) {
-                disp.show_frame(frame);
+                disp.show_frame(m, frame);
                 switch (handle_kbd()) {
                 case sdl_events::quit:
                     run = false;
                     break;
                 case sdl_events::previous:
-                    if (frame != 0) frame--;
+                    if (frame > 0) frame--;
                     break;
                 case sdl_events::next:
-                    if (frame != x_size) frame++;
+                    if (frame < t_size - 1) frame++;
                     break;
                 default: continue;
                 }

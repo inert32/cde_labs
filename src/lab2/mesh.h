@@ -1,7 +1,7 @@
 #ifndef __MESH_H__
 #define __MESH_H__
 
-#include <stddef.h>
+#include <string>
 
 // Сетка
 class mesh_t {
@@ -25,13 +25,23 @@ public:
     }
 
     // Получить рассчитанную сетку
-    double** get_mesh() const {
-        return mesh;
+    const double** get_mesh() const {
+        return (const double**)mesh;
     }
 
     // Получить рассчитанный слой
-    double* get_layer(const size_t t) const {
-        return mesh[t];
+    const double* get_layer(const size_t t) const {
+        if (t >= _t_size) {
+            std::string msg = "mesh: Error: Required layer " + std::to_string(t) +
+            " is out of range";
+            throw std::runtime_error(msg);
+        }
+        return (const double*)mesh[t];
+    }
+
+    // Получить значения оси абсцисс
+    const double* get_layer_x() const {
+        return (const double*)layer_x;
     }
 
     // Задать значения оси абсцисс
@@ -39,17 +49,12 @@ public:
         for (size_t i = 0; i < _x_size; i++) layer_x[i] = i * step;
     }
 
-    // Получить значения оси абсцисс
-    const double* get_layer_x() {
-        return layer_x;
-    }
-
     // Задать первый слой сетки
     void set_layer_t0(double (*func)(double)) {
         for (size_t i = 0; i < _x_size; i++) mesh[0][i] = func(layer_x[i]);
     }
 
-    // Вычислить слой t по слою t-1
+    // Вычислить слой t по предыдущему
     void calc_layer(const size_t t, const double courant) {
         if (t == 0) return;
         if (t >= _t_size) {
@@ -66,7 +71,7 @@ public:
     struct mesh_size_t {const size_t x; const size_t t; };
 
     // Получить размер сетки
-    mesh_size_t get_size() const {
+    const mesh_size_t get_size() const {
         return { _x_size, _t_size };
     }
 

@@ -3,6 +3,7 @@
 
 #include <stdexcept>
 #include <SDL2/SDL_render.h>
+#include "mesh.h"
 
 enum class sdl_events {
     none,
@@ -18,7 +19,7 @@ public:
     ~sdl_display();
 
     // Выбор слоя сетки (curr) для отображения
-    void show_frame(const size_t curr);
+    void show_frame(const mesh_t& mesh, const size_t curr);
 
 private:
     const size_t len_x = 1024, len_y = 768;
