@@ -1,7 +1,8 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
-#include <iostream>
+#ifdef __ENABLE_GRAPH__
+
 #include <stdexcept>
 #include <SDL2/SDL.h>
 #include "display.h"
@@ -63,3 +64,5 @@ sdl_events handle_kbd() {
     }
     return sdl_events::none;
 }
+
+#endif /* __ENABLE_GRAPH__ */
