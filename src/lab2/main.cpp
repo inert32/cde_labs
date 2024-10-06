@@ -79,8 +79,8 @@ int main(int argc, char** argv) {
             size_t frame = 0;
 
             while (run) {
-                auto event = handle_kbd();
-                switch (event) {
+                disp.show_frame(frame);
+                switch (handle_kbd()) {
                 case sdl_events::quit:
                     run = false;
                     break;
@@ -92,7 +92,6 @@ int main(int argc, char** argv) {
                     break;
                 default: continue;
                 }
-                disp.show_frame(frame);
             }
         }
         catch (const std::exception& e) {

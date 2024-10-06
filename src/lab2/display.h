@@ -2,7 +2,7 @@
 #define __DISPLAY_H__
 
 #include <stdexcept>
-#include <SDL2/SDL.h>
+#include <SDL2/SDL_render.h>
 
 enum class sdl_events {
     none,
