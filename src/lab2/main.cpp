@@ -15,7 +15,7 @@ double func1(const double x) {
 }
 
 // Запись слоя сетки в файл
-void write_line(std::fstream& file, double* line, const size_t size, const size_t layer) {
+void write_line(std::fstream& file, const double* line, const size_t size, const size_t layer) {
     file << layer << ":\t";
     for (size_t x = 0; x < size; x++)
         file << line[x] << '\t';
@@ -49,25 +49,24 @@ int main(int argc, char** argv) {
     try {
         // Создаем сетку
         mesh_t m(x_size, t_size);
-        auto mesh = m.get_mesh();
 
+        // Настройка оси абсцисс
+        m.set_layer_x(x_step);
+        auto abs = m.get_layer_x();
         output << "X:\t";
         for (size_t x = 0; x < x_size; x++)
-            output << x * x_step << '\t';
+            output << abs[x] << '\t';
         output << std::endl;
 
         // Первый слой
-        for (size_t x = 0; x < x_size; x++)
-            mesh[0][x] = func1(x * x_step);
-        write_line(output, mesh[0], x_size, 0);
+        m.set_layer_t0(func1);
+        write_line(output, m.get_layer(0), x_size, 0);
 
         std::cout << "Begin mesh calculations...";
         // Расчет сетки
         for (size_t t = 1; t < t_size; t++) {
-            mesh[t][0] = mesh[t - 1][x_size - 1];
-            for (size_t x = 1; x < x_size; x++)
-                mesh[t][x] = mesh[t - 1][x] - courant * (mesh[t - 1][x] - mesh[t - 1][x - 1]);
-            write_line(output, mesh[t], x_size, t);
+            m.calc_layer(t, courant);
+            write_line(output, m.get_layer(t), x_size, t);
         }
         std::cout << "done." << std::endl;
 
@@ -100,7 +99,7 @@ int main(int argc, char** argv) {
     }
     catch (const std::bad_alloc&) { // Слишком большая сетка
         unsigned long long int req_gbytes = sizeof(double) * x_size * t_size / 1024 / 1024 / 1024;
-        std::cerr << "mesh: Out of memory. Mesh size [" << x_size << " X " << t_size << "]"
+        std::cerr << "mesh: Error: Out of memory. Mesh size [" << x_size << " X " << t_size << "]"
         << " will require " << req_gbytes << " GB RAM" << std::endl;
     }
     catch (const std::exception& e) {
