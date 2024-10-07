@@ -31,13 +31,12 @@ private:
     SDL_FPoint* scale_graph(const mesh_t& mesh, const size_t curr);
 
     // Область рисования графика
-    static constexpr int graph_x_start = (int)(0 * len_x);
-    static constexpr int graph_x_end = (int)(1 * len_x) - 1;
-    static constexpr int diap_xg = graph_x_end - graph_x_start; // Диапазон позиций поля вывода вдоль OX
+    static constexpr int area_x_start = (int)(0 * len_x);
+    static constexpr int area_x_end = (int)(1 * len_x) - 1;
+    static constexpr int area_x_diap = area_x_end - area_x_start; // Диапазон позиций поля вывода вдоль OX
 
-    static constexpr int graph_t_start = (int)(0.1 * len_y);
-    static constexpr int graph_t_end = (int)(0.9 * len_y);
-    static constexpr int diap_yg = graph_t_end - graph_t_start; // Диапазон позиций поля вывода вдоль OY
+    static constexpr int area_t_start = (int)(0.1 * len_y);
+    static constexpr int area_t_end = (int)(0.9 * len_y);
 };
 
 sdl_events handle_kbd();

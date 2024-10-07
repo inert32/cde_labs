@@ -35,7 +35,7 @@ void sdl_display::show_frame(const mesh_t& mesh, const size_t curr) {
 
     // Рисуем границы графика
     SDL_SetRenderDrawColor(rend, 0, 255, 0, 255);
-    SDL_Point area[6] = { {graph_x_start, graph_t_start}, {graph_x_start, graph_t_end}, {graph_x_end, graph_t_end}, {graph_x_end, graph_t_start}, {graph_x_start, graph_t_start}, {graph_x_start, graph_t_end}, };
+    SDL_Point area[6] = { {area_x_start, area_t_start}, {area_x_start, area_t_end}, {area_x_end, area_t_end}, {area_x_end, area_t_start}, {area_x_start, area_t_start}, {area_x_start, area_t_end}, };
     if (SDL_RenderDrawLines(rend, area, 5) < 0) throw std::runtime_error(SDL_GetError());
 
     // Рисуем график
@@ -45,6 +45,7 @@ void sdl_display::show_frame(const mesh_t& mesh, const size_t curr) {
     delete[] points;
 
     // Рисуем координатную сетку
+    // TODO: Добавить координатную сетку
 
     // Передаем на экран
     SDL_RenderPresent(rend);
@@ -58,15 +59,24 @@ SDL_FPoint* sdl_display::scale_graph(const mesh_t& mesh, const size_t curr) {
     auto abs = mesh.get_layer_x();
     auto layer = mesh.get_layer(curr);
 
-    // Масштабирование
-    auto Xmin = abs[0];
-    auto diapX = abs[size - 1] - Xmin;
-    auto Ymax = mesh.get_max_on_layer(curr);
-    auto diapY = Ymax - mesh.get_min_on_layer(curr);
+    // Пределы для оси OX
+    auto x_min = abs[0];
+    auto delta_x = abs[size - 1] - x_min;
 
+    // Пределы для оси OY
+    auto y_min = mesh.get_min_on_layer(curr);
+    auto y_max = mesh.get_max_on_layer(curr);
+    auto delta_y = y_max - y_min;
+
+    // Ось OX будет в центре экрана
+    int real_t_start = (int)(len_y * (y_max > 0.0 ? 0.1 : 0.5)); // Положительные значения в верхней части графика
+    int real_t_end = (int)(len_y * (y_min < 0.0 ? 0.9 : 0.5)); // Отрицательные в нижней
+    int real_yg = real_t_end - real_t_start; // Диапазон позиций поля вывода вдоль OY
+
+    // Масштабирование
     for (size_t i = 0; i < size; i++) {
-        auto x = ((abs[i] - Xmin) * diap_xg / diapX) + graph_x_start;
-        auto y = ((Ymax - layer[i]) * diap_yg / diapY) + graph_t_start;
+        auto x = ((abs[i] - x_min) * area_x_diap / delta_x) + area_x_start;
+        auto y = ((y_max - layer[i]) * real_yg / delta_y) + real_t_start;
         points[i] = { (float)x, (float)y };
     }
 
