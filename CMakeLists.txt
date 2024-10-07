@@ -5,14 +5,10 @@ function(configure_target target)
     # Установка опций компилятора
     if(MSVC)
         target_compile_options(${target} PUBLIC /W4)
-        if(CMAKE_BUILD_TYPE STREQUAL "Release")
-            target_compile_options(${target} PUBLIC /WX)
-        endif()
+        target_compile_options(${target} PUBLIC $<$<CONFIG:Release>:/WX>)
     else()
         target_compile_options(${target} PUBLIC -Wall -Wextra -Wpedantic)
-        if(CMAKE_BUILD_TYPE STREQUAL "Release")
-            target_compile_options(${target} PUBLIC -Werror -flto)
-        endif()
+        target_compile_options(${target} PUBLIC $<$<CONFIG:Release>:-Werror -flto>)
     endif()
 
     # Запуск статического анализа
