@@ -45,7 +45,7 @@ void sdl_display::show_frame(const mesh_t& mesh, const size_t curr) {
         float y = (float)layer[i] * 50.0f;
         points[i] = {x, y};
     }
-    if (SDL_RenderDrawLinesF(rend, points, size) < 0) throw std::runtime_error(SDL_GetError());
+    if (SDL_RenderDrawLinesF(rend, points, (int)size) < 0) throw std::runtime_error(SDL_GetError());
     SDL_RenderPresent(rend);
 }
 
