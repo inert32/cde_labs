@@ -30,6 +30,13 @@ private:
 
     SDL_FPoint* scale_graph(const mesh_t& mesh, const size_t curr);
 
+    // Настройки координатной сетки
+    SDL_FPoint* coord_grid = nullptr;
+    static constexpr int grid_ox_count = 10;
+    static constexpr int grid_ot_count = 10;
+    void setup_grid();
+    void draw_grid();
+
     // Область рисования графика
     static constexpr int area_x_start = (int)(0 * len_x);
     static constexpr int area_x_end = (int)(1 * len_x) - 1;
