@@ -17,7 +17,7 @@ sdl_display::sdl_display() {
     window = SDL_CreateWindow("Lab2", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, len_x, len_y, SDL_WINDOW_SHOWN);
     if (window == nullptr) throw std::runtime_error(SDL_GetError());
 
-    rend = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE | SDL_RENDERER_PRESENTVSYNC);
+    rend = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     if (rend == nullptr) throw std::runtime_error(SDL_GetError());
     clear_screen();
     SDL_RenderPresent(rend);
@@ -31,8 +31,6 @@ sdl_display::~sdl_display() {
 
 void sdl_display::show_frame(const mesh_t& mesh, const size_t curr) {
     clear_screen();
-    SDL_SetRenderDrawColor(rend, 255, 0, 0, 255);
-
     // Создаем точки
     auto size = mesh.get_size().x;
     SDL_FPoint* points = new SDL_FPoint[size];
@@ -40,13 +38,30 @@ void sdl_display::show_frame(const mesh_t& mesh, const size_t curr) {
     auto abs = mesh.get_layer_x();
     auto layer = mesh.get_layer(curr);
 
+    // Масштабирование
+    auto min = mesh.get_min_on_layer(curr);
+    auto max = mesh.get_max_on_layer(curr);
+
+    // Для графика выделяем следующие части экрана:
+    // 0-1 по OX, 0.1-0.9 по OT
+    auto graph_x_start = (int)(0 * len_x);
+    auto graph_x_end = (int)(1 * len_x) - 1;
+    auto graph_t_start = (int)(0.1 * len_y);
+    auto graph_t_end = (int)(0.9 * len_y);
+
+    SDL_SetRenderDrawColor(rend, 0, 255, 0, 255);
+    SDL_Point area[6] = { {graph_x_start, graph_t_start}, {graph_x_start, graph_t_end}, {graph_x_end, graph_t_end}, {graph_x_end, graph_t_start}, {graph_x_start, graph_t_start}, {graph_x_start, graph_t_end}, };
+    if (SDL_RenderDrawLines(rend, area, 5) < 0) throw std::runtime_error(SDL_GetError());
+
     for (size_t i = 0; i < size; i++) {
         float x = (float)abs[i] * 50.0f;
         float y = (float)layer[i] * 50.0f;
         points[i] = {x, y};
     }
+    SDL_SetRenderDrawColor(rend, 255, 0, 0, 255);
     if (SDL_RenderDrawLinesF(rend, points, (int)size) < 0) throw std::runtime_error(SDL_GetError());
     SDL_RenderPresent(rend);
+    delete[] points;
 }
 
 sdl_events handle_kbd() {
