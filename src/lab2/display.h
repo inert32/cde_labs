@@ -11,7 +11,7 @@ enum class sdl_events {
 #ifdef __ENABLE_GRAPH__
 
 #include <stdexcept>
-#include <SDL2/SDL_render.h>
+#include <SDL_render.h>
 #include "mesh.h"
 
 // Отображение графика на экране
@@ -24,7 +24,7 @@ public:
     void show_frame(const mesh_t& mesh, const size_t curr);
 
 private:
-    const size_t len_x = 1024, len_y = 768;
+    const int len_x = 1024, len_y = 768;
     SDL_Window* window = nullptr;
     SDL_Renderer* rend = nullptr;
 };

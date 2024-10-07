@@ -4,7 +4,7 @@
 #ifdef __ENABLE_GRAPH__
 
 #include <stdexcept>
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include "display.h"
 
 #define clear_screen() SDL_SetRenderDrawColor(rend, 127, 127, 127, 255); SDL_RenderClear(rend)
