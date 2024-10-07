@@ -3,6 +3,7 @@
 
 #ifdef __ENABLE_GRAPH__
 
+#include <iostream>
 #include <stdexcept>
 #include <SDL.h>
 #include "display.h"
@@ -39,24 +40,29 @@ void sdl_display::show_frame(const mesh_t& mesh, const size_t curr) {
     auto layer = mesh.get_layer(curr);
 
     // Масштабирование
-    auto min = mesh.get_min_on_layer(curr);
-    auto max = mesh.get_max_on_layer(curr);
+    auto Xmin = abs[0];
+    auto diapX = abs[size - 1] - Xmin;
+    auto Ymax = mesh.get_max_on_layer(curr);
+    auto diapY = Ymax - mesh.get_min_on_layer(curr);
 
     // Для графика выделяем следующие части экрана:
     // 0-1 по OX, 0.1-0.9 по OT
     auto graph_x_start = (int)(0 * len_x);
     auto graph_x_end = (int)(1 * len_x) - 1;
+    auto diap_xg = graph_x_end - graph_x_start; // Диапазон позиций поля вывода вдоль OX
+
     auto graph_t_start = (int)(0.1 * len_y);
     auto graph_t_end = (int)(0.9 * len_y);
+    auto diap_yg = graph_t_end - graph_t_start; // Диапазон позиций поля вывода вдоль OY
 
     SDL_SetRenderDrawColor(rend, 0, 255, 0, 255);
     SDL_Point area[6] = { {graph_x_start, graph_t_start}, {graph_x_start, graph_t_end}, {graph_x_end, graph_t_end}, {graph_x_end, graph_t_start}, {graph_x_start, graph_t_start}, {graph_x_start, graph_t_end}, };
     if (SDL_RenderDrawLines(rend, area, 5) < 0) throw std::runtime_error(SDL_GetError());
 
     for (size_t i = 0; i < size; i++) {
-        float x = (float)abs[i] * 50.0f;
-        float y = (float)layer[i] * 50.0f;
-        points[i] = {x, y};
+        auto x = ((abs[i] - Xmin) * diap_xg / diapX) + graph_x_start;
+        auto y = ((Ymax - layer[i]) * diap_yg / diapY) + graph_t_start;
+        points[i] = {(float)x, (float)y};
     }
     SDL_SetRenderDrawColor(rend, 255, 0, 0, 255);
     if (SDL_RenderDrawLinesF(rend, points, (int)size) < 0) throw std::runtime_error(SDL_GetError());
