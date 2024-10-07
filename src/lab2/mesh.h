@@ -68,6 +68,40 @@ public:
             mesh[t][x] = mesh[t - 1][x] - courant * (mesh[t - 1][x] - mesh[t - 1][x - 1]);
     }
 
+    // Получить максимальное значение функции на слое t
+    double get_max_on_layer(const size_t t) const {
+        if (t >= _t_size) {
+            std::string msg = "mesh: Error: Required layer " + std::to_string(t) +
+                " is out of range";
+            throw std::runtime_error(msg);
+        }
+
+        const auto layer = mesh[t];
+        double ret = layer[0];
+
+        for (size_t x = 1; x < _x_size; x++)
+            if (layer[x] > ret) ret = layer[x];
+
+        return ret;
+    }
+
+    // Получить минимальное значение функции на слое t
+    double get_min_on_layer(const size_t t) const {
+        if (t >= _t_size) {
+            std::string msg = "mesh: Error: Required layer " + std::to_string(t) +
+                " is out of range";
+            throw std::runtime_error(msg);
+        }
+
+        const auto layer = mesh[t];
+        double ret = layer[0];
+
+        for (size_t x = 1; x < _x_size; x++)
+            if (layer[x] < ret) ret = layer[x];
+
+        return ret;
+    }
+
     struct mesh_size_t {const size_t x; const size_t t; };
 
     // Получить размер сетки
