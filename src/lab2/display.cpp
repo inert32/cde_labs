@@ -108,7 +108,7 @@ void sdl_display::setup_grid() {
 
     const float step_x = (float)(area_x_diap) / (float)(grid_ox_count); // Отступаем от начала и середины экрана
     const float step_t = (float)(area_t_end - area_t_start) / (float)(grid_ot_count); // Тоже самое для вертикали
-    const float start_x = 1.0f; // Отступаем от левого края экрана
+    const float start_x = (float)area_x_start; // Отступаем от левого края экрана
     const float start_t = 0.1f * len_y; // Отступаем от верхнего края экрана
     // Отметки на оси абсцисс
     for (int i = 0; i < grid_ox_count + 1; i++) {
@@ -125,8 +125,8 @@ void sdl_display::setup_grid() {
         coord_grid[total++] = { mid_x + 10.0f, t + start_t };
     }
     // Оси
-    coord_grid[total++] = { 0.0f, mid_t };
-    coord_grid[total++] = { (float)len_x, mid_t };
+    coord_grid[total++] = { (float)area_x_start, mid_t };
+    coord_grid[total++] = { (float)area_x_end, mid_t };
     coord_grid[total++] = { mid_x, (float)area_t_start };
     coord_grid[total] = { mid_x, (float)area_t_end };
 }
