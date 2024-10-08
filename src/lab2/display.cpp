@@ -93,54 +93,40 @@ SDL_FPoint* sdl_display::scale_graph(const mesh_t& mesh, const size_t curr) {
 void sdl_display::setup_grid() {
     if (coord_grid != nullptr) return;
 
-    coord_grid = new SDL_FPoint[2 * grid_ox_count + 2 * grid_ot_count + 4];
+    coord_grid = new SDL_FPoint[grid_size];
     size_t total = 0;
 
     const float mid_x = len_x * 0.5f;
     const float mid_t = len_y * 0.5f;
 
-    const float step_x = (float)area_x_diap / (grid_ox_count + 2); // Отступаем от начала и середины экрана
-    const float step_t = (float)(area_t_end - area_t_start) / (grid_ot_count + 2); // Тоже самое для вертикали
+    const float step_x = (float)(area_x_diap) / (float)(grid_ox_count); // Отступаем от начала и середины экрана
+    const float step_t = (float)(area_t_end - area_t_start) / (float)(grid_ot_count); // Тоже самое для вертикали
+    const float start_x = 1.0f; // Отступаем от левого края экрана
     const float start_t = 0.1f * len_y; // Отступаем от верхнего края экрана
-    // Слева от нуля
-    for (int i = 0; i < grid_ox_count / 2; i++) {
-        float x = (1 + i) * step_x;
+    // Отметки на оси абсцисс
+    for (int i = 0; i < grid_ox_count + 1; i++) {
+        float x = i * step_x;
 
-        coord_grid[total++] = { x, mid_t - 10.0f };
-        coord_grid[total++] = { x, mid_t + 10.0f };
+        coord_grid[total++] = { x + start_x, mid_t - 10.0f };
+        coord_grid[total++] = { x + start_x, mid_t + 10.0f };
     }
-    // Справа от нуля
-    for (int i = grid_ox_count / 2; i < grid_ox_count; i++) {
-        float x = (2 + i) * step_x;
-
-        coord_grid[total++] = { x, mid_t - 10.0f };
-        coord_grid[total++] = { x, mid_t + 10.0f };
-    }
-    // Сверху от нуля
-    for (int i = 0; i < grid_ot_count / 2; i++) {
-        float t = (1 + i) * step_t;
-
-        coord_grid[total++] = { mid_x - 10.0f, t + start_t };
-        coord_grid[total++] = { mid_x + 10.0f, t + start_t };
-    }
-    // Снизу от нуля
-    for (int i = grid_ot_count / 2; i < grid_ot_count; i++) {
-        float t = (2 + i) * step_t;
+    // Отметки на оси ординат
+    for (int i = 0; i < grid_ot_count + 1; i++) {
+        float t = i * step_t;
 
         coord_grid[total++] = { mid_x - 10.0f, t + start_t };
         coord_grid[total++] = { mid_x + 10.0f, t + start_t };
     }
     // Оси
     coord_grid[total++] = { 0.0f, mid_t };
-    coord_grid[total++] = { len_x, mid_t };
+    coord_grid[total++] = { (float)len_x, mid_t };
     coord_grid[total++] = { mid_x, (float)area_t_start };
     coord_grid[total] = { mid_x, (float)area_t_end };
 }
 
 void sdl_display::draw_grid() {
     SDL_SetRenderDrawColor(rend, 0, 0, 0, 255);
-    const auto size = 2 * grid_ox_count + 2 * grid_ot_count + 4;
-    for (int i = 0; i < size; i += 2) SDL_RenderDrawLinesF(rend, coord_grid + i, 2);
+    for (int i = 0; i < grid_size; i += 2) SDL_RenderDrawLinesF(rend, coord_grid + i, 2);
 }
 
 sdl_events handle_kbd() {

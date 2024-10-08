@@ -34,12 +34,14 @@ private:
     SDL_FPoint* coord_grid = nullptr;
     static constexpr int grid_ox_count = 10;
     static constexpr int grid_ot_count = 10;
+    // Размер coord_grid (оси и все отметки)
+    static constexpr int grid_size = 2 * (grid_ox_count + 1) + 2 * (grid_ot_count + 1) + 4;
     void setup_grid();
     void draw_grid();
 
     // Область рисования графика
-    static constexpr int area_x_start = (int)(0 * len_x);
-    static constexpr int area_x_end = (int)(1 * len_x) - 1;
+    static constexpr int area_x_start = 1;
+    static constexpr int area_x_end = len_x - 1;
     static constexpr int area_x_diap = area_x_end - area_x_start; // Диапазон позиций поля вывода вдоль OX
 
     static constexpr int area_t_start = (int)(0.1 * len_y);
