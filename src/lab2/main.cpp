@@ -77,7 +77,7 @@ int main(int argc, char** argv) {
             size_t frame = 0;
 
             while (run) {
-                disp.show_frame(m, frame);
+                disp.show_frame(m, frame, t_step);
                 switch (handle_kbd()) {
                 case sdl_events::quit:
                     run = false;

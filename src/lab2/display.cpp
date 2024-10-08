@@ -6,6 +6,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <SDL.h>
+#include <SDL_ttf.h>
 #include "display.h"
 
 // Очистка экрана
@@ -26,18 +27,21 @@ sdl_display::sdl_display() {
     // Создание координатной сетки
     setup_grid();
 
+    text = new sdl_text(rend);
+
     clear_screen();
     SDL_RenderPresent(rend);
 }
 
 sdl_display::~sdl_display() {
     delete[] coord_grid;
+    delete text;
     SDL_DestroyRenderer(rend);
     SDL_DestroyWindow(window);
     SDL_Quit();
 }
 
-void sdl_display::show_frame(const mesh_t& mesh, const size_t curr) {
+void sdl_display::show_frame(const mesh_t& mesh, const size_t curr, const double t_step) {
     clear_screen();
 
     // Рисуем границы графика
@@ -53,6 +57,9 @@ void sdl_display::show_frame(const mesh_t& mesh, const size_t curr) {
     const auto points = scale_graph(mesh, curr);
     if (SDL_RenderDrawLinesF(rend, points, (int)mesh.get_size().x) < 0) throw std::runtime_error(SDL_GetError());
     delete[] points;
+
+    // Вывести текущее время
+    text->render_text("Time: " + std::to_string(curr * t_step) + " s", 0, (int)(0.91 * len_y));
 
     // Передаем на экран
     SDL_RenderPresent(rend);
@@ -127,6 +134,37 @@ void sdl_display::setup_grid() {
 void sdl_display::draw_grid() {
     SDL_SetRenderDrawColor(rend, 0, 0, 0, 255);
     for (int i = 0; i < grid_size; i += 2) SDL_RenderDrawLinesF(rend, coord_grid + i, 2);
+}
+
+sdl_text::sdl_text(SDL_Renderer* renderer) {
+    rend = renderer;
+    TTF_Init();
+    // Загрузка шрифта
+    font = TTF_OpenFont("font.ttf", 16);
+    if (font == nullptr) throw std::runtime_error(TTF_GetError());
+}
+
+sdl_text::~sdl_text() {
+    TTF_CloseFont(font);
+}
+
+void sdl_text::render_text(const std::string& text, const int x, const int y) {
+    auto surf = TTF_RenderText_LCD(font, text.c_str(), {255, 255, 255, 255}, {127, 127, 127, 0});
+    if (surf == nullptr) {
+        std::cerr << "SDL_ttf: " << TTF_GetError() << std::endl;
+        return;
+    }
+    auto texture = SDL_CreateTextureFromSurface(rend, surf);
+	if (texture == nullptr){
+		std::cerr << "SDL_ttf: " << TTF_GetError() << std::endl;
+        return;
+	}
+
+    SDL_Rect dest;
+    dest.x = x; dest.y = y;
+    TTF_SizeText(font, text.c_str(), &dest.w, &dest.h);
+    SDL_RenderCopy(rend, texture, nullptr, &dest);
+    SDL_FreeSurface(surf);
 }
 
 sdl_events handle_kbd() {

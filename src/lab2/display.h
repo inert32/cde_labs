@@ -12,7 +12,10 @@ enum class sdl_events {
 
 #include <stdexcept>
 #include <SDL_render.h>
+#include <SDL_ttf.h>
 #include "mesh.h"
+
+class sdl_text;
 
 // Отображение графика на экране
 class sdl_display {
@@ -21,7 +24,7 @@ public:
     ~sdl_display();
 
     // Выбор слоя сетки (curr) для отображения
-    void show_frame(const mesh_t& mesh, const size_t curr);
+    void show_frame(const mesh_t& mesh, const size_t curr, const double t_step);
 
 private:
     static constexpr int len_x = 1024, len_y = 768;
@@ -46,6 +49,21 @@ private:
 
     static constexpr int area_t_start = (int)(0.1 * len_y);
     static constexpr int area_t_end = (int)(0.9 * len_y);
+
+    sdl_text* text;
+};
+
+// Вывод времени и отметок на сетке
+class sdl_text {
+public:
+    sdl_text(SDL_Renderer* renderer);
+    ~sdl_text();
+
+    void render_text(const std::string& text, const int x, const int y);
+private:
+    // Шрифт
+    TTF_Font* font = nullptr;
+    SDL_Renderer* rend = nullptr;
 };
 
 sdl_events handle_kbd();
