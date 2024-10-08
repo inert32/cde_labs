@@ -5,7 +5,9 @@ enum class sdl_events {
     none,
     quit,
     previous,
-    next
+    next,
+    start,
+    end
 };
 
 #ifdef __ENABLE_GRAPH__

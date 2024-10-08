@@ -173,20 +173,4 @@ void sdl_text::render_text(const std::string& text, const int x, const int y) {
     SDL_FreeSurface(surf);
 }
 
-sdl_events handle_kbd() {
-    SDL_Event e;
-    while (SDL_PollEvent(&e)) {
-        if (e.type == SDL_QUIT) return sdl_events::quit;
-        if (e.type == SDL_KEYDOWN) {
-            switch (SDL_GetKeyFromScancode(e.key.keysym.scancode)) {
-                case 27:         return sdl_events::quit;     // Escape
-                case 1073741903: return sdl_events::next;     // Стрелка вправо
-                case 1073741904: return sdl_events::previous; // Стрелка влево
-                default: break;
-            }
-        }
-    }
-    return sdl_events::none;
-}
-
 #endif /* __ENABLE_GRAPH__ */

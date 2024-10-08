@@ -90,6 +90,12 @@ int main(int argc, char** argv) {
                 case sdl_events::next:
                     if (frame < t_size - 1) frame++;
                     break;
+                case sdl_events::start:
+                    frame = 0;
+                    break;
+                case sdl_events::end:
+                    frame = t_size - 1;
+                    break;
                 default: continue;
                 }
             }
@@ -110,4 +116,22 @@ int main(int argc, char** argv) {
     output.close();
 
     return 0;
+}
+
+sdl_events handle_kbd() {
+    SDL_Event e;
+    while (SDL_PollEvent(&e)) {
+        if (e.type == SDL_QUIT) return sdl_events::quit;
+        if (e.type == SDL_KEYDOWN) {
+            switch (SDL_GetKeyFromScancode(e.key.keysym.scancode)) {
+            case 27:         return sdl_events::quit;     // Escape
+            case 1073741903: return sdl_events::next;     // Стрелка вправо
+            case 1073741904: return sdl_events::previous; // Стрелка влево
+            case 1073741898: return sdl_events::start;    // Home
+            case 1073741901: return sdl_events::end;      // End
+            default: break;
+            }
+        }
+    }
+    return sdl_events::none;
 }
