@@ -16,6 +16,7 @@ enum class sdl_events {
 #include "mesh.h"
 
 class sdl_text;
+class sdl_grid;
 
 // Отображение графика на экране
 class sdl_display {
@@ -34,21 +35,15 @@ private:
     SDL_FPoint* scale_graph(const mesh_t& mesh, const size_t curr);
 
     // Настройки координатной сетки
-    SDL_FPoint* coord_grid = nullptr;
-    static constexpr int grid_ox_count = 10;
-    static constexpr int grid_ot_count = 10;
-    // Размер coord_grid (оси и все отметки)
-    static constexpr int grid_size = 2 * (grid_ox_count + 1) + 2 * (grid_ot_count + 1) + 4;
-    void setup_grid();
-    void draw_grid();
+    sdl_grid* coord_grid = nullptr;
 
     // Область рисования графика
-    static constexpr int area_x_start = 1;
+    static constexpr int area_x_start = (int)(0.1 * len_x);
     static constexpr int area_x_end = len_x - 1;
     static constexpr int area_x_diap = area_x_end - area_x_start; // Диапазон позиций поля вывода вдоль OX
 
-    static constexpr int area_t_start = (int)(0.1 * len_y);
-    static constexpr int area_t_end = (int)(0.9 * len_y);
+    static constexpr int area_y_start = (int)(0.1 * len_y);
+    static constexpr int area_y_end = (int)(0.9 * len_y);
 
     sdl_text* text;
 };
@@ -64,6 +59,24 @@ private:
     // Шрифт
     TTF_Font* font = nullptr;
     SDL_Renderer* rend = nullptr;
+};
+
+// Простая X-Y сетка для графика
+class sdl_grid {
+public:
+    sdl_grid(const size_t marks_x, const size_t marks_y, const SDL_FRect& area, sdl_text* text_writer);
+    ~sdl_grid();
+
+    void draw_axes(SDL_Renderer* rend) const;
+private:
+    // Настройки координатной сетки
+    SDL_FPoint* coord_grid = nullptr;
+    // Число отметок
+    size_t grid_ox_count;
+    size_t grid_oy_count;
+    // Размер coord_grid (оси и все отметки)
+    size_t grid_size;
+    sdl_text* text;
 };
 
 sdl_events handle_kbd();

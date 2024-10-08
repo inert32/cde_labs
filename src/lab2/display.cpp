@@ -25,17 +25,16 @@ sdl_display::sdl_display() {
     if (rend == nullptr) throw std::runtime_error(SDL_GetError());
 
     // Создание координатной сетки
-    setup_grid();
-
     text = new sdl_text(rend);
+    coord_grid = new sdl_grid(10, 10, { area_x_start , area_y_start, area_x_end - area_x_start, area_y_end - area_y_start }, text);
 
     clear_screen();
     SDL_RenderPresent(rend);
 }
 
 sdl_display::~sdl_display() {
-    delete[] coord_grid;
     delete text;
+    delete coord_grid;
     SDL_DestroyRenderer(rend);
     SDL_DestroyWindow(window);
     SDL_Quit();
@@ -46,11 +45,11 @@ void sdl_display::show_frame(const mesh_t& mesh, const size_t curr, const double
 
     // Рисуем границы графика
     SDL_SetRenderDrawColor(rend, 0, 255, 0, 255);
-    SDL_Point area[6] = { {area_x_start, area_t_start}, {area_x_start, area_t_end}, {area_x_end, area_t_end}, {area_x_end, area_t_start}, {area_x_start, area_t_start}, {area_x_start, area_t_end}, };
+    SDL_Point area[6] = { {area_x_start, area_y_start}, {area_x_start, area_y_end}, {area_x_end, area_y_end}, {area_x_end, area_y_start}, {area_x_start, area_y_start}, {area_x_start, area_y_end}, };
     if (SDL_RenderDrawLines(rend, area, 5) < 0) throw std::runtime_error(SDL_GetError());
 
     // Рисуем координатную сетку
-    draw_grid();
+    coord_grid->draw_axes(rend);
 
     // Рисуем график
     SDL_SetRenderDrawColor(rend, 255, 0, 0, 255);
@@ -59,7 +58,7 @@ void sdl_display::show_frame(const mesh_t& mesh, const size_t curr, const double
     delete[] points;
 
     // Вывести текущее время
-    text->render_text("Time: " + std::to_string(curr * t_step) + " s", 0, (int)(0.91 * len_y));
+    text->render_text("Time: " + std::to_string(curr * t_step) + " s", area_x_start, (int)(0.91 * len_y));
 
     // Передаем на экран
     SDL_RenderPresent(rend);
@@ -97,41 +96,48 @@ SDL_FPoint* sdl_display::scale_graph(const mesh_t& mesh, const size_t curr) {
     return points;
 }
 
-void sdl_display::setup_grid() {
-    if (coord_grid != nullptr) return;
-
+sdl_grid::sdl_grid(const size_t marks_x, const size_t marks_y, const SDL_FRect& area, sdl_text* text_writer) {
+    grid_ox_count = marks_x;
+    grid_oy_count = marks_y;
+    grid_size = 2 * (marks_x + 1) + 2 * (marks_y + 1) + 4;
     coord_grid = new SDL_FPoint[grid_size];
+    text = text_writer;
     size_t total = 0;
 
-    const float mid_x = len_x * 0.5f;
-    const float mid_t = len_y * 0.5f;
+    // Расчет середины области графика
+    const float mid_x = area.x + area.w * 0.5f;
+    const float mid_y = area.y + area.h * 0.5f;
 
-    const float step_x = (float)(area_x_diap) / (float)(grid_ox_count); // Отступаем от начала и середины экрана
-    const float step_t = (float)(area_t_end - area_t_start) / (float)(grid_ot_count); // Тоже самое для вертикали
-    const float start_x = (float)area_x_start; // Отступаем от левого края экрана
-    const float start_t = 0.1f * len_y; // Отступаем от верхнего края экрана
+    const float step_x = area.w / (float)(grid_ox_count); // Отступаем от начала и середины экрана
+    const float step_y = area.h / (float)(grid_oy_count); // Тоже самое для вертикали
+    const float start_x = area.x; // Отступаем от левого края экрана
+    const float start_t = area.y; // Отступаем от верхнего края экрана
     // Отметки на оси абсцисс
     for (int i = 0; i < grid_ox_count + 1; i++) {
         float x = i * step_x;
 
-        coord_grid[total++] = { x + start_x, mid_t - 10.0f };
-        coord_grid[total++] = { x + start_x, mid_t + 10.0f };
+        coord_grid[total++] = { x + start_x, mid_y - 10.0f };
+        coord_grid[total++] = { x + start_x, mid_y + 10.0f };
     }
     // Отметки на оси ординат
-    for (int i = 0; i < grid_ot_count + 1; i++) {
-        float t = i * step_t;
+    for (int i = 0; i < grid_oy_count + 1; i++) {
+        float t = i * step_y;
 
         coord_grid[total++] = { mid_x - 10.0f, t + start_t };
         coord_grid[total++] = { mid_x + 10.0f, t + start_t };
     }
     // Оси
-    coord_grid[total++] = { (float)area_x_start, mid_t };
-    coord_grid[total++] = { (float)area_x_end, mid_t };
-    coord_grid[total++] = { mid_x, (float)area_t_start };
-    coord_grid[total] = { mid_x, (float)area_t_end };
+    coord_grid[total++] = { area.x, mid_y };
+    coord_grid[total++] = { area.x + area.w, mid_y };
+    coord_grid[total++] = { mid_x, area.y };
+    coord_grid[total] = { mid_x, area.y + area.h };
 }
 
-void sdl_display::draw_grid() {
+sdl_grid::~sdl_grid() {
+    delete[] coord_grid;
+}
+
+void sdl_grid::draw_axes(SDL_Renderer* rend) const {
     SDL_SetRenderDrawColor(rend, 0, 0, 0, 255);
     for (int i = 0; i < grid_size; i += 2) SDL_RenderDrawLinesF(rend, coord_grid + i, 2);
 }
