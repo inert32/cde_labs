@@ -106,7 +106,6 @@ sdl_grid::sdl_grid(const size_t marks_x, const size_t marks_y, const SDL_FRect a
     size_t total = 0;
 
     // Расчет середины области графика
-    const float mid_x = area.x + area.w * 0.5f;
     const float mid_y = area.y + area.h * 0.5f;
 
     const float step_x = area.w / (float)(grid_ox_count); // Отступаем от начала и середины экрана
@@ -124,14 +123,15 @@ sdl_grid::sdl_grid(const size_t marks_x, const size_t marks_y, const SDL_FRect a
     for (size_t i = 0; i < grid_oy_count + 1; i++) {
         float t = i * step_y;
 
-        coord_grid[total++] = { mid_x - 10.0f, t + start_t };
-        coord_grid[total++] = { mid_x + 10.0f, t + start_t };
+        coord_grid[total++] = { start_x - 10.0f, t + start_t };
+        coord_grid[total++] = { start_x + 10.0f, t + start_t };
     }
-    // Оси
+    // Ось абсцисс
     coord_grid[total++] = { area.x, mid_y };
     coord_grid[total++] = { area.x + area.w, mid_y };
-    coord_grid[total++] = { mid_x, area.y };
-    coord_grid[total] = { mid_x, area.y + area.h };
+    // Ось ординат
+    coord_grid[total++] = { start_x, area.y };
+    coord_grid[total] = { start_x, area.y + area.h };
 }
 
 sdl_grid::~sdl_grid() {
