@@ -49,7 +49,7 @@ void sdl_display::show_frame(const mesh_t& mesh, const size_t curr, const double
     if (SDL_RenderDrawLines(rend, area, 5) < 0) throw std::runtime_error(SDL_GetError());
 
     // Рисуем координатную сетку
-    coord_grid->draw_axes(rend);
+    coord_grid->draw_axes(rend, mesh, curr);
 
     // Рисуем график
     SDL_SetRenderDrawColor(rend, 255, 0, 0, 255);
@@ -97,19 +97,20 @@ SDL_FPoint* sdl_display::scale_graph(const mesh_t& mesh, const size_t curr) {
     return points;
 }
 
-sdl_grid::sdl_grid(const size_t marks_x, const size_t marks_y, const SDL_FRect area, sdl_text* text_writer) {
+sdl_grid::sdl_grid(const size_t marks_x, const size_t marks_y, const SDL_FRect area, sdl_text* text) {
     grid_ox_count = marks_x;
     grid_oy_count = marks_y;
     grid_size = 2 * (marks_x + 1) + 2 * (marks_y + 1) + 4;
     coord_grid = new SDL_FPoint[grid_size];
-    text = text_writer;
+    text_ = text;
+    area_ = area;
     size_t total = 0;
 
     // Расчет середины области графика
     const float mid_y = area.y + area.h * 0.5f;
 
-    const float step_x = area.w / (float)(grid_ox_count); // Отступаем от начала и середины экрана
-    const float step_y = area.h / (float)(grid_oy_count); // Тоже самое для вертикали
+    const float step_x = area.w / (float)(grid_ox_count);
+    const float step_y = area.h / (float)(grid_oy_count);
     const float start_x = area.x; // Отступаем от левого края экрана
     const float start_t = area.y; // Отступаем от верхнего края экрана
     // Отметки на оси абсцисс
@@ -138,9 +139,33 @@ sdl_grid::~sdl_grid() {
     delete[] coord_grid;
 }
 
-void sdl_grid::draw_axes(SDL_Renderer* rend) const {
+void sdl_grid::draw_axes(SDL_Renderer* rend, const mesh_t& mesh, const size_t curr) const {
     SDL_SetRenderDrawColor(rend, 0, 0, 0, 255);
     for (size_t i = 0; i < grid_size; i += 2) SDL_RenderDrawLinesF(rend, coord_grid + i, 2);
+
+    const float step_x = area_.w / (float)(grid_ox_count);
+    const float step_y = area_.h / (float)(grid_oy_count);
+
+    // Получаем данные о сетке
+    auto _size_x = mesh.get_size().x;
+    auto _layer_x = mesh.get_layer_x();
+    const double step_x_axis = (_layer_x[_size_x - 1] - _layer_x[0]) / (double)grid_ox_count;
+    const double step_y_axis = (mesh.get_max_on_layer(curr)) / ((double)grid_oy_count / 2.0);
+
+    // Ось абсцисс
+    auto pos_y = (area_.h - area_.y) / 2.0 + area_.y + 5;
+    for (size_t i = 1; i < grid_ox_count + 1; i++) {
+        auto num = text_->cut_number(i * step_x_axis, 3);
+        text_->render_text(num, i * step_x + area_.x - 9, pos_y);
+    }
+
+    // Ось ординат
+    auto pos_x = area_.x - 50;
+    for (size_t i = 0; i < grid_oy_count + 1; i++) {
+        int mult = (int)grid_oy_count / 2 - i; // Рассчитываем значения ниже OX по значениям выше
+        auto num = text_->cut_number(mult * step_y_axis, 3);
+        text_->render_text(num, pos_x, i * step_y + area_.y - 9);
+    }
 }
 
 sdl_text::sdl_text(SDL_Renderer* renderer) {
