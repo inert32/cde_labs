@@ -58,7 +58,8 @@ void sdl_display::show_frame(const mesh_t& mesh, const size_t curr, const double
     delete[] points;
 
     // Вывести текущее время
-    text->render_text("Time: " + std::to_string(curr * t_step) + " s", area_x_start, (int)(0.91 * len_y));
+    auto time = text->cut_number(curr * t_step, 3);
+    text->render_text("Time: " + time + "s", area_x_start, (int)(0.91 * len_y));
 
     // Передаем на экран
     SDL_RenderPresent(rend);
@@ -171,6 +172,13 @@ void sdl_text::render_text(const std::string& text, const int x, const int y) {
     TTF_SizeText(font, text.c_str(), &dest.w, &dest.h);
     SDL_RenderCopy(rend, texture, nullptr, &dest);
     SDL_FreeSurface(surf);
+}
+
+std::string sdl_text::cut_number(const double num, const size_t size) const {
+    std::string ret = std::to_string(num);
+    auto point_pos = ret.find('.');
+    if (point_pos == ret.npos || point_pos + size > ret.size()) return ret;
+    else return ret.substr(0, point_pos + size);
 }
 
 #endif /* __ENABLE_GRAPH__ */

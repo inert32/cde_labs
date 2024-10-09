@@ -57,6 +57,8 @@ public:
     ~sdl_text();
 
     void render_text(const std::string& text, const int x, const int y);
+    // Для чисел с плавающей запятой отрезать лишнее число (size) знаков после запятой
+    std::string cut_number(const double num, const size_t size) const;
 private:
     // Шрифт
     TTF_Font* font = nullptr;
