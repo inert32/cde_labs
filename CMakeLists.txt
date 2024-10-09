@@ -22,12 +22,16 @@ function(configure_target target)
     endif()
 endfunction()
 
-project(cde_labs VERSION 0.2.1)
+project(cde_labs VERSION 0.2.2)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # Запись данных о сборке
-if(EXISTS "${CMAKE_SOURCE_DIR}/.git")
+execute_process(
+        COMMAND git status
+        OUTPUT_QUIET ERROR_QUIET
+        RESULT_VARIABLE GIT_EXISTS)
+if(EXISTS "${CMAKE_SOURCE_DIR}/.git" AND ${GIT_EXISTS} EQUAL 0)
     execute_process(
         COMMAND git log -1 --format=%h
         WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
