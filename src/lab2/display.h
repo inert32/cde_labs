@@ -68,7 +68,7 @@ private:
 // Простая X-Y сетка для графика
 class sdl_grid {
 public:
-    sdl_grid(const size_t marks_x, const size_t marks_y, const SDL_FRect& area, sdl_text* text_writer);
+    sdl_grid(const size_t marks_x, const size_t marks_y, const SDL_FRect area, sdl_text* text_writer);
     ~sdl_grid();
 
     void draw_axes(SDL_Renderer* rend) const;

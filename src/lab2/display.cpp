@@ -97,7 +97,7 @@ SDL_FPoint* sdl_display::scale_graph(const mesh_t& mesh, const size_t curr) {
     return points;
 }
 
-sdl_grid::sdl_grid(const size_t marks_x, const size_t marks_y, const SDL_FRect& area, sdl_text* text_writer) {
+sdl_grid::sdl_grid(const size_t marks_x, const size_t marks_y, const SDL_FRect area, sdl_text* text_writer) {
     grid_ox_count = marks_x;
     grid_oy_count = marks_y;
     grid_size = 2 * (marks_x + 1) + 2 * (marks_y + 1) + 4;
@@ -114,14 +114,14 @@ sdl_grid::sdl_grid(const size_t marks_x, const size_t marks_y, const SDL_FRect& 
     const float start_x = area.x; // Отступаем от левого края экрана
     const float start_t = area.y; // Отступаем от верхнего края экрана
     // Отметки на оси абсцисс
-    for (int i = 0; i < grid_ox_count + 1; i++) {
+    for (size_t i = 0; i < grid_ox_count + 1; i++) {
         float x = i * step_x;
 
         coord_grid[total++] = { x + start_x, mid_y - 10.0f };
         coord_grid[total++] = { x + start_x, mid_y + 10.0f };
     }
     // Отметки на оси ординат
-    for (int i = 0; i < grid_oy_count + 1; i++) {
+    for (size_t i = 0; i < grid_oy_count + 1; i++) {
         float t = i * step_y;
 
         coord_grid[total++] = { mid_x - 10.0f, t + start_t };
@@ -140,7 +140,7 @@ sdl_grid::~sdl_grid() {
 
 void sdl_grid::draw_axes(SDL_Renderer* rend) const {
     SDL_SetRenderDrawColor(rend, 0, 0, 0, 255);
-    for (int i = 0; i < grid_size; i += 2) SDL_RenderDrawLinesF(rend, coord_grid + i, 2);
+    for (size_t i = 0; i < grid_size; i += 2) SDL_RenderDrawLinesF(rend, coord_grid + i, 2);
 }
 
 sdl_text::sdl_text(SDL_Renderer* renderer) {
