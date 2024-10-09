@@ -156,15 +156,15 @@ void sdl_grid::draw_axes(SDL_Renderer* rend, const mesh_t& mesh, const size_t cu
     auto pos_y = (area_.h - area_.y) / 2.0 + area_.y + 5;
     for (size_t i = 1; i < grid_ox_count + 1; i++) {
         auto num = text_->cut_number(i * step_x_axis, 3);
-        text_->render_text(num, i * step_x + area_.x - 9, pos_y);
+        text_->render_text(num, (int)(i * step_x + area_.x - 9), (int)pos_y);
     }
 
     // Ось ординат
     auto pos_x = area_.x - 50;
     for (size_t i = 0; i < grid_oy_count + 1; i++) {
-        int mult = (int)grid_oy_count / 2 - i; // Рассчитываем значения ниже OX по значениям выше
+        int mult = (int)(grid_oy_count / 2 - i); // Рассчитываем значения ниже OX по значениям выше
         auto num = text_->cut_number(mult * step_y_axis, 3);
-        text_->render_text(num, pos_x, i * step_y + area_.y - 9);
+        text_->render_text(num, (int)pos_x, (int)(i * step_y + area_.y - 9));
     }
 }
 
