@@ -125,10 +125,19 @@ sdl_events handle_kbd() {
         if (e.type == SDL_KEYDOWN) {
             switch (SDL_GetKeyFromScancode(e.key.keysym.scancode)) {
             case 27:         return sdl_events::quit;     // Escape
-            case 1073741903: return sdl_events::next;     // Стрелка вправо
-            case 1073741904: return sdl_events::previous; // Стрелка влево
-            case 1073741898: return sdl_events::start;    // Home
-            case 1073741901: return sdl_events::end;      // End
+
+            case 1073741904: [[fallthrough]];             // Стрелка влево
+            case 1073741916: return sdl_events::previous; // Стрелка влево на числовой клавиатуре
+
+            case 1073741903: [[fallthrough]];             // Стрелка вправо
+            case 1073741918: return sdl_events::next;     // Стрелка вправо на числовой клавиатуре
+
+            case 1073741898: [[fallthrough]];             // Home
+            case 1073741919: return sdl_events::start;    // Home на числовой клавиатуре
+
+            case 1073741901: [[fallthrough]];             // End
+            case 1073741913: return sdl_events::end;      // End на числовой клавиатуре
+
             default: break;
             }
         }
