@@ -78,3 +78,26 @@ std::vector<subarea_t> spawn_areas(const parser_data& src, main_area_t* main_are
     *main_area = main_copy;
     return others;
 }
+
+emit_base* spawn_emitter(const parser_data& src) {
+    for (auto it = src.begin(); it != src.end(); ++it)
+        if (it->first == "source") {
+            std::string local = it->second, type, pos;
+            auto space = local.find(' ');
+            type = local.substr(0, space);
+            pos = local.substr(space + 1);
+
+            // Выбор типа источника
+            if (type == "point") {
+                space = pos.find(' ');
+                float x = std::stof(pos.substr(0, space));
+                float y = std::stof(pos.substr(space + 1));
+                return new emit_point(x, y);
+            }
+            if (type == "wall") {
+                throw std::runtime_error("loader: 'wall' type emitters is not supported.");
+            }
+        }
+
+    throw std::runtime_error("loader: Error: No source specified");
+}

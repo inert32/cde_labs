@@ -25,11 +25,15 @@ void particle::set_velocity(const float vel_x, const float vel_y) {
 }
 
 emit_point::emit_point(const float pos_x, const float pos_y) {
-    x = pos_x; y = pos_y;
+    pos.x = pos_x; pos.y = pos_y;
 }
 
 particle emit_point::spawn_particle() {
-    particle ret(x, y, 0.0f, 0.0f);
+    particle ret(pos.x, pos.y, 0.0f, 0.0f);
 
     return ret;
+}
+
+vec2 emit_point::get_position() const {
+    return pos;
 }

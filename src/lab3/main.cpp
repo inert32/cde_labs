@@ -28,13 +28,17 @@ int main(int argc, char** argv) {
     // Разбираем параметры
     main_area_t main_area;
     std::vector<subarea_t> subareas;
+    emit_base* emitter;
     try {
         subareas = spawn_areas(conf, &main_area);
+        emitter = spawn_emitter(conf);
 
         std::cout << "Main: " << main_area.height << ", " << main_area.width << std::endl;
         for (size_t i = 0; i < subareas.size(); i++) {
             std::cout << "Sub " << i + 1 << ": " << subareas[i].x_start << ", " << subareas[i].width << std::endl;
         }
+        auto em_pos = emitter->get_position();
+        std::cout << "Emitter at: " << em_pos.x << " " << em_pos.y << std::endl;
     }
     catch (const std::exception& e) {
         std::cout << e.what() << std::endl;

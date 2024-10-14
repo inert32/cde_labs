@@ -40,18 +40,20 @@ public:
     virtual ~emit_base() = default;
 
     virtual particle spawn_particle() = 0;
+    virtual vec2 get_position() const = 0;
 };
 
 // Точечный источник частиц
-class emit_point : emit_base {
+class emit_point : public emit_base {
 public:
     emit_point(const float pos_x, const float pos_y);
     emit_point() = default;
 
     particle spawn_particle();
+    vec2 get_position() const;
 
 private:
-    float x, y;
+    vec2 pos;
     float last_angle = 45.0f;
 };
 
