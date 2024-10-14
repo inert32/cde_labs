@@ -3,17 +3,20 @@
 
 #include <iostream>
 #include <fstream>
+#include <vector>
 #include "../build.h"
 #include "../common.h"
 #include "display.h"
 
+typedef std::vector<std::pair<std::string, std::string>> parser_data;
 // Парсер файла задания
-cli_map parse_task_file(const std::string& path) {
+parser_data parse_task_file(const std::string& path) {
     std::ifstream file(path);
     if (!file.good()) throw std::runtime_error("Failed to read task file");
 
     std::string line, command, args;
-    cli_map ret;
+    parser_data ret;
+    size_t line_number = 0;
     while (std::getline(file, line)) {
         if (line.length() == 0 || line[0] == '#') continue; // Пропускаем пустые строки и комментарии
 
@@ -28,8 +31,11 @@ cli_map parse_task_file(const std::string& path) {
         }
 
         // Обработка команд
-        if (command == "area" || command == "source") ret["area"] = args;
-        else std::cout << "parse: Unknown command: " << command << std::endl;
+        if (command == "area" || command == "source") {
+            ret.push_back(std::make_pair("command", args));
+        }
+        else std::cout << "parse: Unknown command: '" << command << "' (line " << line_number << ")" << std::endl;
+        line_number++;
     }
 
     return ret;
@@ -40,11 +46,19 @@ int main(int argc, char** argv) {
     auto cli = parse_cli(argc, argv);
     const bool run_sdl = bool_from_cli_map(cli, "graph", true);
 
+    // Получаем параметры из файла задания
+    parser_data conf;
     try {
         const std::string task_file = str_from_cli_map(cli, "file");
-        auto conf = parse_task_file(task_file);
+        conf = parse_task_file(task_file);
         std::cout << "Task file parsed." << std::endl;
+    }
+    catch (const std::exception& e) {
+        std::cout << "parse: " << e.what() << std::endl;
+        return 1;
+    }
 
+    try {
         if (run_sdl) {
             try {
                 sdl_display disp;
