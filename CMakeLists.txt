@@ -89,7 +89,8 @@ endif()
 
 if(BUILD_LAB3)
     add_executable(lab3 src/lab3/main.cpp src/common.cpp src/lab3/display.cpp
-                        src/common.h src/lab3/display.h)
+                        src/lab3/model.cpp
+                        src/common.h src/lab3/display.h src/lab3/model.h)
     if(ENABLE_SDL)
         target_compile_definitions(lab3 PUBLIC __ENABLE_GRAPH__)
         target_link_libraries(lab3 SDL2::SDL2 SDL2_ttf::SDL2_ttf)
