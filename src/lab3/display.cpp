@@ -3,11 +3,13 @@
 
 #ifdef __ENABLE_GRAPH__
 
-#include <iostream>
-
 #include <stdexcept>
 #include <SDL.h>
 #include "display.h"
+
+static constexpr Uint8 subareas_colors[3][3] = {
+    {255, 255, 0}, {0, 255, 255}, {255, 255, 0}
+};
 
 // Очистка экрана
 #define clear_screen() SDL_SetRenderDrawColor(rend, 127, 127, 127, 255); SDL_RenderClear(rend)
@@ -50,9 +52,13 @@ void sdl_display::show_frame() {
     SDL_RenderDrawPointF(rend, emitter_pos.x, emitter_pos.y);
 
     // Подобласти
-    SDL_SetRenderDrawColor(rend, 0, 255, 255, 100);
-    for (size_t i = 0; i < subareas_count; i++)
+    for (size_t i = 0; i < subareas_count; i++) {
+        // Отрисовка разных подобластей разными цветами
+        int color_now = i % 3;
+        SDL_SetRenderDrawColor(rend, subareas_colors[color_now][0], 
+        subareas_colors[color_now][1], subareas_colors[color_now][2], 100);
         SDL_RenderFillRectF(rend, &subareas_[i]);
+    }
 
     // Передаем на экран
     SDL_RenderPresent(rend);
@@ -77,7 +83,7 @@ void sdl_display::setup_consts(const main_area_t& main_area, const std::vector<s
         // Сохраняем координаты
         SDL_FRect tmp; 
         tmp.x = start.x; tmp.y = start.y;
-        tmp.w = end.x; tmp.h = area_y_end - area_y_start;
+        tmp.w = end.x - area_x_start; tmp.h = area_y_end - area_y_start;
         subareas_[i] = tmp;
     }
 }
