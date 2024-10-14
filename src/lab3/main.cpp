@@ -32,7 +32,7 @@ parser_data parse_task_file(const std::string& path) {
 
         // Обработка команд
         if (command == "area" || command == "source") {
-            ret.push_back(std::make_pair("command", args));
+            ret.emplace_back(std::make_pair("command", args));
         }
         else std::cout << "parse: Unknown command: '" << command << "' (line " << line_number << ")" << std::endl;
         line_number++;

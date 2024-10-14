@@ -3,8 +3,6 @@
 
 #ifdef __ENABLE_GRAPH__
 
-#include <iostream>
-#include <stdexcept>
 #include <SDL.h>
 #include "display.h"
 
@@ -16,7 +14,7 @@ sdl_display::sdl_display() {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) throw std::runtime_error(SDL_GetError());
 
     // Создание окна
-    window = SDL_CreateWindow("Lab2", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, len_x, len_y, SDL_WINDOW_SHOWN);
+    window = SDL_CreateWindow("Lab3", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, len_x, len_y, SDL_WINDOW_SHOWN);
     if (window == nullptr) throw std::runtime_error(SDL_GetError());
 
     // Запуск структуры отрисовки
