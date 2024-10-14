@@ -197,6 +197,7 @@ void sdl_text::render_text(const std::string& text, const int x, const int y) {
     TTF_SizeText(font, text.c_str(), &dest.w, &dest.h);
     SDL_RenderCopy(rend, texture, nullptr, &dest);
     SDL_FreeSurface(surf);
+    SDL_DestroyTexture(texture);
 }
 
 std::string sdl_text::cut_number(const double num, const size_t size) const {
