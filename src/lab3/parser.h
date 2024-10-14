@@ -16,4 +16,7 @@ std::vector<subarea_t> spawn_areas(const parser_data& src, main_area_t* main_are
 // Создание источника частиц
 emit_point* spawn_emitter(const parser_data& src);
 
+// Получение числа частиц для обработки
+size_t get_particles_count(const parser_data& src);
+
 #endif /* __PARSER_H__ */

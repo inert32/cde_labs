@@ -26,7 +26,7 @@ parser_data parse_task_file(const std::string& path) {
         }
 
         // Обработка команд
-        if (command == "area" || command == "subarea" || command == "source")
+        if (command == "area" || command == "subarea" || command == "source" || command == "particles")
             ret.emplace_back(std::make_pair(command, args));
         else 
             std::cout << "parse: Unknown command: '" << command << "' (line " << line_number << ")" << std::endl;
@@ -100,4 +100,13 @@ emit_point* spawn_emitter(const parser_data& src) {
         }
 
     throw std::runtime_error("loader: Error: No source specified");
+}
+
+size_t get_particles_count(const parser_data& src) {
+    for (auto it = src.begin(); it != src.end(); ++it)
+        if (it->first == "particles")
+            return std::stoul(it->second);
+    
+    std::cout << "loader: No particles required?" << std::endl;
+    return 0;
 }

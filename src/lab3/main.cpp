@@ -29,15 +29,17 @@ int main(int argc, char** argv) {
     main_area_t main_area;
     std::vector<subarea_t> subareas;
     emit_point* emitter;
+    size_t part_count = 0;
     try {
         subareas = spawn_areas(conf, &main_area);
         emitter = spawn_emitter(conf);
+        part_count = get_particles_count(conf);
     }
     catch (const std::exception& e) {
         std::cout << e.what() << std::endl;
         return 1;
     }
-
+    
     try {
         if (run_sdl) {
             try {
