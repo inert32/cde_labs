@@ -12,9 +12,10 @@ enum class sdl_events {
 
 #ifdef __ENABLE_GRAPH__
 
-#include <stdexcept>
+#include <vector>
 #include <SDL_render.h>
 #include <SDL_ttf.h>
+#include "model.h"
 
 class sdl_text;
 class sdl_grid;
@@ -25,8 +26,8 @@ public:
     sdl_display();
     ~sdl_display();
 
-    // Выбор слоя сетки (curr) для отображения
     void show_frame();
+    void setup_consts(main_area_t main_area, std::vector<subarea_t> subareas, emit_point* emitter);
 
 private:
     static constexpr int len_x = 1024, len_y = 768;
@@ -40,6 +41,10 @@ private:
 
     static constexpr int area_y_start = (int)(0.1 * len_y);
     static constexpr int area_y_end = (int)(0.9 * len_y);
+
+    SDL_FRect* subareas = nullptr;
+    int subareas_count = 0;
+    SDL_FPoint emitter_pos;
 };
 
 sdl_events handle_kbd();

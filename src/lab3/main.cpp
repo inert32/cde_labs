@@ -28,17 +28,10 @@ int main(int argc, char** argv) {
     // Разбираем параметры
     main_area_t main_area;
     std::vector<subarea_t> subareas;
-    emit_base* emitter;
+    emit_point* emitter;
     try {
         subareas = spawn_areas(conf, &main_area);
         emitter = spawn_emitter(conf);
-
-        std::cout << "Main: " << main_area.height << ", " << main_area.width << std::endl;
-        for (size_t i = 0; i < subareas.size(); i++) {
-            std::cout << "Sub " << i + 1 << ": " << subareas[i].x_start << ", " << subareas[i].width << std::endl;
-        }
-        auto em_pos = emitter->get_position();
-        std::cout << "Emitter at: " << em_pos.x << " " << em_pos.y << std::endl;
     }
     catch (const std::exception& e) {
         std::cout << e.what() << std::endl;
@@ -49,6 +42,7 @@ int main(int argc, char** argv) {
         if (run_sdl) {
             try {
                 sdl_display disp;
+                disp.setup_consts(main_area, subareas, emitter);
                 bool run = true;
                 while (run) {
                     disp.show_frame();

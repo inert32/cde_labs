@@ -34,17 +34,8 @@ private:
     vec2 velocity;
 };
 
-// 
-class emit_base {
-public:
-    virtual ~emit_base() = default;
-
-    virtual particle spawn_particle() = 0;
-    virtual vec2 get_position() const = 0;
-};
-
 // Точечный источник частиц
-class emit_point : public emit_base {
+class emit_point {
 public:
     emit_point(const float pos_x, const float pos_y);
     emit_point() = default;

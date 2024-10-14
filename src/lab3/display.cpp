@@ -3,6 +3,7 @@
 
 #ifdef __ENABLE_GRAPH__
 
+#include <stdexcept>
 #include <SDL.h>
 #include "display.h"
 
@@ -39,8 +40,20 @@ void sdl_display::show_frame() {
     SDL_Point area[6] = { {area_x_start, area_y_start}, {area_x_start, area_y_end}, {area_x_end, area_y_end}, {area_x_end, area_y_start}, {area_x_start, area_y_start}, {area_x_start, area_y_end}, };
     if (SDL_RenderDrawLines(rend, area, 5) < 0) throw std::runtime_error(SDL_GetError());
 
+    // Источник
+    SDL_SetRenderDrawColor(rend, 255, 255, 255, 255);
+    SDL_RenderDrawPointF(rend, emitter_pos.x, emitter_pos.y);
+
     // Передаем на экран
     SDL_RenderPresent(rend);
+}
+
+void sdl_display::setup_consts(main_area_t main_area, std::vector<subarea_t> subareas, emit_point* emitter) {
+    // Позиция источника на экране
+    const auto em_pos = emitter->get_position();
+    float em_x = em_pos.x + area_x_start;
+    float em_y = (area_y_end - area_y_start) / main_area.height * em_pos.y + area_y_start;
+    emitter_pos = { em_x, em_y };
 }
 
 #endif /* __ENABLE_GRAPH__ */

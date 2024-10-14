@@ -13,7 +13,7 @@ parser_data parse_task_file(const std::string& path);
 // Создание областей работы
 std::vector<subarea_t> spawn_areas(const parser_data& src, main_area_t* main_area);
 
-// Создаие источника частиц
-emit_base* spawn_emitter(const parser_data& src);
+// Создание источника частиц
+emit_point* spawn_emitter(const parser_data& src);
 
 #endif /* __PARSER_H__ */

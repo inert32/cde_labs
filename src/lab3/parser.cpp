@@ -79,7 +79,7 @@ std::vector<subarea_t> spawn_areas(const parser_data& src, main_area_t* main_are
     return others;
 }
 
-emit_base* spawn_emitter(const parser_data& src) {
+emit_point* spawn_emitter(const parser_data& src) {
     for (auto it = src.begin(); it != src.end(); ++it)
         if (it->first == "source") {
             std::string local = it->second, type, pos;
