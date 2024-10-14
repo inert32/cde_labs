@@ -41,8 +41,7 @@ int main(int argc, char** argv) {
     try {
         if (run_sdl) {
             try {
-                sdl_display disp;
-                disp.setup_consts(main_area, subareas, emitter);
+                sdl_display disp(main_area, subareas, emitter);
                 bool run = true;
                 while (run) {
                     disp.show_frame();

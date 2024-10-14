@@ -23,11 +23,10 @@ class sdl_grid;
 // Отображение графика на экране
 class sdl_display {
 public:
-    sdl_display();
+    sdl_display(const main_area_t& main_area, const std::vector<subarea_t>& subareas, const emit_point* emitter);
     ~sdl_display();
 
     void show_frame();
-    void setup_consts(main_area_t main_area, std::vector<subarea_t> subareas, emit_point* emitter);
 
 private:
     static constexpr int len_x = 1024, len_y = 768;
@@ -43,11 +42,17 @@ private:
     static constexpr int area_y_end = (int)(0.9 * len_y);
     static constexpr int area_y_diap = area_y_end - area_y_start;
 
+    // Размеры главной области
     float main_width = 0.0f;
     float main_height = 0.0f;
 
-    SDL_FRect* subareas = nullptr;
-    int subareas_count = 0;
+    void setup_consts(const main_area_t& main_area, const std::vector<subarea_t>& subareas, const emit_point* emitter);
+
+    // Массив подобластей
+    SDL_FRect* subareas_ = nullptr;
+    size_t subareas_count = 0;
+
+    // Координаты источника
     SDL_FPoint emitter_pos = {0.0f, 0.0f};
 
     // Расчет позиции точки внутри графика
