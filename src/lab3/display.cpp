@@ -37,7 +37,7 @@ void sdl_display::show_frame() {
     clear_screen();
 
     // Рисуем границы графика
-    SDL_SetRenderDrawColor(rend, 0, 255, 0, 255);
+    SDL_SetRenderDrawColor(rend, 0, 0, 0, 255);
     SDL_Point area[6] = { {area_x_start, area_y_start}, {area_x_start, area_y_end}, {area_x_end, area_y_end}, {area_x_end, area_y_start}, {area_x_start, area_y_start}, {area_x_start, area_y_end}, };
     if (SDL_RenderDrawLines(rend, area, 5) < 0) throw std::runtime_error(SDL_GetError());
 
