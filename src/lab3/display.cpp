@@ -8,7 +8,7 @@
 #include "display.h"
 
 static constexpr Uint8 subareas_colors[3][3] = {
-    {255, 255, 0}, {0, 255, 255}, {255, 255, 0}
+    {0, 255, 255}, {255, 0, 255}, {255, 255, 0}
 };
 
 // Очистка экрана
@@ -57,6 +57,7 @@ void sdl_display::show_frame() {
         int color_now = i % 3;
         SDL_SetRenderDrawColor(rend, subareas_colors[color_now][0], 
         subareas_colors[color_now][1], subareas_colors[color_now][2], 100);
+
         SDL_RenderFillRectF(rend, &subareas_[i]);
     }
 
