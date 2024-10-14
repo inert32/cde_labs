@@ -37,14 +37,21 @@ private:
     // Область рисования графика
     static constexpr int area_x_start = (int)(0.1 * len_x);
     static constexpr int area_x_end = (int)(0.9 * len_x);
-    static constexpr int area_x_diap = area_x_end - area_x_start; // Диапазон позиций поля вывода вдоль OX
+    static constexpr int area_x_diap = area_x_end - area_x_start;
 
     static constexpr int area_y_start = (int)(0.1 * len_y);
     static constexpr int area_y_end = (int)(0.9 * len_y);
+    static constexpr int area_y_diap = area_y_end - area_y_start;
+
+    float main_width = 0.0f;
+    float main_height = 0.0f;
 
     SDL_FRect* subareas = nullptr;
     int subareas_count = 0;
-    SDL_FPoint emitter_pos;
+    SDL_FPoint emitter_pos = {0.0f, 0.0f};
+
+    // Расчет позиции точки внутри графика
+    SDL_FPoint calc_point_position(const float x, const float y);
 };
 
 sdl_events handle_kbd();

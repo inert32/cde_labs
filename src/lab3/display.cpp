@@ -49,11 +49,19 @@ void sdl_display::show_frame() {
 }
 
 void sdl_display::setup_consts(main_area_t main_area, std::vector<subarea_t> subareas, emit_point* emitter) {
+    main_height = main_area.height;
+    main_width = main_area.width;
+
     // Позиция источника на экране
     const auto em_pos = emitter->get_position();
-    float em_x = em_pos.x + area_x_start;
-    float em_y = (area_y_end - area_y_start) / main_area.height * em_pos.y + area_y_start;
-    emitter_pos = { em_x, em_y };
+    emitter_pos = calc_point_position(em_pos.x, em_pos.y);
+}
+
+SDL_FPoint sdl_display::calc_point_position(const float x, const float y) {
+    float ret_x = area_x_diap / main_width * x + area_x_start;
+    float ret_y = area_y_diap / main_height * y + area_y_start;
+
+    return {ret_x, ret_y};
 }
 
 #endif /* __ENABLE_GRAPH__ */
