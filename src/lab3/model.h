@@ -1,12 +1,16 @@
 #ifndef __MODEL_H__
 #define __MODEL_H__
 
-// Область моделирования
-struct area {
-    float x = 0.0f;
-    float y = 0.0f;
-    float w = 0.0f;
-    float h = 0.0f;
+// Главная область моделирования
+struct main_area_t {
+    float width = 0.0f;
+    float height = 0.0f;
+};
+
+// Подобласть моделирования внутри 
+struct subarea_t {
+    float x_start = 0.0f;
+    float width = 0.0f;
 };
 
 struct vec2 {
