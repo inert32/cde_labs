@@ -56,23 +56,39 @@ private:
     float last_angle = 45.0f;
 };
 
+// Выход симуляции - треки частиц
+struct sim_output {
+    // Массивы треков (посещенные точки в области)
+    // Размерность: tracks[particle_count][track_len[i]]
+    SDL_FPoint** tracks = nullptr;
+    size_t* track_len = nullptr; // Число столкновений у частицы
+    size_t particle_count = 0;
+};
+
 class simulation {
 public:
     simulation(const std::vector<std::pair<std::string, std::string>>& conf);
     ~simulation() = default;
 
-    void next_particle();
+    // Расчет пути частицы
+    // Возвращает false, если все частицы рассчитаны
+    bool process_particle();
 
     const main_area_t get_main_area() const;
     const std::vector<subarea_t>& get_subarea() const;
     const emit_point* get_emitter() const;
+
+    sim_output get_tracks() const; // Вывод данных о симуляции
 private:
     std::vector<std::vector<SDL_FPoint>> tracks;
 
     main_area_t main_area;
     std::vector<subarea_t> subareas;
     emit_point* emitter;
-    size_t part_count = 0;
+    size_t part_count = 0; // Общее число частиц
+    size_t current_part = 0; // Номер текущей частицы
+
+    bool is_within_main(const SDL_FPoint p) const; // Проверка на вылет частицы за пределы main_area
 };
 
 #endif /* __MODEL_H__ */

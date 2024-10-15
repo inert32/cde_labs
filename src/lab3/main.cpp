@@ -26,10 +26,13 @@ int main(int argc, char** argv) {
         std::cout << e.what() << std::endl;
         return 1;
     }
-    // Разбираем параметры
     
     try {
         simulation sim(conf);
+        std::cout << "Start simulation..." << std::endl;
+        while (sim.process_particle());
+        std::cout << "Simulation complete." << std::endl;
+
         if (run_sdl) {
             try {
                 sdl_display disp(sim);

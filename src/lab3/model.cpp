@@ -1,6 +1,8 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
+#include <iostream>
+#include <random>
 #include "model.h"
 #include "parser.h"
 
@@ -18,7 +20,8 @@ SDL_FPoint particle::get_velocity() const {
 }
 
 void particle::move_particle(const float len) {
-    // TODO: Перемещение частицы в зависимости от вектора скорости
+    pos.x += len * velocity.x;
+    pos.y += len * velocity.y;
 }
 
 void particle::set_velocity(const float vel_x, const float vel_y) {
@@ -30,7 +33,11 @@ emit_point::emit_point(const float pos_x, const float pos_y) {
 }
 
 particle emit_point::spawn_particle() {
-    particle ret(pos.x, pos.y, 0.0f, 0.0f);
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution nums_x(0.25f, 0.35f); // Разброс скорости
+    std::uniform_real_distribution nums_y(-0.15f, 0.15f); // Разброс угла
+    particle ret(pos.x, pos.y, nums_x(gen), nums_y(gen));
 
     return ret;
 }
@@ -44,18 +51,78 @@ simulation::simulation(const std::vector<std::pair<std::string, std::string>>& c
     emitter = spawn_emitter(conf);
     part_count = get_particles_count(conf);
 
+    // Выделение памяти под треки
     tracks.reserve(part_count);
-    for (auto &i : tracks) i.reserve(5);
+    for (size_t i = 0; i < part_count; i++) {
+        tracks.emplace_back();
+        tracks.back().reserve(5);
+    }
 }
 
-void simulation::next_particle() {}
+bool simulation::process_particle() {
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution nums(0.0f, main_area.width);
+
+    // Создать частицу
+    // Продвинуть ее на длину пробега
+    // Если частица попала в другую среду
+    //      Создать новый вектор перемещения
+    //      Продвинуть ее на длину пробега
+    // И так, пока она не выйдет за границы main_area
+    auto p = emitter->spawn_particle();
+    tracks[current_part].push_back(p.get_position());
+
+    do { // Движение частицы
+        p.move_particle(nums(gen));
+        tracks[current_part].push_back(p.get_position());
+    } while (is_within_main(p.get_position()));
+
+    // Отладочный вывод
+    std::cout << "Particle " << current_part << ": ";
+    for (auto &c : tracks[current_part])
+        std::cout << "{" << c.x << " " << c.y << "} ";
+    std::cout << std::endl;
+
+    current_part++;
+    return (current_part < part_count) ? true : false;
+}
 
 const main_area_t simulation::get_main_area() const {
     return main_area;
 }
+
 const std::vector<subarea_t>& simulation::get_subarea() const {
     return subareas;
 }
+
 const emit_point* simulation::get_emitter() const {
     return emitter;
+}
+
+bool simulation::is_within_main(const SDL_FPoint p) const {
+    if (p.x < 0.0f || p.y < 0.0f) return false;
+    if (p.x > main_area.width || p.y > main_area.height) return false;
+
+    return true;
+}
+
+sim_output simulation::get_tracks() const {
+    sim_output ret;
+
+    ret.particle_count = part_count;
+    ret.tracks = new SDL_FPoint*[part_count];
+    ret.track_len = new size_t[part_count];
+
+    for (size_t p = 0; p < part_count; p++) {
+        auto len = tracks[p].size();
+        ret.track_len[p] = len;
+        ret.tracks[p] = new SDL_FPoint[len];
+
+        auto curr = ret.tracks[p];
+        for (size_t t = 0; t < len; t++)
+            curr[t] = tracks[p][t];
+    }
+
+    return ret;
 }
