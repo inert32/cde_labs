@@ -28,6 +28,9 @@ public:
 
     void show_frame();
 
+    // Расчет позиции точки внутри графика
+    SDL_FPoint calc_point_position(const float x, const float y) const;
+    SDL_FPoint calc_point_position(const SDL_FPoint p) const;
 private:
     static constexpr int len_x = 1024, len_y = 768;
     SDL_Window* window = nullptr;
@@ -54,9 +57,6 @@ private:
 
     // Координаты источника
     SDL_FPoint emitter_pos = {0.0f, 0.0f};
-
-    // Расчет позиции точки внутри графика
-    SDL_FPoint calc_point_position(const float x, const float y);
 };
 
 sdl_events handle_kbd();

@@ -92,9 +92,16 @@ void sdl_display::setup_consts(const simulation& sim) {
     }
 }
 
-SDL_FPoint sdl_display::calc_point_position(const float x, const float y) {
+SDL_FPoint sdl_display::calc_point_position(const float x, const float y) const {
     float ret_x = area_x_diap / main_width * x + area_x_start;
     float ret_y = area_y_diap / main_height * y + area_y_start;
+
+    return {ret_x, ret_y};
+}
+
+SDL_FPoint sdl_display::calc_point_position(const SDL_FPoint p) const {
+    float ret_x = area_x_diap / main_width * p.x + area_x_start;
+    float ret_y = area_y_diap / main_height * p.y + area_y_start;
 
     return {ret_x, ret_y};
 }
