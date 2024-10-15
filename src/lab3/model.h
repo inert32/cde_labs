@@ -26,25 +26,20 @@ struct subarea_t {
     float width = 0.0f;
 };
 
-struct vec2 {
-    float x = 0.0f;
-    float y = 0.0f;
-};
-
 class particle {
 public:
     particle(const float pos_x, const float pos_y, const float vel_x, const float vel_y);
 
-    vec2 get_position() const;
-    vec2 get_velocity() const;
+    SDL_FPoint get_position() const;
+    SDL_FPoint get_velocity() const;
 
     void move_particle(const float len);
     void set_velocity(const float vel_x, const float vel_y);
 private:
     // Координаты частицы
-    vec2 pos;
+    SDL_FPoint pos;
     // Вектор скорости
-    vec2 velocity;
+    SDL_FPoint velocity;
 };
 
 // Точечный источник частиц
@@ -54,10 +49,10 @@ public:
     emit_point() = default;
 
     particle spawn_particle();
-    vec2 get_position() const;
+    SDL_FPoint get_position() const;
 
 private:
-    vec2 pos;
+    SDL_FPoint pos;
     float last_angle = 45.0f;
 };
 

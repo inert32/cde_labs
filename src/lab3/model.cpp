@@ -9,11 +9,11 @@ particle::particle(const float pos_x, const float pos_y, const float vel_x, cons
     velocity = {vel_x, vel_y};
 }
 
-vec2 particle::get_position() const {
+SDL_FPoint particle::get_position() const {
     return pos;
 }
 
-vec2 particle::get_velocity() const {
+SDL_FPoint particle::get_velocity() const {
     return velocity;
 }
 
@@ -35,7 +35,7 @@ particle emit_point::spawn_particle() {
     return ret;
 }
 
-vec2 emit_point::get_position() const {
+SDL_FPoint emit_point::get_position() const {
     return pos;
 }
 
