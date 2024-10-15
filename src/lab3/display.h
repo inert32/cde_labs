@@ -26,7 +26,12 @@ public:
     sdl_display(const simulation& sim);
     ~sdl_display();
 
-    void show_frame();
+    // Вывести треки на экран
+    // Треки должны быть масштабированы (translate_tracks) перед выводом на экран
+    void show_frame(const sim_output& tracks);
+
+    // Масштабирование треков
+    sim_output translate_tracks(const sim_output& tracks) const;
 
     // Расчет позиции точки внутри графика
     SDL_FPoint calc_point_position(const float x, const float y) const;

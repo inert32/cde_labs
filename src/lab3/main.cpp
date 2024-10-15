@@ -36,9 +36,11 @@ int main(int argc, char** argv) {
         if (run_sdl) {
             try {
                 sdl_display disp(sim);
+                auto tracks = disp.translate_tracks(sim.get_tracks());
                 bool run = true;
+
                 while (run) {
-                    disp.show_frame();
+                    disp.show_frame(tracks);
                     switch (handle_kbd()) {
                     case sdl_events::quit:
                         run = false;

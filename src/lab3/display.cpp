@@ -39,7 +39,7 @@ sdl_display::~sdl_display() {
     SDL_Quit();
 }
 
-void sdl_display::show_frame() {
+void sdl_display::show_frame(const sim_output& tracks) {
     clear_screen();
 
     // Рисуем границы графика
@@ -61,11 +61,38 @@ void sdl_display::show_frame() {
         SDL_RenderFillRectF(rend, &subareas_[i]);
     }
 
+    // Треки
+    SDL_SetRenderDrawColor(rend, 0, 255, 0, 255);
+    for (size_t p = 0; p < tracks.particle_count; p++) {
+        SDL_RenderDrawLinesF(rend, tracks.tracks[p], tracks.track_len[p]);
+    }
+
     // Передаем на экран
     SDL_RenderPresent(rend);
 }
 
-//void sdl_display::setup_consts(const main_area_t& main_area, const std::vector<subarea_t>& subareas, const emit_point* emitter) {
+sim_output sdl_display::translate_tracks(const sim_output& tracks) const {
+    sim_output ret;
+
+    size_t part_count = ret.particle_count = tracks.particle_count;
+    ret.tracks = new SDL_FPoint*[part_count];
+    ret.track_len = new size_t[part_count];
+
+    for (size_t p = 0; p < part_count; p++) {
+        auto len = tracks.track_len[p];
+        ret.track_len[p] = len;
+        ret.tracks[p] = new SDL_FPoint[len];
+
+        auto from = tracks.tracks[p];
+        auto to = ret.tracks[p];
+
+        for (size_t t = 0; t < len; t++)
+            to[t] = calc_point_position(from[t]);
+    }
+
+    return ret;
+}
+
 void sdl_display::setup_consts(const simulation& sim) {
     auto ma = sim.get_main_area();
     main_height = ma.height;
