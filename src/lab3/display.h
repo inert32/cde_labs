@@ -23,7 +23,7 @@ class sdl_grid;
 // Отображение графика на экране
 class sdl_display {
 public:
-    sdl_display(const main_area_t& main_area, const std::vector<subarea_t>& subareas, const emit_point* emitter);
+    sdl_display(const simulation& sim);
     ~sdl_display();
 
     void show_frame();
@@ -46,7 +46,7 @@ private:
     float main_width = 0.0f;
     float main_height = 0.0f;
 
-    void setup_consts(const main_area_t& main_area, const std::vector<subarea_t>& subareas, const emit_point* emitter);
+    void setup_consts(const simulation& sim);
 
     // Массив подобластей
     SDL_FRect* subareas_ = nullptr;

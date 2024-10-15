@@ -1,6 +1,19 @@
 #ifndef __MODEL_H__
 #define __MODEL_H__
 
+#include <vector>
+#include <string>
+
+#ifndef __ENABLE_GRAPH__ // SDL отключен, копируем определение SDL_FPoint
+typedef struct SDL_FPoint
+{
+    float x;
+    float y;
+} SDL_FPoint;
+#else
+#include <SDL_rect.h>
+#endif /* __ENABLE_GRAPH__ */
+
 // Главная область моделирования
 struct main_area_t {
     float width = 0.0f;
@@ -46,6 +59,25 @@ public:
 private:
     vec2 pos;
     float last_angle = 45.0f;
+};
+
+class simulation {
+public:
+    simulation(const std::vector<std::pair<std::string, std::string>>& conf);
+    ~simulation() = default;
+
+    void next_particle();
+
+    const main_area_t get_main_area() const;
+    const std::vector<subarea_t>& get_subarea() const;
+    const emit_point* get_emitter() const;
+private:
+    std::vector<std::vector<SDL_FPoint>> tracks;
+
+    main_area_t main_area;
+    std::vector<subarea_t> subareas;
+    emit_point* emitter;
+    size_t part_count = 0;
 };
 
 #endif /* __MODEL_H__ */

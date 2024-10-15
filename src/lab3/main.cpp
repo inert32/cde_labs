@@ -8,6 +8,7 @@
 #include "../common.h"
 #include "display.h"
 #include "parser.h"
+#include "model.h"
 
 int main(int argc, char** argv) {
     std::cout << "Lab3 " << build_version << " " << build_git << std::endl;
@@ -26,24 +27,12 @@ int main(int argc, char** argv) {
         return 1;
     }
     // Разбираем параметры
-    main_area_t main_area;
-    std::vector<subarea_t> subareas;
-    emit_point* emitter;
-    size_t part_count = 0;
-    try {
-        subareas = spawn_areas(conf, &main_area);
-        emitter = spawn_emitter(conf);
-        part_count = get_particles_count(conf);
-    }
-    catch (const std::exception& e) {
-        std::cout << e.what() << std::endl;
-        return 1;
-    }
     
     try {
+        simulation sim(conf);
         if (run_sdl) {
             try {
-                sdl_display disp(main_area, subareas, emitter);
+                sdl_display disp(sim);
                 bool run = true;
                 while (run) {
                     disp.show_frame();

@@ -2,6 +2,7 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
 #include "model.h"
+#include "parser.h"
 
 particle::particle(const float pos_x, const float pos_y, const float vel_x, const float vel_y) {
     pos = {pos_x, pos_y};
@@ -36,4 +37,25 @@ particle emit_point::spawn_particle() {
 
 vec2 emit_point::get_position() const {
     return pos;
+}
+
+simulation::simulation(const std::vector<std::pair<std::string, std::string>>& conf) {
+    subareas = spawn_areas(conf, &main_area);
+    emitter = spawn_emitter(conf);
+    part_count = get_particles_count(conf);
+
+    tracks.reserve(part_count);
+    for (auto &i : tracks) i.reserve(5);
+}
+
+void simulation::next_particle() {}
+
+const main_area_t simulation::get_main_area() const {
+    return main_area;
+}
+const std::vector<subarea_t>& simulation::get_subarea() const {
+    return subareas;
+}
+const emit_point* simulation::get_emitter() const {
+    return emitter;
 }
