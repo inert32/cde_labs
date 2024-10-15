@@ -48,6 +48,12 @@ SDL_FPoint emit_point::get_position() const {
 
 simulation::simulation(const std::vector<std::pair<std::string, std::string>>& conf) {
     subareas = spawn_areas(conf, &main_area);
+    // Получаем границы для подобластей
+    b_count = subareas.size();
+    borders = new subarea_borders_t[b_count];
+    for (size_t i = 0; i < b_count; i++)
+        borders[i] = { subareas[i].x_start, subareas[i].x_start + subareas[i].width };
+
     emitter = spawn_emitter(conf);
     part_count = get_particles_count(conf);
 
@@ -71,11 +77,22 @@ bool simulation::process_particle() {
     //      Продвинуть ее на длину пробега
     // И так, пока она не выйдет за границы main_area
     auto p = emitter->spawn_particle();
+    size_t sa_prev = 0; // Предыдущая подобласть
+                        // Считаем, что sa_* = 0 - вакуум
     tracks[current_part].push_back(p.get_position());
 
     do { // Движение частицы
         p.move_particle(nums(gen));
         tracks[current_part].push_back(p.get_position());
+
+        auto sa_now = get_subarea_index(p);
+        if (sa_now != sa_prev && sa_now > 0) {
+            // Изменить направление
+            std::uniform_real_distribution new_x_vel(-1.0f, 1.0f);
+            std::uniform_real_distribution new_y_vel(-0.15f, 0.15f);
+            p.set_velocity(new_x_vel(gen), new_y_vel(gen));
+            sa_prev = sa_now;
+        }
     } while (is_within_main(p.get_position()));
 
     // Отладочный вывод
@@ -98,6 +115,15 @@ const std::vector<subarea_t>& simulation::get_subarea() const {
 
 const emit_point* simulation::get_emitter() const {
     return emitter;
+}
+
+size_t simulation::get_subarea_index(const particle& p) const {
+    auto pos = p.get_position();
+    for (size_t id = 0; id < b_count; id++) {
+        auto bord = borders[id];
+        if (pos.x > bord.start && pos.x < bord.end) return id + 1; // Одна из подобластей
+    }
+    return 0; // Находимся в главной области
 }
 
 bool simulation::is_within_main(const SDL_FPoint p) const {

@@ -89,6 +89,14 @@ private:
     size_t part_count = 0; // Общее число частиц
     size_t current_part = 0; // Номер текущей частицы
 
+    // Границы подобластей для простоты расчета столкновений
+    struct subarea_borders_t {float start = 0.0f; float end = 0.0f;};
+    subarea_borders_t* borders = nullptr;
+    size_t b_count = 0;
+    // Изменяем направление частицы если мы перешли из одной подобласти в другую
+    // (get_subarea_index до перемещения != get_subarea_index после)
+    size_t get_subarea_index(const particle& p) const;
+
     bool is_within_main(const SDL_FPoint p) const; // Проверка на вылет частицы за пределы main_area
 };
 
