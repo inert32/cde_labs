@@ -37,7 +37,7 @@ public:
     SDL_FPoint calc_point_position(const float x, const float y) const;
     SDL_FPoint calc_point_position(const SDL_FPoint p) const;
 private:
-    static constexpr int len_x = 1024, len_y = 768;
+    static constexpr int len_x = 1024, len_y = 768; // Размер окна
     SDL_Window* window = nullptr;
     SDL_Renderer* rend = nullptr;
 
@@ -50,10 +50,11 @@ private:
     static constexpr int area_y_end = (int)(0.9 * len_y);
     static constexpr int area_y_diap = area_y_end - area_y_start;
 
-    // Размеры главной области
+    // Размеры главной области (main_area_t)
     float main_width = 0.0f;
     float main_height = 0.0f;
 
+    // Настройка subareas_ и emitter_pos
     void setup_consts(const simulation& sim);
 
     // Массив подобластей
@@ -64,6 +65,7 @@ private:
     SDL_FPoint emitter_pos = {0.0f, 0.0f};
 };
 
+// Обработка нажатий клавиш
 sdl_events handle_kbd();
 
 #else

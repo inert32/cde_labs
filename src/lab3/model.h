@@ -20,7 +20,7 @@ struct main_area_t {
     float height = 0.0f;
 };
 
-// Подобласть моделирования внутри 
+// Подобласть внутри главной
 struct subarea_t {
     float x_start = 0.0f;
     float width = 0.0f;
@@ -50,7 +50,6 @@ public:
 
     particle spawn_particle();
     SDL_FPoint get_position() const;
-
 private:
     SDL_FPoint pos;
     float last_angle = 45.0f;
@@ -65,6 +64,7 @@ struct sim_output {
     size_t particle_count = 0;
 };
 
+// Обработка частиц
 class simulation {
 public:
     simulation(const std::vector<std::pair<std::string, std::string>>& conf);
@@ -78,9 +78,10 @@ public:
     const std::vector<subarea_t>& get_subarea() const;
     const emit_point* get_emitter() const;
 
-    sim_output get_tracks() const; // Вывод данных о симуляции
+    // Вывод данных о симуляции
+    sim_output get_tracks() const;
 private:
-    std::vector<std::vector<SDL_FPoint>> tracks;
+    std::vector<std::vector<SDL_FPoint>> tracks; // Треки частиц
 
     main_area_t main_area;
     std::vector<subarea_t> subareas;

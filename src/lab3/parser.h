@@ -5,6 +5,8 @@
 #include <string>
 #include "model.h"
 
+// Массив параметров задания
+// std::map не подходит, так как в файле может быть несколько subarea
 typedef std::vector<std::pair<std::string, std::string>> parser_data;
 
 // Парсер файла задания
