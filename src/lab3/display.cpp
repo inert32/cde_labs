@@ -96,7 +96,7 @@ sim_output sdl_display::translate_tracks(const sim_output& tracks) const {
 void sdl_display::setup_consts(const simulation& sim) {
     auto ma = sim.get_main_area();
     main_height = ma.height;
-    main_width = ma.width;
+    main_width = ma.length;
 
     // Позиция источника на экране
     const auto em_pos = sim.get_emitter()->get_position();

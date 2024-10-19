@@ -47,7 +47,7 @@ SDL_FPoint emit_point::get_position() const {
     return pos;
 }
 
-simulation::simulation(const std::vector<std::pair<std::string, std::string>>& conf) {
+simulation::simulation(const parser_data& conf) {
     subareas = spawn_areas(conf, &main_area);
     // Получаем границы для подобластей
     b_count = subareas.size();
@@ -55,8 +55,8 @@ simulation::simulation(const std::vector<std::pair<std::string, std::string>>& c
     for (size_t i = 0; i < b_count; i++)
         borders[i] = { subareas[i].x_start, subareas[i].x_start + subareas[i].width };
 
-    emitter = spawn_emitter(conf);
-    part_count = get_particles_count(conf);
+    emitter = spawn_emitter(find_config_line(conf, "source"));
+    part_count = get_particles_count(find_config_line(conf, "particles"));
 
     // Выделение памяти под треки
     tracks.reserve(part_count);
@@ -70,7 +70,7 @@ bool simulation::process_particle() {
     if (current_part >= part_count) return false; // Не рассчитываем частицы, если они не заданы
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::uniform_real_distribution nums(0.0f, main_area.width);
+    std::uniform_real_distribution nums(0.0f, main_area.length);
 
     // Создать частицу
     // Продвинуть ее на длину пробега
@@ -86,15 +86,6 @@ bool simulation::process_particle() {
     do { // Движение частицы
         p.move_particle(nums(gen));
         tracks[current_part].push_back(p.get_position());
-
-        /*auto sa_now = get_subarea_index(p);
-        if (sa_now != sa_prev && sa_now > 0) {
-            // Изменить направление
-            std::uniform_real_distribution new_x_vel(-1.0f, 1.0f);
-            std::uniform_real_distribution new_y_vel(-0.15f, 0.15f);
-            //p.set_velocity(new_x_vel(gen), new_y_vel(gen));
-            sa_prev = sa_now;
-        }*/
     } while (is_within_main(p.get_position()));
 
     // Отладочный вывод
@@ -130,7 +121,7 @@ size_t simulation::get_subarea_index(const particle& p) const {
 
 bool simulation::is_within_main(const SDL_FPoint p) const {
     if (p.x < 0.0f || p.y < 0.0f) return false;
-    if (p.x > main_area.width || p.y > main_area.height) return false;
+    if (p.x > main_area.length || p.y > main_area.height) return false;
 
     return true;
 }

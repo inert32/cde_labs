@@ -14,9 +14,11 @@ typedef struct SDL_FPoint
 #include <SDL_rect.h>
 #endif /* __ENABLE_GRAPH__ */
 
+#include "parser_types.h"
+
 // Главная область моделирования
 struct main_area_t {
-    float width = 0.0f;
+    float length = 0.0f;
     float height = 0.0f;
 };
 
@@ -66,7 +68,7 @@ struct sim_output {
 // Обработка частиц
 class simulation {
 public:
-    simulation(const std::vector<std::pair<std::string, std::string>>& conf);
+    simulation(const parser_data& conf);
     ~simulation() = default;
 
     // Расчет пути частицы

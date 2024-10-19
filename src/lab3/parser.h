@@ -3,11 +3,10 @@
 
 #include <vector>
 #include <string>
+#include "parser_types.h"
 #include "model.h"
 
-// Массив параметров задания
-// std::map не подходит, так как в файле может быть несколько subarea
-typedef std::vector<std::pair<std::string, std::string>> parser_data;
+const parser_line& find_config_line(const parser_data& conf, const std::string& line);
 
 // Парсер файла задания
 parser_data parse_task_file(const std::string& path);
@@ -16,9 +15,9 @@ parser_data parse_task_file(const std::string& path);
 std::vector<subarea_t> spawn_areas(const parser_data& src, main_area_t* main_area);
 
 // Создание источника частиц
-emit_point* spawn_emitter(const parser_data& src);
+emit_point* spawn_emitter(const parser_line& src);
 
 // Получение числа частиц для обработки
-size_t get_particles_count(const parser_data& src);
+size_t get_particles_count(const parser_line& src);
 
 #endif /* __PARSER_H__ */
