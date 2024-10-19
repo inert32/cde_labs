@@ -15,7 +15,7 @@ sdl_events handle_kbd();
 
 #ifdef __ENABLE_GRAPH__
 
-#include <SDL_render.h>
+#include <SDL.h>
 #include "model.h"
 
 // Отображение графика на экране
