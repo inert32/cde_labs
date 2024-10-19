@@ -25,15 +25,15 @@ void particle::set_direction(const float dir_x, const float dir_y) {
     direction = {dir_x, dir_y};
 }
 
-emit_point::emit_point(const float pos_x, const float pos_y) {
-    pos.x = pos_x; pos.y = pos_y;
+emit_point::emit_point(const float pos_x, const float pos_y, const float angle) {
+    pos.x = pos_x; pos.y = pos_y; spread = angle;
 }
 
 particle emit_point::spawn_particle() {
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::uniform_real_distribution nums_y(45.0f, 135.0f); // Разброс косинуса угла (в градусах)
-    float angle = nums_y(gen) * M_PI / 180.0f;
+    std::uniform_real_distribution nums_y(90.0f - spread, spread + 90.0f);
+    float angle = nums_y(gen) * M_PI / 180.0f; // Перевод в радианы
 
     float dir_x = sin(angle);
     float dir_y = cos(angle);

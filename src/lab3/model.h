@@ -44,13 +44,14 @@ private:
 // Точечный источник частиц
 class emit_point {
 public:
-    emit_point(const float pos_x, const float pos_y);
+    emit_point(const float pos_x, const float pos_y, const float angle);
     emit_point() = default;
 
     particle spawn_particle();
     SDL_FPoint get_position() const;
 private:
     SDL_FPoint pos;
+    float spread;
 };
 
 // Выход симуляции - треки частиц
