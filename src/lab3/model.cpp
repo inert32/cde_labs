@@ -3,29 +3,26 @@
 
 #include <iostream>
 #include <random>
+#include <cmath>
 #include "model.h"
 #include "parser.h"
 
-particle::particle(const float pos_x, const float pos_y, const float vel_x, const float vel_y) {
+particle::particle(const float pos_x, const float pos_y, const float dir_x, const float dir_y) {
     pos = {pos_x, pos_y};
-    velocity = {vel_x, vel_y};
+    direction = {dir_x, dir_y};
 }
 
 SDL_FPoint particle::get_position() const {
     return pos;
 }
 
-SDL_FPoint particle::get_velocity() const {
-    return velocity;
-}
-
 void particle::move_particle(const float len) {
-    pos.x += len * velocity.x;
-    pos.y += len * velocity.y;
+    pos.x += len * direction.x;
+    pos.y += len * direction.y;
 }
 
-void particle::set_velocity(const float vel_x, const float vel_y) {
-    velocity = {vel_x, vel_y};
+void particle::set_direction(const float dir_x, const float dir_y) {
+    direction = {dir_x, dir_y};
 }
 
 emit_point::emit_point(const float pos_x, const float pos_y) {
@@ -35,9 +32,13 @@ emit_point::emit_point(const float pos_x, const float pos_y) {
 particle emit_point::spawn_particle() {
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::uniform_real_distribution nums_x(0.25f, 0.35f); // Разброс скорости
-    std::uniform_real_distribution nums_y(-0.15f, 0.15f); // Разброс косинуса угла (в градусах)
-    particle ret(pos.x, pos.y, nums_x(gen), nums_y(gen));
+    std::uniform_real_distribution nums_y(45.0f, 135.0f); // Разброс косинуса угла (в градусах)
+    float angle = nums_y(gen) * M_PI / 180.0f;
+
+    float dir_x = sin(angle);
+    float dir_y = cos(angle);
+
+    particle ret(pos.x, pos.y, dir_x, dir_y);
 
     return ret;
 }
@@ -86,14 +87,14 @@ bool simulation::process_particle() {
         p.move_particle(nums(gen));
         tracks[current_part].push_back(p.get_position());
 
-        auto sa_now = get_subarea_index(p);
+        /*auto sa_now = get_subarea_index(p);
         if (sa_now != sa_prev && sa_now > 0) {
             // Изменить направление
             std::uniform_real_distribution new_x_vel(-1.0f, 1.0f);
             std::uniform_real_distribution new_y_vel(-0.15f, 0.15f);
-            p.set_velocity(new_x_vel(gen), new_y_vel(gen));
+            //p.set_velocity(new_x_vel(gen), new_y_vel(gen));
             sa_prev = sa_now;
-        }
+        }*/
     } while (is_within_main(p.get_position()));
 
     // Отладочный вывод

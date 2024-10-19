@@ -28,18 +28,17 @@ struct subarea_t {
 
 class particle {
 public:
-    particle(const float pos_x, const float pos_y, const float vel_x, const float vel_y);
+    particle(const float pos_x, const float pos_y, const float dir_x, const float dir_y);
 
     SDL_FPoint get_position() const;
-    SDL_FPoint get_velocity() const;
 
     void move_particle(const float len);
-    void set_velocity(const float vel_x, const float vel_y);
+    void set_direction(const float dir_x, const float dir_y);
 private:
     // Координаты частицы
     SDL_FPoint pos;
     // Вектор скорости
-    SDL_FPoint velocity;
+    SDL_FPoint direction;
 };
 
 // Точечный источник частиц
@@ -52,7 +51,6 @@ public:
     SDL_FPoint get_position() const;
 private:
     SDL_FPoint pos;
-    float last_angle = 45.0f;
 };
 
 // Выход симуляции - треки частиц
