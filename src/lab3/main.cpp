@@ -4,6 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <cstring>
 #include "../build.h"
 #include "../common.h"
 #include "display.h"
@@ -50,7 +51,8 @@ int main(int argc, char** argv) {
                 }
             }
             catch (const std::exception& e) {
-                std::cerr << "SDL: Error: " << e.what() << std::endl;
+                if (!strcmp(e.what(), "SDL disabled"))
+                    std::cerr << "SDL: Error: " << e.what() << std::endl;
             }
         }
     }
@@ -61,6 +63,8 @@ int main(int argc, char** argv) {
 
     return 0;
 }
+
+#ifdef __ENABLE_GRAPH__
 
 sdl_events handle_kbd() {
     SDL_Event e;
@@ -88,3 +92,9 @@ sdl_events handle_kbd() {
     }
     return sdl_events::none;
 }
+#else
+
+sdl_events handle_kbd() {
+    return sdl_events::none;
+}
+#endif /* __ENABLE_GRAPH__ */

@@ -26,6 +26,7 @@ struct main_area_t {
 struct subarea_t {
     float x_start = 0.0f;
     float width = 0.0f;
+    // Оптическая толщина
     float optics = 0.0f;
 };
 
@@ -62,7 +63,9 @@ struct sim_output {
     // Массивы треков (посещенные точки в области)
     // Размерность: tracks[particle_count][track_len[i]]
     SDL_FPoint** tracks = nullptr;
-    size_t* track_len = nullptr; // Число столкновений у частицы
+    // Число столкновений у частицы
+    // Размерность: track_len[particle_count]
+    size_t* track_len = nullptr;
     size_t particle_count = 0;
 };
 
@@ -95,11 +98,13 @@ private:
     struct subarea_borders_t {float start = 0.0f; float end = 0.0f;};
     subarea_borders_t* borders = nullptr;
     size_t b_count = 0;
+
     // Изменяем направление частицы если мы перешли из одной подобласти в другую
     // (get_subarea_index до перемещения != get_subarea_index после)
     size_t get_subarea_index(const SDL_FPoint p) const;
 
-    bool is_within_main(const SDL_FPoint p) const; // Проверка на вылет частицы за пределы main_area
+    // Проверка на вылет частицы за пределы main_area
+    bool is_within_main(const SDL_FPoint p) const;
 };
 
 #endif /* __MODEL_H__ */

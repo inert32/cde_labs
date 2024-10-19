@@ -18,12 +18,13 @@ bool checkout_args(const std::string& command, const parser_opts& opts) {
     return false;
 }
 
+// Поиск параметра в файле задания
 const parser_line& find_config_line(const parser_data& conf, const std::string& line) {
     for (auto &i : conf) {
         if (line == i.first)
             return i;
     }
-    throw std::runtime_error("No such line");
+    throw std::runtime_error("No such line: " + line);
 }
 
 parser_data parse_task_file(const std::string& path) {
