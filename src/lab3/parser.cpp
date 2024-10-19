@@ -11,7 +11,7 @@ bool is_known_command(const std::string& cmd) {
 // Проверка команд файла на нужное число аргументов
 bool checkout_args(const std::string& command, const parser_opts& opts) {
     if (command == "area") return opts.size() == 2;
-    if (command == "subarea") return opts.size() == 2;
+    if (command == "subarea") return opts.size() == 3;
     if (command == "source") return opts.size() == 4;
     if (command == "particles") return opts.size() == 1;
 
@@ -88,6 +88,9 @@ std::vector<subarea_t> spawn_areas(const parser_data& src, main_area_t* main_are
             subarea_t sa;
             sa.x_start = std::stof(sa_raw[0]);
             sa.width = std::stof(sa_raw[1]);
+            sa.optics = std::stof(sa_raw[2]);
+            if (!(sa.optics > 0.0f)) throw std::runtime_error("loader: Error: Check subarea " + std::to_string(others.size() + 1) + " optical density");
+
             if (check_subarea(sa, main_copy)) others.push_back(sa);
             else throw std::runtime_error("loader: Error: Check subarea " + std::to_string(others.size() + 1) + " position and size");
         }

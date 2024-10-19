@@ -84,8 +84,16 @@ bool simulation::process_particle() {
     tracks[current_part].push_back(p.get_position());
 
     do { // Движение частицы
-        p.move_particle(nums(gen));
+        auto sa_now = get_subarea_index(p.get_position());
+
+        float move = nums(gen);
+        float opt = subareas[sa_now - 1].optics; // get_subarea_index смещена на +1, компенсируем
+        if (sa_now != 0) move /= opt;
+
+        p.move_particle(move);
         tracks[current_part].push_back(p.get_position());
+
+        sa_prev = sa_now;
     } while (is_within_main(p.get_position()));
 
     // Отладочный вывод
@@ -110,11 +118,10 @@ const emit_point* simulation::get_emitter() const {
     return emitter;
 }
 
-size_t simulation::get_subarea_index(const particle& p) const {
-    auto pos = p.get_position();
+size_t simulation::get_subarea_index(const SDL_FPoint p) const {
     for (size_t id = 0; id < b_count; id++) {
         auto bord = borders[id];
-        if (pos.x > bord.start && pos.x < bord.end) return id + 1; // Одна из подобластей
+        if (p.x > bord.start && p.x < bord.end) return id + 1; // Одна из подобластей
     }
     return 0; // Находимся в главной области
 }

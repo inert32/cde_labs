@@ -22,10 +22,11 @@ struct main_area_t {
     float height = 0.0f;
 };
 
-// Подобласть внутри главной
+// Подобласть внутри главной (вещество)
 struct subarea_t {
     float x_start = 0.0f;
     float width = 0.0f;
+    float optics = 0.0f;
 };
 
 class particle {
@@ -96,7 +97,7 @@ private:
     size_t b_count = 0;
     // Изменяем направление частицы если мы перешли из одной подобласти в другую
     // (get_subarea_index до перемещения != get_subarea_index после)
-    size_t get_subarea_index(const particle& p) const;
+    size_t get_subarea_index(const SDL_FPoint p) const;
 
     bool is_within_main(const SDL_FPoint p) const; // Проверка на вылет частицы за пределы main_area
 };
