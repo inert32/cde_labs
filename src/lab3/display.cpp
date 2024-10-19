@@ -62,7 +62,7 @@ void sdl_display::show_frame(const sim_output& tracks) {
     }
 
     // Треки
-    SDL_SetRenderDrawColor(rend, 0, 255, 0, 255);
+    SDL_SetRenderDrawColor(rend, 255, 255, 255, 255);
     for (size_t p = 0; p < tracks.particle_count; p++) {
         SDL_RenderDrawLinesF(rend, tracks.tracks[p], tracks.track_len[p]);
     }
