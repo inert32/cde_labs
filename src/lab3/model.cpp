@@ -36,7 +36,7 @@ particle emit_point::spawn_particle() {
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_real_distribution nums_x(0.25f, 0.35f); // Разброс скорости
-    std::uniform_real_distribution nums_y(-0.15f, 0.15f); // Разброс угла
+    std::uniform_real_distribution nums_y(-0.15f, 0.15f); // Разброс косинуса угла (в градусах)
     particle ret(pos.x, pos.y, nums_x(gen), nums_y(gen));
 
     return ret;
@@ -66,6 +66,7 @@ simulation::simulation(const std::vector<std::pair<std::string, std::string>>& c
 }
 
 bool simulation::process_particle() {
+    if (current_part >= part_count) return false; // Не рассчитываем частицы, если они не заданы
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_real_distribution nums(0.0f, main_area.width);
