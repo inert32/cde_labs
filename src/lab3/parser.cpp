@@ -5,7 +5,7 @@
 #include "parser.h"
 
 bool is_known_command(const std::string& cmd) {
-    return cmd == "area" || cmd == "subarea" || cmd == "source" || cmd == "particles";
+    return cmd == "area" || cmd == "subarea" || cmd == "source" || cmd == "particles" || cmd == "energy";
 }
 
 // Проверка команд файла на нужное число аргументов
@@ -14,8 +14,22 @@ bool checkout_args(const std::string& command, const parser_opts& opts) {
     if (command == "subarea") return opts.size() == 3;
     if (command == "source") return opts.size() == 4;
     if (command == "particles") return opts.size() == 1;
+    if (command == "energy") return opts.size() > 0;
 
     return false;
+}
+
+bool checkout_energy_args(const parser_opts& en) {
+    float total_prob = 0.0f;
+    for (auto &i : en) {
+        // Распределение излучения должно иметь вид <уровень=вероятность>
+        auto pos = i.find('=');
+        if (pos == std::string::npos) return false;
+
+        // Вероятность должна быть близка к единице (насколько можно)
+        total_prob += std::stof(i.substr(pos + 1));
+    }
+    return (fabs(total_prob - 1.0f) < 0.001f) ? true : false;
 }
 
 // Поиск параметра в файле задания
@@ -54,6 +68,9 @@ parser_data parse_task_file(const std::string& path) {
             if (!checkout_args(command, args))
                 throw std::runtime_error("Not enough arguments for command " + command
                 + " at line " + std::to_string(line_number));
+            
+            if (command == "energy" && !checkout_energy_args(args))
+                throw std::runtime_error("Bad energy distribution at line " + std::to_string(line_number));
 
             ret.emplace_back(std::make_pair(command, args));
             args.clear();
