@@ -4,8 +4,7 @@
 #define SDL_MAIN_HANDLED
 
 #include <iostream>
-#include <fstream>
-#include <vector>
+#include <iomanip>
 #include <cstring>
 #include "../build.h"
 #include "../common.h"
@@ -35,6 +34,18 @@ int main(int argc, char** argv) {
         std::cout << "Start simulation..." << std::endl;
         while (sim.process_particle());
         std::cout << "Simulation complete." << std::endl;
+
+        auto stats = sim.get_stats();
+        std::cout << "Statistics: " << std::endl;
+        std::cout << std::setprecision(3);
+        std::cout << "Particles got on screen: " << stats.screen_particles << "/" << stats.total_particles
+        << " (" << (float)stats.screen_particles / (float)stats.total_particles * 100.0f << "%)" << std::endl;
+        std::cout << "Screen absorbed " << stats.screen_energy << "/" << stats.total_energy
+        << " MeV (" << stats.screen_energy / stats.total_energy * 100.0f << "%)" << std::endl;
+        for (size_t i = 0; i < stats.subareas_count; i++) {
+            std::cout << "Subarea " << i + 1 << " absorbed: " << stats.subarea_energy[i]
+            << " MeV (" << stats.subarea_energy[i] / stats.total_energy * 100.0f << "%)" << std::endl;
+        }
 
         if (run_sdl) {
             try {

@@ -86,6 +86,22 @@ struct sim_output {
     size_t particle_count = 0;
 };
 
+// Статистика симуляции
+struct sim_stats {
+    // Всего выпущено частиц источником
+    size_t total_particles = 0;
+    // Всего потрачено энергии источником
+    size_t total_energy = 0.0f;
+    // Число частиц, попавших на экран
+    size_t screen_particles = 0;
+    // Энергия, поглощеная экраном
+    float screen_energy = 0.0f;
+    // Энергия, поглощеная веществами
+    float* subarea_energy = nullptr;
+
+    size_t subareas_count = 0;
+};
+
 // Обработка частиц
 class simulation {
 public:
@@ -102,6 +118,9 @@ public:
 
     // Вывод данных о симуляции
     sim_output get_tracks() const;
+
+    // Вывод статистики
+    sim_stats get_stats() const;
 private:
     std::vector<std::vector<SDL_FPoint>> tracks; // Треки частиц
 
@@ -125,6 +144,17 @@ private:
 
     // Проверка на вылет частицы за пределы main_area
     bool is_within_main(const SDL_FPoint p) const;
+
+    // Статистика
+
+    // Всего потрачено энергии источником
+    size_t stat_total_energy = 0.0f;
+    // Число частиц, попавших на экран
+    size_t stat_screen_particles = 0;
+    // Энергия, поглощеная экраном
+    float stat_screen_energy = 0.0f;
+    // Энергия, поглощеная веществами
+    float* stat_subarea_energy = nullptr;
 };
 
 #endif /* __MODEL_H__ */

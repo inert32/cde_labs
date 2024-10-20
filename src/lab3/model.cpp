@@ -83,6 +83,8 @@ simulation::simulation(const parser_data& conf) {
         tracks.emplace_back();
         tracks.back().reserve(5);
     }
+
+    stat_subarea_energy = new float[b_count];
 }
 
 // Метод Карлсона для столкновения
@@ -124,6 +126,7 @@ bool simulation::process_particle() {
     auto p = emitter->spawn_particle();
     tracks[current_part].push_back(p.get_position());
     float start_energy = p.get_energy();
+    stat_total_energy += start_energy;
 
     do { // Движение частицы
         auto sa_now = get_subarea_index(p.get_position());
@@ -140,12 +143,22 @@ bool simulation::process_particle() {
         // Ядро столкновений
         if (sa_now > 0) {
             std::uniform_real_distribution xi(0.0f, 1.0f);
-            if (xi(gen) > subareas[sa_now - 1].consume_prob) collide_carlson(p, xi(gen));
-            else break;
+            if (xi(gen) > subareas[sa_now - 1].consume_prob) 
+                collide_carlson(p, xi(gen));
+            else {
+                stat_subarea_energy[sa_now - 1] += p.get_energy();
+                break;
+            }
         }
     } while (is_within_main(p.get_position()));
-
+    // На экран?
+    auto end_pos = p.get_position();
     float end_energy = p.get_energy();
+    if (end_pos.x > main_area.length) {
+        stat_screen_particles++;
+        stat_screen_energy += end_energy;
+    }
+
     part_en.push_back({start_energy, end_energy});
 
     // Отладочный вывод
@@ -206,6 +219,24 @@ sim_output simulation::get_tracks() const {
         ret.energies->x = part_en[p].pre;
         ret.energies->y = part_en[p].post;
     }
+
+    return ret;
+}
+
+sim_stats simulation::get_stats() const {
+    sim_stats ret;
+    const size_t size = subareas.size();
+
+    ret.subarea_energy = new float[size];
+    ret.subareas_count = size;
+    for (size_t i = 0 ; i < size; i++)
+        ret.subarea_energy[i] = stat_subarea_energy[i];
+
+    ret.screen_energy = stat_screen_energy;
+    ret.screen_particles = stat_screen_particles;
+
+    ret.total_energy = stat_total_energy;
+    ret.total_particles = part_count;
 
     return ret;
 }
