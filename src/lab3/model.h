@@ -32,17 +32,21 @@ struct subarea_t {
 
 class particle {
 public:
-    particle(const float pos_x, const float pos_y, const float dir_x, const float dir_y);
+    particle(const float pos_x, const float pos_y, const float dir_x, const float dir_y, const float en);
 
     SDL_FPoint get_position() const;
+    float get_energy() const;
 
     void move_particle(const float len);
     void set_direction(const float dir_x, const float dir_y);
+    void set_energy(const float en);
 private:
     // Координаты частицы
     SDL_FPoint pos;
     // Вектор скорости
     SDL_FPoint direction;
+
+    float energy = 0.0f;
 };
 
 struct energy_distr_t {
@@ -72,6 +76,10 @@ struct sim_output {
     // Число столкновений у частицы
     // Размерность: track_len[particle_count]
     size_t* track_len = nullptr;
+    // Энергия частицы до (x) и после (y)
+    // Размерность: energies[particle_count]
+    SDL_FPoint* energies = nullptr;
+
     size_t particle_count = 0;
 };
 
@@ -93,6 +101,9 @@ public:
     sim_output get_tracks() const;
 private:
     std::vector<std::vector<SDL_FPoint>> tracks; // Треки частиц
+
+    struct energy_track_t { float pre = 0.0f; float post = 0.0f; };
+    std::vector<energy_track_t> part_en;
 
     main_area_t main_area;
     std::vector<subarea_t> subareas;

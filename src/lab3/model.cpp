@@ -7,13 +7,18 @@
 #include "model.h"
 #include "parser.h"
 
-particle::particle(const float pos_x, const float pos_y, const float dir_x, const float dir_y) {
+particle::particle(const float pos_x, const float pos_y, const float dir_x, const float dir_y, const float en) {
     pos = {pos_x, pos_y};
     direction = {dir_x, dir_y};
+    energy = en;
 }
 
 SDL_FPoint particle::get_position() const {
     return pos;
+}
+
+float particle::get_energy() const {
+    return energy;
 }
 
 void particle::move_particle(const float len) {
@@ -23,6 +28,10 @@ void particle::move_particle(const float len) {
 
 void particle::set_direction(const float dir_x, const float dir_y) {
     direction = {dir_x, dir_y};
+}
+
+void particle::set_energy(const float en) {
+    energy = en;
 }
 
 emit_point::emit_point(const float pos_x, const float pos_y, const float angle, const std::vector<energy_distr_t>& dist) : energy(dist) {
@@ -38,9 +47,19 @@ particle emit_point::spawn_particle() {
     float dir_x = sin(angle);
     float dir_y = cos(angle);
 
-    particle ret(pos.x, pos.y, dir_x, dir_y);
+    std::uniform_real_distribution en(0.01f, 0.99f);
+    float got_prob = en(gen);
 
-    return ret;
+    // Выбор энергии
+    size_t prob_id = 0;
+    float top_prob = 0.0f;
+    while (top_prob < got_prob) {
+        top_prob += energy[prob_id].prob;
+        prob_id++;
+    }
+    prob_id--;
+
+    return particle(pos.x, pos.y, dir_x, dir_y, energy[prob_id].level);
 }
 
 SDL_FPoint emit_point::get_position() const {
@@ -82,6 +101,7 @@ bool simulation::process_particle() {
     size_t sa_prev = 0; // Предыдущая подобласть
                         // Считаем, что sa_* = 0 - вакуум
     tracks[current_part].push_back(p.get_position());
+    float start_energy = p.get_energy();
 
     do { // Движение частицы
         auto sa_now = get_subarea_index(p.get_position());
@@ -95,11 +115,14 @@ bool simulation::process_particle() {
 
         sa_prev = sa_now;
     } while (is_within_main(p.get_position()));
+    float end_energy = p.get_energy();
+    part_en.push_back({start_energy, end_energy});
 
     // Отладочный вывод
     std::cout << "Particle " << current_part << ": ";
     for (auto &c : tracks[current_part])
         std::cout << "{" << c.x << " " << c.y << "} ";
+    std::cout << "; Energy: " << start_energy << "->" << end_energy << std::endl;
     std::cout << std::endl;
 
     current_part++;
@@ -139,6 +162,7 @@ sim_output simulation::get_tracks() const {
     ret.particle_count = part_count;
     ret.tracks = new SDL_FPoint*[part_count];
     ret.track_len = new size_t[part_count];
+    ret.energies = new SDL_FPoint[part_count];
 
     for (size_t p = 0; p < part_count; p++) {
         auto len = tracks[p].size();
@@ -148,6 +172,9 @@ sim_output simulation::get_tracks() const {
         auto curr = ret.tracks[p];
         for (size_t t = 0; t < len; t++)
             curr[t] = tracks[p][t];
+
+        ret.energies->x = part_en[p].pre;
+        ret.energies->y = part_en[p].post;
     }
 
     return ret;
