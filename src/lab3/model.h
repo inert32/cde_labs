@@ -28,6 +28,9 @@ struct subarea_t {
     float width = 0.0f;
     // Оптическая толщина
     float optics = 0.0f;
+
+    // Вероятность поглощения
+    float consume_prob = 0.0f;
 };
 
 class particle {

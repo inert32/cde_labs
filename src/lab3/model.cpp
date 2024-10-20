@@ -140,7 +140,8 @@ bool simulation::process_particle() {
         // Ядро столкновений
         if (sa_now > 0) {
             std::uniform_real_distribution xi(0.0f, 1.0f);
-            collide_carlson(p, xi(gen));
+            if (xi(gen) > subareas[sa_now - 1].consume_prob) collide_carlson(p, xi(gen));
+            else break;
         }
     } while (is_within_main(p.get_position()));
 
