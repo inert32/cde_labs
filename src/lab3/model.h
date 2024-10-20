@@ -45,10 +45,15 @@ private:
     SDL_FPoint direction;
 };
 
+struct energy_distr_t {
+    float level = 0.0f;
+    float prob = 0.0;
+};
+
 // Точечный источник частиц
 class emit_point {
 public:
-    emit_point(const float pos_x, const float pos_y, const float angle);
+    emit_point(const float pos_x, const float pos_y, const float angle, const std::vector<energy_distr_t>& dist);
     emit_point() = default;
 
     particle spawn_particle();
@@ -56,6 +61,7 @@ public:
 private:
     SDL_FPoint pos;
     float spread;
+    std::vector<energy_distr_t> energy;
 };
 
 // Выход симуляции - треки частиц

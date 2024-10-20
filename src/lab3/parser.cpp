@@ -118,13 +118,22 @@ std::vector<subarea_t> spawn_areas(const parser_data& src, main_area_t* main_are
     return others;
 }
 
-emit_point* spawn_emitter(const parser_line& src) {
+emit_point* spawn_emitter(const parser_line& src, const parser_line& energy) {
     auto& args = src.second;
     if (args[0] == "point") {
         float x = std::stof(args[1]);
         float y = std::stof(args[2]);
         float angle = std::stof(args[3]);
-        return new emit_point(x, y, angle);
+
+        std::vector<energy_distr_t> dist;
+        for (auto &i : energy.second) {
+            energy_distr_t tmp;
+            auto pos = i.find('=');
+            tmp.level = std::stof(i.substr(0, pos));
+            tmp.prob = std::stof(i.substr(pos + 1, i.length()));
+            dist.push_back(tmp);
+        }
+        return new emit_point(x, y, angle, dist);
     }
     else throw std::runtime_error("loader: Unknown emitter type");
 }

@@ -25,7 +25,7 @@ void particle::set_direction(const float dir_x, const float dir_y) {
     direction = {dir_x, dir_y};
 }
 
-emit_point::emit_point(const float pos_x, const float pos_y, const float angle) {
+emit_point::emit_point(const float pos_x, const float pos_y, const float angle, const std::vector<energy_distr_t>& dist) : energy(dist) {
     pos.x = pos_x; pos.y = pos_y; spread = angle;
 }
 
@@ -55,7 +55,7 @@ simulation::simulation(const parser_data& conf) {
     for (size_t i = 0; i < b_count; i++)
         borders[i] = { subareas[i].x_start, subareas[i].x_start + subareas[i].width };
 
-    emitter = spawn_emitter(find_config_line(conf, "source"));
+    emitter = spawn_emitter(find_config_line(conf, "source"), find_config_line(conf, "energy"));
     part_count = get_particles_count(find_config_line(conf, "particles"));
 
     // Выделение памяти под треки
