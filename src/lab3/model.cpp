@@ -85,21 +85,43 @@ simulation::simulation(const parser_data& conf) {
     }
 }
 
+// Метод Карлсона для столкновения
+void collide_carlson(particle& p, const float xi) {
+    const float energy_now = p.get_energy();
+
+    const float eps = 0.511;
+    const float alpha = energy_now / eps;
+
+    const float S = energy_now / (1.0f + 0.5625f * alpha);
+    float energy_new = energy_now / (1.0f + S + xi + (2.0f * alpha - S) * pow(xi, 3.0f));
+
+    // Поправки для разных энергий
+    if (energy_now > 0.0f && energy_now < 0.5f) {
+        const float A = 0.592f;
+        const float B = 2.578f;
+        const float C = 0.425f;
+
+        energy_new -= (A * alpha * alpha) / (1.0f + 2.0f * alpha);
+        energy_new *= (B / (C + alpha) - 1.0f) * xi * xi * (1.0f - xi) * (1.0f - xi);
+    }
+    else {
+        energy_new += 0.5f * (alpha - 4.0f) * xi * xi * (1.0f - xi) * (1.0f - xi);
+    }
+
+    float new_cos = 1.0f - (eps / energy_new) + (eps / energy_now);
+    float new_sin = sqrt(1.0 - new_cos * new_cos);
+
+    p.set_direction(new_cos, new_sin);
+    p.set_energy(energy_new);
+}
+
 bool simulation::process_particle() {
     if (current_part >= part_count) return false; // Не рассчитываем частицы, если они не заданы
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_real_distribution nums(0.0f, main_area.length);
 
-    // Создать частицу
-    // Продвинуть ее на длину пробега
-    // Если частица попала в другую среду
-    //      Создать новый вектор перемещения
-    //      Продвинуть ее на длину пробега
-    // И так, пока она не выйдет за границы main_area
     auto p = emitter->spawn_particle();
-    size_t sa_prev = 0; // Предыдущая подобласть
-                        // Считаем, что sa_* = 0 - вакуум
     tracks[current_part].push_back(p.get_position());
     float start_energy = p.get_energy();
 
@@ -110,11 +132,18 @@ bool simulation::process_particle() {
         float opt = subareas[sa_now - 1].optics; // get_subarea_index смещена на +1, компенсируем
         if (sa_now != 0) move /= opt;
 
+        // Транспортное ядро
         p.move_particle(move);
         tracks[current_part].push_back(p.get_position());
+        sa_now = get_subarea_index(p.get_position());
 
-        sa_prev = sa_now;
+        // Ядро столкновений
+        if (sa_now > 0) {
+            std::uniform_real_distribution xi(0.0f, 1.0f);
+            collide_carlson(p, xi(gen));
+        }
     } while (is_within_main(p.get_position()));
+
     float end_energy = p.get_energy();
     part_en.push_back({start_energy, end_energy});
 
@@ -143,7 +172,7 @@ const emit_point* simulation::get_emitter() const {
 
 size_t simulation::get_subarea_index(const SDL_FPoint p) const {
     for (size_t id = 0; id < b_count; id++) {
-        auto bord = borders[id];
+        auto& bord = borders[id];
         if (p.x > bord.start && p.x < bord.end) return id + 1; // Одна из подобластей
     }
     return 0; // Находимся в главной области
