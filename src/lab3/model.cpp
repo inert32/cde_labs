@@ -85,6 +85,7 @@ simulation::simulation(const parser_data& conf) {
     }
 
     stat_subarea_energy = new float[b_count];
+    for (size_t i = 0; i < b_count; i++) stat_subarea_energy[i] = 0.0f;
 }
 
 // Метод Карлсона для столкновения
@@ -129,7 +130,7 @@ bool simulation::process_particle() {
     stat_total_energy += start_energy;
 
     do { // Движение частицы
-        auto sa_now = get_subarea_index(p.get_position());
+        auto sa_now = get_subarea_index(p.get_position()); // Текущая подобласть: вакуум(0) или вещество(>0)
 
         float move = nums(gen);
         float opt = subareas[sa_now - 1].optics; // get_subarea_index смещена на +1, компенсируем
@@ -144,7 +145,7 @@ bool simulation::process_particle() {
         if (sa_now > 0) {
             std::uniform_real_distribution xi(0.0f, 1.0f);
             if (xi(gen) > subareas[sa_now - 1].consume_prob) 
-                collide_carlson(p, xi(gen));
+                collide_carlson(p, 0.5f);
             else {
                 stat_subarea_energy[sa_now - 1] += p.get_energy();
                 break;
