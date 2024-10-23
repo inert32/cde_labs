@@ -91,7 +91,7 @@ struct sim_stats {
     // Всего выпущено частиц источником
     size_t total_particles = 0;
     // Всего потрачено энергии источником
-    size_t total_energy = 0.0f;
+    float total_energy = 0.0f;
     // Число частиц, попавших на экран
     size_t screen_particles = 0;
     // Энергия, поглощеная экраном
@@ -148,7 +148,7 @@ private:
     // Статистика
 
     // Всего потрачено энергии источником
-    size_t stat_total_energy = 0.0f;
+    float stat_total_energy = 0.0f;
     // Число частиц, попавших на экран
     size_t stat_screen_particles = 0;
     // Энергия, поглощеная экраном

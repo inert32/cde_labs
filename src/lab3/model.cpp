@@ -42,7 +42,7 @@ particle emit_point::spawn_particle() {
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_real_distribution nums_y(90.0f - spread, spread + 90.0f);
-    float angle = nums_y(gen) * M_PI / 180.0f; // Перевод в радианы
+    float angle = (float)(nums_y(gen) * M_PI / 180.0f); // Перевод в радианы
 
     float dir_x = sin(angle);
     float dir_y = cos(angle);
@@ -92,7 +92,7 @@ simulation::simulation(const parser_data& conf) {
 void collide_carlson(particle& p, const float xi) {
     const float energy_now = p.get_energy();
 
-    const float eps = 0.511;
+    const float eps = 0.511f;
     const float alpha = energy_now / eps;
 
     const float S = energy_now / (1.0f + 0.5625f * alpha);
@@ -112,7 +112,7 @@ void collide_carlson(particle& p, const float xi) {
     }
 
     float new_cos = 1.0f - (eps / energy_new) + (eps / energy_now);
-    float new_sin = sqrt(1.0 - new_cos * new_cos);
+    float new_sin = (float)sqrt(1.0 - new_cos * new_cos);
 
     p.set_direction(new_cos, new_sin);
     p.set_energy(energy_new);
