@@ -90,10 +90,10 @@ struct sim_output {
 struct sim_stats {
     // Всего выпущено частиц источником
     size_t total_particles = 0;
-    // Всего потрачено энергии источником
-    float total_energy = 0.0f;
     // Число частиц, попавших на экран
     size_t screen_particles = 0;
+    // Всего потрачено энергии источником
+    float total_energy = 0.0f;
     // Энергия, поглощеная экраном
     float screen_energy = 0.0f;
     // Энергия, поглощеная веществами
