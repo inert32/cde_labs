@@ -195,6 +195,16 @@ const emit_point* simulation::get_emitter() const {
     return emitter;
 }
 
+std::vector<std::string> simulation::get_subarea_names() const {
+    std::vector<std::string> ret;
+
+    const auto size = subareas.size();
+    ret.reserve(size);
+
+    for (size_t i = 0; i < size; i++) ret.push_back(subareas[i].name);
+    return ret;
+}
+
 size_t simulation::get_subarea_index(const SDL_FPoint p) const {
     for (size_t id = 0; id < b_count; id++) {
         auto& bord = borders[id];
@@ -248,6 +258,9 @@ sim_stats simulation::get_stats() const {
 
     ret.total_energy = stat_total_energy;
     ret.total_particles = part_count;
+
+    for (size_t i = 0; i < size; i++)
+        ret.subarea_names.push_back(subareas[i].name);
 
     return ret;
 }

@@ -26,8 +26,8 @@ void print_stats(const sim_stats& stats) {
             
     for (size_t i = 0; i < stats.subareas_count; i++) {
         auto sa = stats.subarea_energy[i] / stats.total_energy * 100.0f;
-        std::cout << "Subarea " << i + 1 << " absorbed: " << stats.subarea_energy[i] <<
-        std::setprecision(4) << " MeV (" << sa << "%)" << std::setprecision(prec) << std::endl;
+        std::cout << "Subarea " << i + 1 << " (" << stats.subarea_names[i] <<  ") absorbed: "
+        << stats.subarea_energy[i] << std::setprecision(4) << " MeV (" << sa << "%)" << std::setprecision(prec) << std::endl;
     }
 }
 

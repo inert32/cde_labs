@@ -16,7 +16,21 @@ sdl_events handle_kbd();
 #ifdef __ENABLE_GRAPH__
 
 #include <SDL.h>
+#include <SDL_ttf.h>
 #include "model.h"
+
+class sdl_text {
+public:
+    sdl_text(SDL_Renderer* renderer);
+    ~sdl_text();
+
+    // Вывод текста по координатам x, y
+    void render_text(const std::string& text, const int x, const int y, const int len);
+private:
+    // Шрифт
+    TTF_Font* font = nullptr;
+    SDL_Renderer* rend = nullptr;
+};
 
 // Отображение графика на экране
 class sdl_display {
@@ -58,9 +72,12 @@ private:
     // Массив подобластей
     SDL_FRect* subareas_ = nullptr;
     size_t subareas_count = 0;
+    std::vector<std::string> names;
 
     // Координаты источника
     SDL_FPoint emitter_pos = {0.0f, 0.0f};
+
+    sdl_text* text;
 };
 
 #else

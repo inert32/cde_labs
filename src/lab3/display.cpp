@@ -4,7 +4,6 @@
 #ifdef __ENABLE_GRAPH__
 
 #include <stdexcept>
-#include <SDL.h>
 #include "display.h"
 
 static constexpr Uint8 subareas_colors[3][3] = {
@@ -28,12 +27,14 @@ sdl_display::sdl_display(const simulation& sim) {
     SDL_SetRenderDrawBlendMode(rend, SDL_BLENDMODE_BLEND);
 
     setup_consts(sim);
+    text = new sdl_text(rend);
 
     clear_screen();
     SDL_RenderPresent(rend);
 }
 
 sdl_display::~sdl_display() {
+    delete text;
     SDL_DestroyRenderer(rend);
     SDL_DestroyWindow(window);
     SDL_Quit();
@@ -59,6 +60,9 @@ void sdl_display::show_frame(const sim_output& tracks) {
         subareas_colors[color_now][1], subareas_colors[color_now][2], 100);
 
         SDL_RenderFillRectF(rend, &subareas_[i]);
+
+        // Вывод названия материала
+        text->render_text(names[i], subareas_[i].x, area_y_end + 10, subareas_[i].w);
     }
 
     // Треки
@@ -117,6 +121,7 @@ void sdl_display::setup_consts(const simulation& sim) {
         tmp.w = end.x - area_x_start; tmp.h = area_y_end - area_y_start;
         subareas_[i] = tmp;
     }
+    names = sim.get_subarea_names();
 }
 
 SDL_FPoint sdl_display::calc_point_position(const float x, const float y) const {
@@ -131,6 +136,35 @@ SDL_FPoint sdl_display::calc_point_position(const SDL_FPoint p) const {
     float ret_y = area_y_diap / main_height * p.y + area_y_start;
 
     return {ret_x, ret_y};
+}
+
+sdl_text::sdl_text(SDL_Renderer* renderer) {
+    rend = renderer;
+    TTF_Init();
+    // Загрузка шрифта
+    font = TTF_OpenFont("font.ttf", 16);
+    if (font == nullptr) throw std::runtime_error(TTF_GetError());
+}
+
+sdl_text::~sdl_text() {
+    TTF_CloseFont(font);
+}
+
+void sdl_text::render_text(const std::string& text, const int x, const int y, const int len = 0) {
+    auto surf = TTF_RenderText_LCD(font, text.c_str(), {255, 255, 255, 255}, {127, 127, 127, 255});
+    if (surf == nullptr) throw std::runtime_error(TTF_GetError());
+    auto texture = SDL_CreateTextureFromSurface(rend, surf);
+	if (texture == nullptr) throw std::runtime_error(TTF_GetError());
+
+    SDL_Rect dest;
+    TTF_SizeText(font, text.c_str(), &dest.w, &dest.h);
+    dest.y = y;
+    dest.x = x;
+    if (len > 0) dest.x += (len - dest.w) / 2;
+
+    SDL_RenderCopy(rend, texture, nullptr, &dest);
+    SDL_FreeSurface(surf);
+    SDL_DestroyTexture(texture);
 }
 
 #endif /* __ENABLE_GRAPH__ */

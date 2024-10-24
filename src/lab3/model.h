@@ -31,7 +31,7 @@ struct subarea_t {
     float optics = 0.0f;
     // Вероятность поглощения
     float consume_prob = 0.0f;
-    std::string_view name;
+    std::string name;
 };
 
 // Параметры материала.
@@ -110,6 +110,8 @@ struct sim_stats {
     // Энергия, поглощеная веществами
     float* subarea_energy = nullptr;
 
+    std::vector<std::string> subarea_names;
+
     size_t subareas_count = 0;
 };
 
@@ -126,6 +128,7 @@ public:
     const main_area_t get_main_area() const;
     const std::vector<subarea_t>& get_subarea() const;
     const emit_point* get_emitter() const;
+    std::vector<std::string> get_subarea_names() const;
 
     // Вывод данных о симуляции
     sim_output get_tracks() const;
