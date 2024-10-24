@@ -111,8 +111,13 @@ void collide_carlson(particle& p, const float xi) {
         energy_new += 0.5f * (alpha - 4.0f) * xi * xi * (1.0f - xi) * (1.0f - xi);
     }
 
-    float new_cos = 1.0f - (eps / energy_new) + (eps / energy_now);
-    float new_sin = (float)sqrt(1.0 - new_cos * new_cos);
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution new_angle(0.0, 2.0 * M_PI);
+    auto angle = new_angle(gen);
+
+    float new_cos = (float)cos(angle);
+    float new_sin = (float)sin(angle);
 
     p.set_direction(new_cos, new_sin);
     p.set_energy(energy_new);
