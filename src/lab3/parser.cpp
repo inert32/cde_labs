@@ -7,7 +7,7 @@
 
 bool is_known_command(const std::string& cmd) {
     return cmd == "area" || cmd == "subarea" || cmd == "source" ||
-    cmd == "particles" || cmd == "energy" || cmd == "matreial";
+    cmd == "particles" || cmd == "energy" || cmd == "material";
 }
 
 // Проверка команд файла на нужное число аргументов
@@ -29,9 +29,9 @@ bool checkout_energy_args(const parser_opts& en) {
         auto pos = i.find('=');
         if (pos == std::string::npos) return false;
 
-        // Вероятность должна быть близка к единице (насколько можно)
         total_prob += std::stof(i.substr(pos + 1));
     }
+    // Вероятность должна быть близка к единице (насколько можно)
     return (fabs(total_prob - 1.0f) < 0.001f) ? true : false;
 }
 
@@ -147,4 +147,20 @@ emit_point* spawn_emitter(const parser_line& src, const parser_line& energy) {
 
 size_t get_particles_count(const parser_line& src) {
     return std::stoul(src.second[0]);
+}
+
+std::map<std::string_view, material_t>* load_materials(const parser_data& conf) {
+    auto ret = new std::map<std::string_view, material_t>;
+    for (auto &i : conf) {
+        if (i.first == "material") {
+            material_t m;
+            auto& args = i.second;
+            std::string_view name = args[0];
+            m.sigma = std::stof(args[1]);
+            m.consume_prob = std::stof(args[2]);
+
+            ret->insert_or_assign(name, m);
+        }
+    }
+    return ret;
 }

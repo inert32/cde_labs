@@ -1,6 +1,7 @@
 #ifndef __MODEL_H__
 #define __MODEL_H__
 
+#include <string_view>
 #include <vector>
 #include <string>
 
@@ -28,7 +29,16 @@ struct subarea_t {
     float width = 0.0f;
     // Оптическая толщина
     float optics = 0.0f;
+    // Вероятность поглощения
+    float consume_prob = 0.0f;
+    std::string_view name;
+};
 
+// Параметры материала.
+// Необходима во время настройки simulation
+struct material_t {
+    // Сечение взаимодействия
+    float sigma = 0.0f;
     // Вероятность поглощения
     float consume_prob = 0.0f;
 };
