@@ -1,11 +1,13 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
+#include <cmath>
 #include <fstream>
 #include "parser.h"
 
 bool is_known_command(const std::string& cmd) {
-    return cmd == "area" || cmd == "subarea" || cmd == "source" || cmd == "particles" || cmd == "energy";
+    return cmd == "area" || cmd == "subarea" || cmd == "source" ||
+    cmd == "particles" || cmd == "energy" || cmd == "matreial";
 }
 
 // Проверка команд файла на нужное число аргументов
@@ -15,6 +17,7 @@ bool checkout_args(const std::string& command, const parser_opts& opts) {
     if (command == "source") return opts.size() == 4;
     if (command == "particles") return opts.size() == 1;
     if (command == "energy") return opts.size() > 0;
+    if (command == "material") return opts.size() == 3;
 
     return false;
 }

@@ -7,8 +7,11 @@ function(configure_target target)
         target_compile_options(${target} PUBLIC /W4)
         target_compile_options(${target} PUBLIC $<$<CONFIG:Release>:/WX>)
     else()
-        target_compile_options(${target} PUBLIC -Wall -Wextra -Wpedantic)
-        target_compile_options(${target} PUBLIC $<$<CONFIG:Release>:-Werror -flto>)
+        target_compile_options(${target} PUBLIC -Wall -Wextra -Wpedantic -fexceptions -pipe
+        -Wformat=2 -Wsign-conversion -Werror=format-security -fstack-protector-strong -Wl,-z,noexecstack -fPIE -pie)
+
+        target_compile_options(${target} PUBLIC $<$<CONFIG:Debug>:-g3>)
+        target_compile_options(${target} PUBLIC $<$<CONFIG:Release>:-O2 -D_FORTIFY_SOURCE=2 -Werror -flto>)
     endif()
 
     # Запуск статического анализа
