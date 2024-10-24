@@ -98,7 +98,7 @@ public:
     void show_frame([[maybe_unused]] const mesh_t& mesh, [[maybe_unused]] const size_t curr, [[maybe_unused]] const double t_step) {}
 };
 
-sdl_events handle_kbd() { return sdl_events::quit; }
+sdl_events handle_kbd();
 
 #endif /* __ENABLE_GRAPH__ */
 
