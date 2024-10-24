@@ -1,7 +1,7 @@
 #ifndef __MODEL_H__
 #define __MODEL_H__
 
-#include <string_view>
+#include <map>
 #include <vector>
 #include <string>
 
@@ -42,6 +42,7 @@ struct material_t {
     // Вероятность поглощения
     float consume_prob = 0.0f;
 };
+typedef std::map<std::string, material_t> mat_t;
 
 class particle {
 public:

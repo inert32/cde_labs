@@ -67,16 +67,12 @@ SDL_FPoint emit_point::get_position() const {
 }
 
 simulation::simulation(const parser_data& conf) {
-    subareas = spawn_areas(conf, &main_area);
     // Загрузка материалов
     auto mats = load_materials(conf);
-    if (mats->size() == 0)
+    if (mats.size() == 0)
         throw std::runtime_error("No materials found.");
-        
-    std::cout << "simulation: debug: materials loaded: ";
-    for (auto &i : *mats) {
-        std::cout << "Material '" << i.first << "' : sigma " << i.second.sigma << ", prob: " << i.second.consume_prob << std::endl;
-    }
+
+    subareas = spawn_areas(conf, &main_area, mats);
     // Получаем границы для подобластей
     b_count = subareas.size();
     borders = new subarea_borders_t[b_count];

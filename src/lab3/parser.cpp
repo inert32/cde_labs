@@ -13,7 +13,7 @@ bool is_known_command(const std::string& cmd) {
 // Проверка команд файла на нужное число аргументов
 bool checkout_args(const std::string& command, const parser_opts& opts) {
     if (command == "area") return opts.size() == 2;
-    if (command == "subarea") return opts.size() == 4;
+    if (command == "subarea") return opts.size() == 3;
     if (command == "source") return opts.size() == 4;
     if (command == "particles") return opts.size() == 1;
     if (command == "energy") return opts.size() > 0;
@@ -91,7 +91,7 @@ bool check_subarea(const subarea_t& test, const main_area_t& main) {
     return test.x_start > 0.0f && test.width > 0.0f && test.x_start + test.width < main.length;
 }
 
-std::vector<subarea_t> spawn_areas(const parser_data& src, main_area_t* main_area) {
+std::vector<subarea_t> spawn_areas(const parser_data& src, main_area_t* main_area, const mat_t& materials) {
     std::vector<subarea_t> others;
 
     // Ищем main_area
@@ -109,10 +109,18 @@ std::vector<subarea_t> spawn_areas(const parser_data& src, main_area_t* main_are
             subarea_t sa;
             sa.x_start = std::stof(sa_raw[0]);
             sa.width = std::stof(sa_raw[1]);
-            sa.optics = std::stof(sa_raw[2]);
+            auto mat_id = sa_raw[2];
+            sa.name = mat_id;
+
+            try {
+                sa.optics = materials.at(mat_id).sigma;
+            }
+            catch (const std::exception&) {
+                throw std::runtime_error("Unknown material: " + mat_id);
+            }
             if (!(sa.optics > 0.0f)) throw std::runtime_error("loader: Error: Check subarea " + std::to_string(others.size() + 1) + " optical density");
             
-            sa.consume_prob = std::stof(sa_raw[3]);
+            sa.consume_prob = materials.at(mat_id).consume_prob;
             if (!(sa.consume_prob > 0.01f && sa.consume_prob < 1.0)) 
                 throw std::runtime_error("loader: Error: Check subarea " + std::to_string(others.size() + 1) + " absorbtion probability");
 
@@ -149,17 +157,17 @@ size_t get_particles_count(const parser_line& src) {
     return std::stoul(src.second[0]);
 }
 
-std::map<std::string_view, material_t>* load_materials(const parser_data& conf) {
-    auto ret = new std::map<std::string_view, material_t>;
+mat_t load_materials(const parser_data& conf) {
+    mat_t ret;
     for (auto &i : conf) {
         if (i.first == "material") {
             material_t m;
             auto& args = i.second;
-            std::string_view name = args[0];
+            std::string name = args[0];
             m.sigma = std::stof(args[1]);
             m.consume_prob = std::stof(args[2]);
 
-            ret->insert_or_assign(name, m);
+            ret.insert_or_assign(name, m);
         }
     }
     return ret;
