@@ -12,6 +12,25 @@
 #include "parser.h"
 #include "model.h"
 
+void print_stats(const sim_stats& stats) {
+    const auto prec = std::cout.precision();
+    std::cout << "Statistics: " << std::endl;
+
+    auto sp = (float)stats.screen_particles / (float)stats.total_particles * 100.0f;
+    std::cout << "Particles got on screen: " << stats.screen_particles << "/" << stats.total_particles <<
+    std::setprecision(4) << " (" << sp << "%)" << std::setprecision(prec) << std::endl;
+
+    auto ep = stats.screen_energy / stats.total_energy * 100.0f;
+    std::cout << "Screen absorbed " << stats.screen_energy << "/" << stats.total_energy <<
+    std::setprecision(4) << " MeV (" << ep << "%)" << std::setprecision(prec) << std::endl;
+            
+    for (size_t i = 0; i < stats.subareas_count; i++) {
+        auto sa = stats.subarea_energy[i] / stats.total_energy * 100.0f;
+        std::cout << "Subarea " << i + 1 << " absorbed: " << stats.subarea_energy[i] <<
+        std::setprecision(4) << " MeV (" << sa << "%)" << std::setprecision(prec) << std::endl;
+    }
+}
+
 int main(int argc, char** argv) {
     std::cout << "Lab3 " << build_version << " " << build_git << std::endl;
     auto cli = parse_cli(argc, argv);
@@ -36,22 +55,7 @@ int main(int argc, char** argv) {
         while (sim.process_particle());
         std::cout << "Simulation complete." << std::endl;
 
-        if (run_stats) {
-            auto stats = sim.get_stats();
-            std::cout << "Statistics: " << std::endl;
-            std::cout << std::setprecision(3);
-
-            std::cout << "Particles got on screen: " << stats.screen_particles << "/" << stats.total_particles
-            << " (" << (float)stats.screen_particles / (float)stats.total_particles * 100.0f << "%)" << std::endl;
-
-            std::cout << "Screen absorbed " << stats.screen_energy << "/" << stats.total_energy
-            << " MeV (" << stats.screen_energy / stats.total_energy * 100.0f << "%)" << std::endl;
-            
-            for (size_t i = 0; i < stats.subareas_count; i++) {
-                std::cout << "Subarea " << i + 1 << " absorbed: " << stats.subarea_energy[i]
-                << " MeV (" << stats.subarea_energy[i] / stats.total_energy * 100.0f << "%)" << std::endl;
-            }
-        }
+        if (run_stats) print_stats(sim.get_stats());
 
         if (run_sdl) {
             try {
