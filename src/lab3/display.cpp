@@ -55,14 +55,14 @@ void sdl_display::show_frame(const sim_output& tracks) {
     // Подобласти
     for (size_t i = 0; i < subareas_count; i++) {
         // Отрисовка разных подобластей разными цветами
-        int color_now = i % 3;
+        size_t color_now = i % 3;
         SDL_SetRenderDrawColor(rend, subareas_colors[color_now][0], 
         subareas_colors[color_now][1], subareas_colors[color_now][2], 100);
 
         SDL_RenderFillRectF(rend, &subareas_[i]);
 
         // Вывод названия материала
-        text->render_text(names[i], subareas_[i].x, area_y_end + 10, subareas_[i].w);
+        text->render_text(names[i], (int)subareas_[i].x, area_y_end + 10, (int)subareas_[i].w);
     }
 
     // Треки
@@ -75,26 +75,15 @@ void sdl_display::show_frame(const sim_output& tracks) {
     SDL_RenderPresent(rend);
 }
 
-sim_output sdl_display::translate_tracks(const sim_output& tracks) const {
-    sim_output ret;
-
-    size_t part_count = ret.particle_count = tracks.particle_count;
-    ret.tracks = new SDL_FPoint*[part_count];
-    ret.track_len = new size_t[part_count];
-
-    for (size_t p = 0; p < part_count; p++) {
+sim_output sdl_display::translate_tracks(sim_output& tracks) const {
+    for (size_t p = 0; p < tracks.particle_count; p++) {
         auto len = tracks.track_len[p];
-        ret.track_len[p] = len;
-        ret.tracks[p] = new SDL_FPoint[len];
-
-        auto from = tracks.tracks[p];
-        auto to = ret.tracks[p];
-
+        auto curr = tracks.tracks[p];
         for (size_t t = 0; t < len; t++)
-            to[t] = calc_point_position(from[t]);
+            curr[t] = calc_point_position(curr[t]);
     }
 
-    return ret;
+    return tracks;
 }
 
 void sdl_display::setup_consts(const simulation& sim) {

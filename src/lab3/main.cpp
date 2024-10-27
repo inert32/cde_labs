@@ -13,7 +13,7 @@
 #include "model.h"
 
 void print_stats(const sim_stats& stats) {
-    const auto prec = std::cout.precision();
+    const auto prec = (int)std::cout.precision();
     std::cout << "Statistics: " << std::endl;
 
     auto sp = (float)stats.screen_particles / (float)stats.total_particles * 100.0f;
@@ -60,7 +60,8 @@ int main(int argc, char** argv) {
         if (run_sdl) {
             try {
                 sdl_display disp(sim);
-                auto tracks = disp.translate_tracks(sim.get_tracks());
+                auto tracks = sim.get_tracks();
+                tracks = disp.translate_tracks(tracks);
                 bool run = true;
 
                 while (run) {
