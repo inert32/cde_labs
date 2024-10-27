@@ -7,6 +7,13 @@
 #include "model.h"
 #include "parser.h"
 
+// Уравнение прямой
+struct line_t {
+    float A = 0.0f;
+    float B = 0.0f;
+    float C = 0.0f;
+};
+
 particle::particle(const float pos_x, const float pos_y, const float dir_x, const float dir_y, const float en) {
     pos = {pos_x, pos_y};
     direction = {dir_x, dir_y};
@@ -89,6 +96,7 @@ simulation::simulation(const parser_data& conf) {
         tracks.back().reserve(5);
     }
 
+    // Подготовка статистики
     stat_subarea_energy = new float[b_count];
     for (size_t i = 0; i < b_count; i++) stat_subarea_energy[i] = 0.0f;
 }
@@ -128,6 +136,42 @@ void collide_carlson(particle& p, const float xi) {
     p.set_energy(energy_new);
 }
 
+SDL_FPoint calc_real_end_pos(const SDL_FPoint start_pos, const SDL_FPoint end_pos, const main_area_t& consts) {
+    std::cout << "debug: pos: " << start_pos.x << " " << start_pos.y << " " << end_pos.x << " " << end_pos.y << std::endl;
+    // Уравнение последнего движения частицы
+    line_t track;
+    track.A = end_pos.y - start_pos.y;
+    track.B = start_pos.x - end_pos.x;
+    track.C = start_pos.y * (end_pos.x - start_pos.x);
+    track.C -= start_pos.x * (end_pos.y - start_pos.y);
+    track.C *= -1.0f;
+
+    float len[4] = {HUGE_VALF, HUGE_VALF, HUGE_VALF, HUGE_VALF};
+    SDL_FPoint rets[4];
+    rets[0] = { 0.0f, track.C / track.B };
+    rets[1] = { (track.C - track.B * consts.height) / track.A, consts.height };
+    rets[2] = { track.C / track.A, 0.0f };
+    rets[3] = { consts.length, (track.C - track.A * consts.length) / track.B };
+
+    // Расчет расстояния
+    for (int i = 0; i < 4; i++) {
+        auto tmp = sqrt(pow(rets[i].x - start_pos.x, 2.0f) + pow(rets[i].y - start_pos.y, 2.0f));
+        len[i] = tmp;
+    }
+
+    // Выбираем минимальное расстояние
+    float min = HUGE_VALF;
+    int ind = 0;
+    for (int i = 0; i < 4; i++)
+        if (len[i] < min) {
+            ind = i;
+            min = len[i];
+        }
+
+    std::cout << "debug: return: " << rets[ind].x << " " << rets[ind].y << " (" << ind << ")" << " with len " << len[ind] << std::endl;
+    return rets[ind];
+}
+
 bool simulation::process_particle() {
     if (current_part >= part_count) return false; // Не рассчитываем частицы, если они не заданы
     std::random_device rd;
@@ -135,12 +179,17 @@ bool simulation::process_particle() {
     std::uniform_real_distribution nums(0.0f, main_area.length);
 
     auto p = emitter->spawn_particle();
-    tracks[current_part].push_back(p.get_position());
+
+    SDL_FPoint coord_pre, coord_now;
+    coord_now = p.get_position();
+    tracks[current_part].push_back(coord_now);
+
     float start_energy = p.get_energy();
     stat_total_energy += start_energy;
 
+    bool is_absorbed = false;
     do { // Движение частицы
-        auto sa_now = get_subarea_index(p.get_position()); // Текущая подобласть: вакуум(0) или вещество(>0)
+        auto sa_now = get_subarea_index(coord_now); // Текущая подобласть: вакуум(0) или вещество(>0)
 
         float move = nums(gen);
         float opt = subareas[sa_now - 1].optics; // get_subarea_index смещена на +1, компенсируем
@@ -148,26 +197,39 @@ bool simulation::process_particle() {
 
         // Транспортное ядро
         p.move_particle(move);
-        tracks[current_part].push_back(p.get_position());
-        sa_now = get_subarea_index(p.get_position());
+        coord_pre = coord_now;
+        coord_now = p.get_position();
+        tracks[current_part].push_back(coord_now);
+        sa_now = get_subarea_index(coord_now);
 
         // Ядро столкновений
         if (sa_now > 0) {
             std::uniform_real_distribution xi(0.0f, 1.0f);
-            if (xi(gen) > subareas[sa_now - 1].consume_prob) 
+            if (xi(gen) > subareas[sa_now - 1].consume_prob) {
+                auto pre_consume = p.get_energy();
                 collide_carlson(p, 0.5f);
+                // Поглощение веществом энергии
+                stat_subarea_energy[sa_now - 1] += pre_consume - p.get_energy();
+            }
             else {
                 stat_subarea_energy[sa_now - 1] += p.get_energy();
+                is_absorbed = true;
                 break;
             }
         }
     } while (is_within_main(p.get_position()));
-    // На экран?
-    auto end_pos = p.get_position();
     float end_energy = p.get_energy();
-    if (end_pos.x > main_area.length) {
-        stat_screen_particles++;
-        stat_screen_energy += end_energy;
+
+    if (!is_absorbed) {
+        // Частица скорее всего перелетела границы. В какой точке?
+        auto end_pos = calc_real_end_pos(coord_pre, coord_now, main_area);
+        tracks[current_part].back() = end_pos;
+
+        // На экран?
+        if (fabs(end_pos.x - main_area.length) < 0.001 && end_pos.y > 0.0f && end_pos.y < main_area.length) {
+            stat_screen_particles++;
+            stat_screen_energy += end_energy;
+        }
     }
 
     part_en.push_back({start_energy, end_energy});
@@ -180,7 +242,7 @@ bool simulation::process_particle() {
     std::cout << std::endl;
 
     current_part++;
-    return (current_part < part_count) ? true : false;
+    return current_part < part_count;
 }
 
 const main_area_t simulation::get_main_area() const {
