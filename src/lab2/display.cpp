@@ -58,7 +58,7 @@ void sdl_display::show_frame(const mesh_t& mesh, const size_t curr, const double
     delete[] points;
 
     // Вывести текущее время
-    auto time = text->cut_number(curr * t_step, 3);
+    auto time = text->cut_number((double)curr * t_step, 3);
     text->render_text("Time: " + time + "s", area_x_start, (int)(0.91 * len_y));
 
     // Передаем на экран
@@ -115,14 +115,14 @@ sdl_grid::sdl_grid(const size_t marks_x, const size_t marks_y, const SDL_FRect a
     const float start_t = area.y; // Отступаем от верхнего края экрана
     // Отметки на оси абсцисс
     for (size_t i = 0; i < grid_ox_count + 1; i++) {
-        float x = i * step_x;
+        float x = (float)i * step_x;
 
         coord_grid[total++] = { x + start_x, mid_y - 10.0f };
         coord_grid[total++] = { x + start_x, mid_y + 10.0f };
     }
     // Отметки на оси ординат
     for (size_t i = 0; i < grid_oy_count + 1; i++) {
-        float t = i * step_y;
+        float t = (float)i * step_y;
 
         coord_grid[total++] = { start_x - 10.0f, t + start_t };
         coord_grid[total++] = { start_x + 10.0f, t + start_t };
@@ -155,8 +155,8 @@ void sdl_grid::draw_axes(SDL_Renderer* rend, const mesh_t& mesh, const size_t cu
     // Ось абсцисс
     auto pos_y = (area_.h - area_.y) / 2.0 + area_.y + 5;
     for (size_t i = 1; i < grid_ox_count + 1; i++) {
-        auto num = text_->cut_number(i * step_x_axis, 3);
-        text_->render_text(num, (int)(i * step_x + area_.x - 9), (int)pos_y);
+        auto num = text_->cut_number((float)i * step_x_axis, 3);
+        text_->render_text(num, (int)((float)i * step_x + area_.x - 9.0f), (int)pos_y);
     }
 
     // Ось ординат
@@ -164,7 +164,7 @@ void sdl_grid::draw_axes(SDL_Renderer* rend, const mesh_t& mesh, const size_t cu
     for (size_t i = 0; i < grid_oy_count + 1; i++) {
         int mult = (int)(grid_oy_count / 2 - i); // Рассчитываем значения ниже OX по значениям выше
         auto num = text_->cut_number(mult * step_y_axis, 3);
-        text_->render_text(num, (int)pos_x, (int)(i * step_y + area_.y - 9));
+        text_->render_text(num, (int)pos_x, (int)((float)i * step_y + area_.y - 9.0f));
     }
 }
 

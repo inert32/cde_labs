@@ -46,7 +46,7 @@ public:
 
     // Задать значения оси абсцисс
     void set_layer_x(const double step) {
-        for (size_t i = 0; i < _x_size; i++) layer_x[i] = i * step;
+        for (size_t i = 0; i < _x_size; i++) layer_x[i] = (double)i * step;
     }
 
     // Задать первый слой сетки

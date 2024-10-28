@@ -29,7 +29,7 @@ double quadrants::calc(const func_base* fn, const size_t count, const double fro
     const double step = (to - from) / (double)count;
     double sum = 0.0;
     for (size_t i = 0; i < count; i++)
-        sum = sum + fn->calc(from + step * i);
+        sum = sum + fn->calc(from + step * (double)i);
 
     return step * sum;
 }
@@ -42,7 +42,7 @@ double trapezoid::calc(const func_base* fn, const size_t count, const double fro
 
     double sum = 0.0;
     for (size_t i = 1; i < count - 1; i++)
-        sum = sum + fn->calc(from + step * i);
+        sum = sum + fn->calc(from + step * (double)i);
 
     return step * (sum + borders);
 }
@@ -51,12 +51,12 @@ double simpson::calc(const func_base* fn, const size_t count, const double from,
     std::cout << "Using Simpson's method" << std::endl;
 
     const size_t count_n = count * 2;
-    const double step = (to - from) / count_n;
+    const double step = (to - from) / (double)count_n;
 
     double sum1 = 0.0, sum2 = 0.0;
     for (size_t i = 1; i < count_n; i+=2) {
-        sum1 = sum1 + fn->calc(from + step * i); // Проход по нечетным членам
-        sum2 = sum2 + fn->calc(from + step * (i + 1)); // Проход по четным членам
+        sum1 = sum1 + fn->calc(from + step * (double)i); // Проход по нечетным членам
+        sum2 = sum2 + fn->calc(from + step * (double)(i + 1)); // Проход по четным членам
     }
 
     sum1 = sum1 * 4.0;
