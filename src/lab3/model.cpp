@@ -137,7 +137,6 @@ void collide_carlson(particle& p, const float xi) {
 }
 
 SDL_FPoint calc_real_end_pos(const SDL_FPoint start_pos, const SDL_FPoint end_pos, const main_area_t& consts) {
-    std::cout << "debug: pos: " << start_pos.x << " " << start_pos.y << " " << end_pos.x << " " << end_pos.y << std::endl;
     // Уравнение последнего движения частицы
     line_t track;
     track.A = end_pos.y - start_pos.y;
@@ -168,7 +167,6 @@ SDL_FPoint calc_real_end_pos(const SDL_FPoint start_pos, const SDL_FPoint end_po
             min = len[i];
         }
 
-    std::cout << "debug: return: " << rets[ind].x << " " << rets[ind].y << " (" << ind << ")" << " with len " << len[ind] << std::endl;
     return rets[ind];
 }
 
