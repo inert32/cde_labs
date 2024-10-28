@@ -21,7 +21,7 @@ sdl_events handle_kbd();
 
 class sdl_text {
 public:
-    sdl_text(SDL_Renderer* renderer);
+    sdl_text(SDL_Renderer* renderer, const bool force_start = false);
     ~sdl_text();
 
     // Вывод текста по координатам x, y

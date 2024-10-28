@@ -3,6 +3,7 @@
 
 #ifdef __ENABLE_GRAPH__
 
+#include <iostream>
 #include <stdexcept>
 #include "display.h"
 
@@ -27,7 +28,13 @@ sdl_display::sdl_display(const simulation& sim) {
     SDL_SetRenderDrawBlendMode(rend, SDL_BLENDMODE_BLEND);
 
     setup_consts(sim);
-    text = new sdl_text(rend);
+    try {
+        text = new sdl_text(rend);
+    }
+    catch (const std::exception &e) {
+        std::cerr << "SDL: Warn: No font.ttf detected, disable text functions." << std::endl;
+        text = new sdl_text(rend, true);
+    }
 
     clear_screen();
     SDL_RenderPresent(rend);
@@ -127,12 +134,12 @@ SDL_FPoint sdl_display::calc_point_position(const SDL_FPoint p) const {
     return {ret_x, ret_y};
 }
 
-sdl_text::sdl_text(SDL_Renderer* renderer) {
+sdl_text::sdl_text(SDL_Renderer* renderer, const bool force_start) {
     rend = renderer;
     TTF_Init();
     // Загрузка шрифта
     font = TTF_OpenFont("font.ttf", 16);
-    if (font == nullptr) throw std::runtime_error(TTF_GetError());
+    if (font == nullptr && !force_start) throw std::runtime_error(TTF_GetError());
 }
 
 sdl_text::~sdl_text() {
@@ -140,6 +147,8 @@ sdl_text::~sdl_text() {
 }
 
 void sdl_text::render_text(const std::string& text, const int x, const int y, const int len = 0) {
+    if (font == nullptr) return;
+
     auto surf = TTF_RenderText_LCD(font, text.c_str(), {255, 255, 255, 255}, {127, 127, 127, 255});
     if (surf == nullptr) throw std::runtime_error(TTF_GetError());
     auto texture = SDL_CreateTextureFromSurface(rend, surf);
