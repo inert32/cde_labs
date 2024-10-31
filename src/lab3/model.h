@@ -4,6 +4,7 @@
 #include <map>
 #include <vector>
 #include <string>
+#include <iostream>
 
 #ifndef __ENABLE_GRAPH__ // SDL отключен, копируем определение SDL_FPoint
 typedef struct SDL_FPoint
@@ -95,6 +96,50 @@ struct sim_output {
     SDL_FPoint* energies = nullptr;
 
     size_t particle_count = 0;
+    sim_output(const size_t count) {
+        particle_count = count;
+        tracks = new SDL_FPoint*[count];
+        track_len = new size_t[count];
+        energies = new SDL_FPoint[count];
+    }
+    sim_output(const sim_output& other) {
+        particle_count = other.particle_count;
+        track_len = new size_t[particle_count];
+        memcpy(track_len, other.track_len, sizeof(size_t) * particle_count);
+
+        tracks = new SDL_FPoint*[particle_count];
+        for (size_t i = 0; i < particle_count; i++) {
+            auto len = track_len[i];
+            tracks[i] = new SDL_FPoint[len];
+            memcpy(tracks[i], other.tracks[i], sizeof(SDL_FPoint) * len);
+        }
+
+        energies = new SDL_FPoint[particle_count];
+        memcpy(energies, other.energies, sizeof(SDL_FPoint) * particle_count);
+    }
+    sim_output& operator=(const sim_output& other) {
+        if (this == &other) return *this;
+        particle_count = other.particle_count;
+        track_len = new size_t[particle_count]; //-V773
+        memcpy(track_len, other.track_len, sizeof(size_t) * particle_count);
+
+        tracks = new SDL_FPoint*[particle_count];
+        for (size_t i = 0; i < particle_count; i++) {
+            auto len = track_len[i];
+            tracks[i] = new SDL_FPoint[len];
+            memcpy(tracks[i], other.tracks[i], sizeof(SDL_FPoint) * len);
+        }
+
+        energies = new SDL_FPoint[particle_count];
+        memcpy(energies, other.energies, sizeof(SDL_FPoint) * particle_count);
+        return *this;
+    }
+    ~sim_output() {
+        for (size_t i = 0; i < particle_count; i++) delete[] tracks[i];
+        delete[] tracks;
+        delete[] track_len;
+        delete[] energies;
+    }
 };
 
 // Статистика симуляции
@@ -108,7 +153,7 @@ struct sim_stats {
     // Энергия, поглощеная экраном
     float screen_energy = 0.0f;
     // Энергия, поглощеная веществами
-    float* subarea_energy = nullptr;
+    std::vector<float> subarea_energy;
 
     std::vector<std::string> subarea_names;
 

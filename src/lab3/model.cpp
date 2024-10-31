@@ -281,13 +281,7 @@ bool simulation::is_within_main(const SDL_FPoint p) const {
 }
 
 sim_output simulation::get_tracks() const {
-    sim_output ret;
-
-    ret.particle_count = part_count;
-    ret.tracks = new SDL_FPoint*[part_count];
-    ret.track_len = new size_t[part_count];
-    ret.energies = new SDL_FPoint[part_count];
-
+    sim_output ret(part_count);
     for (size_t p = 0; p < part_count; p++) {
         auto len = tracks[p].size();
         ret.track_len[p] = len;
@@ -308,10 +302,10 @@ sim_stats simulation::get_stats() const {
     sim_stats ret;
     const size_t size = subareas.size();
 
-    ret.subarea_energy = new float[size];
+    ret.subarea_energy.reserve(size);
     ret.subareas_count = size;
     for (size_t i = 0 ; i < size; i++)
-        ret.subarea_energy[i] = stat_subarea_energy[i];
+        ret.subarea_energy.push_back(stat_subarea_energy[i]);
 
     ret.screen_energy = stat_screen_energy;
     ret.screen_particles = stat_screen_particles;
