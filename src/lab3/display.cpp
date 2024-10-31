@@ -4,6 +4,7 @@
 #ifdef __ENABLE_GRAPH__
 
 #include <iostream>
+#include <random>
 #include "display.h"
 
 static constexpr Uint8 subareas_colors[3][3] = {
@@ -61,10 +62,8 @@ void sdl_display::show_frame(const sim_output& tracks) {
     // Подобласти
     for (size_t i = 0; i < subareas_count; i++) {
         // Отрисовка разных подобластей разными цветами
-        size_t color_now = i % 3;
-        SDL_SetRenderDrawColor(rend, subareas_colors[color_now][0], 
-        subareas_colors[color_now][1], subareas_colors[color_now][2], 100);
-
+        auto color = subarea_colors[names[i]];
+        SDL_SetRenderDrawColor(rend, color.r, color.g, color.b, 100);
         SDL_RenderFillRectF(rend, &subareas_[i]);
 
         // Вывод названия материала
@@ -117,6 +116,15 @@ void sdl_display::setup_consts(const simulation& sim) {
         subareas_.push_back(tmp);
     }
     names = sim.get_subarea_names();
+
+    // Выбор цвета для разных материалов
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution color(0, 255);
+    for (auto &i : names) {
+        color_t c = {(Uint8)color(gen), (Uint8)color(gen), (Uint8)color(gen)};
+        subarea_colors.insert_or_assign(i, c);
+    }
 }
 
 SDL_FPoint sdl_display::calc_point_position(const float x, const float y) const {

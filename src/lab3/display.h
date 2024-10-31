@@ -15,6 +15,7 @@ sdl_events handle_kbd();
 
 #ifdef __ENABLE_GRAPH__
 
+#include <map>
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include "model.h"
@@ -30,6 +31,12 @@ private:
     // Шрифт
     TTF_Font* font = nullptr;
     SDL_Renderer* rend = nullptr;
+};
+
+struct color_t {
+    Uint8 r = 0;
+    Uint8 g = 0;
+    Uint8 b = 0;
 };
 
 // Отображение графика на экране
@@ -73,6 +80,7 @@ private:
     std::vector<SDL_FRect> subareas_;
     size_t subareas_count = 0;
     std::vector<std::string> names;
+    std::map<std::string, color_t> subarea_colors;
 
     // Координаты источника
     SDL_FPoint emitter_pos = {0.0f, 0.0f};
