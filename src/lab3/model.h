@@ -4,7 +4,6 @@
 #include <map>
 #include <vector>
 #include <string>
-#include <iostream>
 
 #ifndef __ENABLE_GRAPH__ // SDL отключен, копируем определение SDL_FPoint
 typedef struct SDL_FPoint
@@ -47,14 +46,16 @@ typedef std::map<std::string, material_t> mat_t;
 
 class particle {
 public:
-    particle(const float pos_x, const float pos_y, const float dir_x, const float dir_y, const float en);
+    particle(const float pos_x, const float pos_y, const float dir_x, const float dir_y, const float en) {
+        pos = {pos_x, pos_y}; direction = {dir_x, dir_y}; energy = en;
+    }
 
-    SDL_FPoint get_position() const;
-    float get_energy() const;
+    SDL_FPoint get_position() const { return pos; }
+    float get_energy() const { return energy; }
 
-    void move_particle(const float len);
-    void set_direction(const float dir_x, const float dir_y);
-    void set_energy(const float en);
+    void move_particle(const float len) { pos.x += len * direction.x; pos.y += len * direction.y; }
+    void set_direction(const float dir_x, const float dir_y) { direction = {dir_x, dir_y}; }
+    void set_energy(const float en) { energy = en; }
 private:
     // Координаты частицы
     SDL_FPoint pos;
@@ -72,11 +73,13 @@ struct energy_distr_t {
 // Точечный источник частиц
 class emit_point {
 public:
-    emit_point(const float pos_x, const float pos_y, const float angle, const std::vector<energy_distr_t>& dist);
+    emit_point(const float pos_x, const float pos_y, const float angle, const std::vector<energy_distr_t>& dist) : energy(dist) {
+        pos.x = pos_x; pos.y = pos_y; spread = angle;
+    }
     emit_point() = default;
 
     particle spawn_particle();
-    SDL_FPoint get_position() const;
+    SDL_FPoint get_position() const { return pos; }
 private:
     SDL_FPoint pos;
     float spread;
@@ -170,9 +173,9 @@ public:
     // Возвращает false, если все частицы рассчитаны
     bool process_particle();
 
-    const main_area_t get_main_area() const;
-    const std::vector<subarea_t>& get_subarea() const;
-    const emit_point* get_emitter() const;
+    const main_area_t get_main_area() const { return main_area; }
+    const std::vector<subarea_t>& get_subarea() const { return subareas; }
+    const emit_point* get_emitter() const { return emitter; }
     std::vector<std::string> get_subarea_names() const;
 
     // Вывод данных о симуляции

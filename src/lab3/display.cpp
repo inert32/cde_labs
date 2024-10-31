@@ -4,7 +4,6 @@
 #ifdef __ENABLE_GRAPH__
 
 #include <iostream>
-#include <stdexcept>
 #include "display.h"
 
 static constexpr Uint8 subareas_colors[3][3] = {

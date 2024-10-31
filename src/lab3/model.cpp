@@ -14,37 +14,6 @@ struct line_t {
     float C = 0.0f;
 };
 
-particle::particle(const float pos_x, const float pos_y, const float dir_x, const float dir_y, const float en) {
-    pos = {pos_x, pos_y};
-    direction = {dir_x, dir_y};
-    energy = en;
-}
-
-SDL_FPoint particle::get_position() const {
-    return pos;
-}
-
-float particle::get_energy() const {
-    return energy;
-}
-
-void particle::move_particle(const float len) {
-    pos.x += len * direction.x;
-    pos.y += len * direction.y;
-}
-
-void particle::set_direction(const float dir_x, const float dir_y) {
-    direction = {dir_x, dir_y};
-}
-
-void particle::set_energy(const float en) {
-    energy = en;
-}
-
-emit_point::emit_point(const float pos_x, const float pos_y, const float angle, const std::vector<energy_distr_t>& dist) : energy(dist) {
-    pos.x = pos_x; pos.y = pos_y; spread = angle;
-}
-
 particle emit_point::spawn_particle() {
     std::random_device rd;
     std::mt19937 gen(rd());
@@ -67,10 +36,6 @@ particle emit_point::spawn_particle() {
     prob_id--;
 
     return particle(pos.x, pos.y, dir_x, dir_y, energy[prob_id].level);
-}
-
-SDL_FPoint emit_point::get_position() const {
-    return pos;
 }
 
 simulation::simulation(const parser_data& conf) {
@@ -241,18 +206,6 @@ bool simulation::process_particle() {
 
     current_part++;
     return current_part < part_count;
-}
-
-const main_area_t simulation::get_main_area() const {
-    return main_area;
-}
-
-const std::vector<subarea_t>& simulation::get_subarea() const {
-    return subareas;
-}
-
-const emit_point* simulation::get_emitter() const {
-    return emitter;
 }
 
 std::vector<std::string> simulation::get_subarea_names() const {

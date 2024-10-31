@@ -1,9 +1,7 @@
 #ifndef __PARSER_H__
 #define __PARSER_H__
 
-#include <vector>
 #include <string>
-#include <map>
 #include "parser_types.h"
 #include "model.h"
 
@@ -21,6 +19,7 @@ emit_point* spawn_emitter(const parser_line& src, const parser_line& energy);
 // Получение числа частиц для обработки
 size_t get_particles_count(const parser_line& src);
 
+// Загрузка данных о материале из файла
 mat_t load_materials(const parser_data& conf);
 
 #endif /* __PARSER_H__ */
