@@ -18,10 +18,10 @@ particle emit_point::spawn_particle() {
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_real_distribution nums_y(90.0f - spread, spread + 90.0f);
-    float angle = (float)(nums_y(gen) * M_PI / 180.0f); // Перевод в радианы
+    auto angle = nums_y(gen) * M_PI / 180.0f; // Перевод в радианы
 
-    float dir_x = sin(angle);
-    float dir_y = cos(angle);
+    float dir_x = (float)sin(angle);
+    float dir_y = (float)cos(angle);
 
     std::uniform_real_distribution en(0.01f, 0.99f);
     float got_prob = en(gen);
@@ -74,7 +74,7 @@ void collide_carlson(particle& p, const float xi) {
     const float alpha = energy_now / eps;
 
     const float S = energy_now / (1.0f + 0.5625f * alpha);
-    float energy_new = energy_now / (1.0f + S + xi + (2.0f * alpha - S) * pow(xi, 3.0f));
+    float energy_new = energy_now / (1.0f + S + xi + (2.0f * alpha - S) * powf(xi, 3.0f));
 
     // Поправки для разных энергий
     if (energy_now > 0.0f && energy_now < 0.5f) {
@@ -118,10 +118,8 @@ SDL_FPoint calc_real_end_pos(const SDL_FPoint start_pos, const SDL_FPoint end_po
     rets[3] = { consts.length, (track.C - track.A * consts.length) / track.B };
 
     // Расчет расстояния
-    for (int i = 0; i < 4; i++) {
-        auto tmp = sqrt(pow(rets[i].x - start_pos.x, 2.0f) + pow(rets[i].y - start_pos.y, 2.0f));
-        len[i] = tmp;
-    }
+    for (int i = 0; i < 4; i++)
+        len[i] = sqrtf(powf(rets[i].x - start_pos.x, 2.0f) + powf(rets[i].y - start_pos.y, 2.0f));
 
     // Выбираем минимальное расстояние
     float min = HUGE_VALF;

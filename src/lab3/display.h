@@ -103,7 +103,7 @@ public:
 
     // Масштабирование треков
     sim_output translate_tracks([[maybe_unused]] const sim_output& tracks) const {
-        sim_output dummy;
+        sim_output dummy(0);
         return dummy;
     }
 

@@ -4,6 +4,7 @@
 #include <map>
 #include <vector>
 #include <string>
+#include <cstring>
 
 #ifndef __ENABLE_GRAPH__ // SDL отключен, копируем определение SDL_FPoint
 typedef struct SDL_FPoint
