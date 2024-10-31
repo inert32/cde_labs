@@ -164,7 +164,7 @@ struct sim_stats {
 class simulation {
 public:
     simulation(const parser_data& conf);
-    ~simulation() = default;
+    ~simulation() { delete emitter; }
 
     // Расчет пути частицы
     // Возвращает false, если все частицы рассчитаны
@@ -194,7 +194,7 @@ private:
 
     // Границы подобластей для простоты расчета столкновений
     struct subarea_borders_t {float start = 0.0f; float end = 0.0f;};
-    subarea_borders_t* borders = nullptr;
+    std::vector<subarea_borders_t> borders;
     size_t b_count = 0;
 
     // Изменяем направление частицы если мы перешли из одной подобласти в другую
@@ -213,7 +213,7 @@ private:
     // Энергия, поглощеная экраном
     float stat_screen_energy = 0.0f;
     // Энергия, поглощеная веществами
-    float* stat_subarea_energy = nullptr;
+    std::vector<float> stat_subarea_energy;
 };
 
 #endif /* __MODEL_H__ */

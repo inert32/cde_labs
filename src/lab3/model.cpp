@@ -82,9 +82,9 @@ simulation::simulation(const parser_data& conf) {
     subareas = spawn_areas(conf, &main_area, mats);
     // Получаем границы для подобластей
     b_count = subareas.size();
-    borders = new subarea_borders_t[b_count];
+    borders.reserve(b_count);
     for (size_t i = 0; i < b_count; i++)
-        borders[i] = { subareas[i].x_start, subareas[i].x_start + subareas[i].width };
+        borders.push_back({ subareas[i].x_start, subareas[i].x_start + subareas[i].width });
 
     emitter = spawn_emitter(find_config_line(conf, "source"), find_config_line(conf, "energy"));
     part_count = get_particles_count(find_config_line(conf, "particles"));
@@ -97,8 +97,8 @@ simulation::simulation(const parser_data& conf) {
     }
 
     // Подготовка статистики
-    stat_subarea_energy = new float[b_count];
-    for (size_t i = 0; i < b_count; i++) stat_subarea_energy[i] = 0.0f;
+    stat_subarea_energy.reserve(b_count);
+    for (size_t i = 0; i < b_count; i++) stat_subarea_energy.push_back(0.0f);
 }
 
 // Метод Карлсона для столкновения

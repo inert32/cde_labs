@@ -105,7 +105,7 @@ void sdl_display::setup_consts(const simulation& sim) {
     // Подобласти
     auto sa = sim.get_subarea();
     subareas_count = sa.size();
-    subareas_ = new SDL_FRect[subareas_count];
+    subareas_.reserve(subareas_count);
     for (size_t i = 0; i < subareas_count; i++) {
         // Переводим координаты
         SDL_FPoint start = calc_point_position(sa[i].x_start, 0.0f);
@@ -115,7 +115,7 @@ void sdl_display::setup_consts(const simulation& sim) {
         SDL_FRect tmp; 
         tmp.x = start.x; tmp.y = start.y;
         tmp.w = end.x - area_x_start; tmp.h = area_y_end - area_y_start;
-        subareas_[i] = tmp;
+        subareas_.push_back(tmp);
     }
     names = sim.get_subarea_names();
 }

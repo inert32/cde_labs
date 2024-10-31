@@ -70,7 +70,7 @@ private:
     void setup_consts(const simulation& sim);
 
     // Массив подобластей
-    SDL_FRect* subareas_ = nullptr;
+    std::vector<SDL_FRect> subareas_;
     size_t subareas_count = 0;
     std::vector<std::string> names;
 
