@@ -153,8 +153,7 @@ bool simulation::process_particle() {
         auto sa_now = get_subarea_index(coord_now); // Текущая подобласть: вакуум(0) или вещество(>0)
 
         float move = nums(gen);
-        float opt = subareas[sa_now - 1].optics; // get_subarea_index смещена на +1, компенсируем
-        if (sa_now != 0) move /= opt;
+        if (sa_now != 0) move /= subareas[sa_now - 1].optics;
 
         // Транспортное ядро
         p.move_particle(move);
