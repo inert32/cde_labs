@@ -17,6 +17,10 @@ public:
     // Вывод текста по координатам x, y.
     // Переменная len позволит выровнять текст по центру
     void render_text(const std::string& text, const int x, const int y, const int len);
+
+    // Для чисел с плавающей запятой отрезать (не округлить)
+    // лишнее число (size) знаков после запятой
+    std::string cut_number(const double num, const size_t size) const;
 private:
     // Шрифт
     TTF_Font* font = nullptr;

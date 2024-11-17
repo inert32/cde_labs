@@ -37,4 +37,11 @@ void sdl_text::render_text(const std::string& text, const int x, const int y, co
     SDL_DestroyTexture(texture);
 }
 
+std::string sdl_text::cut_number(const double num, const size_t size) const {
+    std::string ret = std::to_string(num);
+    auto point_pos = ret.find('.');
+    if (point_pos == ret.npos || point_pos + size > ret.size()) return ret;
+    else return ret.substr(0, point_pos + size);
+}
+
 #endif /* __ENABLE_GRAPH__ */
