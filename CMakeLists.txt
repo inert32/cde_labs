@@ -57,6 +57,7 @@ option(PVS_CHECK "Perform static analysis with PVS-Studio" OFF)
 option(BUILD_LAB1 "Build lab no.1" ON)
 option(BUILD_LAB2 "Build lab no.2" ON)
 option(BUILD_LAB3 "Build lab no.3" ON)
+option(BUILD_LAB4 "Build lab no.4" ON)
 
 option(ENABLE_SDL "Enable graph functionality with SDL library" OFF)
 
@@ -102,4 +103,14 @@ if(BUILD_LAB3)
         target_link_libraries(lab3 SDL2::SDL2 SDL2_ttf::SDL2_ttf)
     endif()
     configure_target(lab3)
+endif()
+
+if(BUILD_LAB4)
+    add_executable(lab4 src/lab4/main.cpp src/common.cpp
+                        src/common.h src/build.h) 
+    if(ENABLE_SDL)
+        target_compile_definitions(lab4 PUBLIC __ENABLE_GRAPH__)
+        target_link_libraries(lab4 SDL2::SDL2 SDL2_ttf::SDL2_ttf)
+    endif()
+    configure_target(lab4)
 endif()
