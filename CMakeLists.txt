@@ -53,13 +53,13 @@ endif()
 configure_file(src/build.h.in ${cde_labs_SOURCE_DIR}/src/build.h)
 
 # Выбор работ
-option(PVS_CHECK "Perform static analysis with PVS-Studio" OFF)
-option(BUILD_LAB1 "Build lab no.1" ON)
-option(BUILD_LAB2 "Build lab no.2" ON)
-option(BUILD_LAB3 "Build lab no.3" ON)
-option(BUILD_LAB4 "Build lab no.4" ON)
+option(BUILD_LAB1 "Build lab no.1 (Numerical integration)" ON)
+option(BUILD_LAB2 "Build lab no.2 (Square wave movement with finite difference method)" ON)
+option(BUILD_LAB3 "Build lab no.3 (Photons propagation in materials)" ON)
+option(BUILD_LAB4 "Build lab no.4 (Blast waves)" ON)
 
-option(ENABLE_SDL "Enable graph functionality with SDL library" OFF)
+option(PVS_CHECK "Perform static analysis with PVS-Studio" OFF)
+option(ENABLE_SDL "Enable graphical functionality with SDL library" OFF)
 
 if(PVS_CHECK)
     include(FetchContent)
