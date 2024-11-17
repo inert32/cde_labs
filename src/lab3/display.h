@@ -17,21 +17,8 @@ sdl_events handle_kbd();
 
 #include <map>
 #include <SDL.h>
-#include <SDL_ttf.h>
 #include "model.h"
-
-class sdl_text {
-public:
-    sdl_text(SDL_Renderer* renderer, const bool force_start = false);
-    ~sdl_text();
-
-    // Вывод текста по координатам x, y
-    void render_text(const std::string& text, const int x, const int y, const int len);
-private:
-    // Шрифт
-    TTF_Font* font = nullptr;
-    SDL_Renderer* rend = nullptr;
-};
+#include "../common_display.h"
 
 struct color_t {
     Uint8 r = 0;
