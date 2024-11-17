@@ -168,43 +168,4 @@ void sdl_grid::draw_axes(SDL_Renderer* rend, const mesh_t& mesh, const size_t cu
     }
 }
 
-sdl_text::sdl_text(SDL_Renderer* renderer) {
-    rend = renderer;
-    TTF_Init();
-    // Загрузка шрифта
-    font = TTF_OpenFont("font.ttf", 16);
-    if (font == nullptr) throw std::runtime_error(TTF_GetError());
-}
-
-sdl_text::~sdl_text() {
-    TTF_CloseFont(font);
-}
-
-void sdl_text::render_text(const std::string& text, const int x, const int y) {
-    auto surf = TTF_RenderText_LCD(font, text.c_str(), {255, 255, 255, 255}, {127, 127, 127, 0});
-    if (surf == nullptr) {
-        std::cerr << "SDL_ttf: " << TTF_GetError() << std::endl;
-        return;
-    }
-    auto texture = SDL_CreateTextureFromSurface(rend, surf);
-	if (texture == nullptr){
-		std::cerr << "SDL_ttf: " << TTF_GetError() << std::endl;
-        return;
-	}
-
-    SDL_Rect dest;
-    dest.x = x; dest.y = y;
-    TTF_SizeText(font, text.c_str(), &dest.w, &dest.h);
-    SDL_RenderCopy(rend, texture, nullptr, &dest);
-    SDL_FreeSurface(surf);
-    SDL_DestroyTexture(texture);
-}
-
-std::string sdl_text::cut_number(const double num, const size_t size) const {
-    std::string ret = std::to_string(num);
-    auto point_pos = ret.find('.');
-    if (point_pos == ret.npos || point_pos + size > ret.size()) return ret;
-    else return ret.substr(0, point_pos + size);
-}
-
 #endif /* __ENABLE_GRAPH__ */

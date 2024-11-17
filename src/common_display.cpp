@@ -18,7 +18,7 @@ sdl_text::~sdl_text() {
     TTF_CloseFont(font);
 }
 
-void sdl_text::render_text(const std::string& text, const int x, const int y, const int len = 0) {
+void sdl_text::render_text(const std::string& text, const int x, const int y, const int len) {
     if (font == nullptr) return;
 
     auto surf = TTF_RenderText_LCD(font, text.c_str(), {255, 255, 255, 255}, {127, 127, 127, 255});

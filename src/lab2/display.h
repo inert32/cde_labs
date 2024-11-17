@@ -16,8 +16,8 @@ enum class sdl_events {
 #include <SDL_render.h>
 #include <SDL_ttf.h>
 #include "mesh.h"
+#include "../common_display.h"
 
-class sdl_text;
 class sdl_grid;
 
 // Отображение графика на экране
@@ -48,21 +48,6 @@ private:
     static constexpr int area_y_end = (int)(0.9 * len_y);
 
     sdl_text* text;
-};
-
-// Вывод времени и отметок на сетке
-class sdl_text {
-public:
-    sdl_text(SDL_Renderer* renderer);
-    ~sdl_text();
-
-    void render_text(const std::string& text, const int x, const int y);
-    // Для чисел с плавающей запятой отрезать лишнее число (size) знаков после запятой
-    std::string cut_number(const double num, const size_t size) const;
-private:
-    // Шрифт
-    TTF_Font* font = nullptr;
-    SDL_Renderer* rend = nullptr;
 };
 
 // Простая X-Y сетка для графика

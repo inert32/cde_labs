@@ -16,7 +16,7 @@ public:
 
     // Вывод текста по координатам x, y.
     // Переменная len позволит выровнять текст по центру
-    void render_text(const std::string& text, const int x, const int y, const int len);
+    void render_text(const std::string& text, const int x, const int y, const int len = 0);
 
     // Для чисел с плавающей запятой отрезать (не округлить)
     // лишнее число (size) знаков после запятой
