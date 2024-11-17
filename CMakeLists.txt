@@ -82,8 +82,9 @@ if(BUILD_LAB1)
 endif()
 
 if(BUILD_LAB2)
-    add_executable(lab2 src/lab2/main.cpp src/common.cpp src/lab2/display.cpp src/common_display.cpp
-                        src/lab2/mesh.h src/common.h src/build.h src/lab2/display.h src/common_display.cpp)
+    add_executable(lab2 src/lab2/main.cpp src/common.cpp src/lab2/display.cpp
+                        src/lab2/mesh.h src/common.h src/build.h
+                        src/lab2/display.h src/common_display.h)
     if(ENABLE_SDL)
         target_compile_definitions(lab2 PUBLIC __ENABLE_GRAPH__)
         target_link_libraries(lab2 SDL2::SDL2 SDL2_ttf::SDL2_ttf)
@@ -93,7 +94,7 @@ endif()
 
 if(BUILD_LAB3)
     add_executable(lab3 src/lab3/main.cpp src/common.cpp src/lab3/display.cpp
-                        src/lab3/model.cpp src/lab3/parser.cpp src/common_display.cpp
+                        src/lab3/model.cpp src/lab3/parser.cpp
                         src/common.h src/lab3/display.h src/lab3/model.h
                         src/lab3/parser.h src/lab3/parser_types.h src/common_display.h) 
     if(ENABLE_SDL)
