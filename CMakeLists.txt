@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.18)
 
 # Общие настройки
 function(configure_target target)
+    # Дополнение общими исходными файлами
+    target_sources(${target} PRIVATE src/common/common.cpp src/common/common.h src/build.h)
+
     # Установка опций компилятора
     if(MSVC)
         target_compile_options(${target} PUBLIC /W4)
@@ -77,15 +80,13 @@ if(ENABLE_SDL)
 endif()
 
 if(BUILD_LAB1)
-    add_executable(lab1 src/lab1/main.cpp src/lab1/methods.cpp src/common/common.cpp
-                        src/common/common.h src/build.h src/lab1/methods.h)
+    add_executable(lab1 src/lab1/main.cpp src/lab1/methods.cpp src/lab1/methods.h)
     configure_target(lab1)
 endif()
 
 if(BUILD_LAB2)
-    add_executable(lab2 src/lab2/main.cpp src/common/common.cpp src/lab2/display.cpp
-                        src/lab2/mesh.h src/common/common.h src/build.h
-                        src/lab2/display.h src/common/sdl_text.h)
+    add_executable(lab2 src/lab2/main.cpp src/lab2/display.cpp
+                        src/lab2/mesh.h src/lab2/display.h src/common/sdl_text.h)
     if(ENABLE_SDL)
         target_compile_definitions(lab2 PUBLIC __ENABLE_GRAPH__)
         target_link_libraries(lab2 SDL2::SDL2 SDL2_ttf::SDL2_ttf)
@@ -94,9 +95,8 @@ if(BUILD_LAB2)
 endif()
 
 if(BUILD_LAB3)
-    add_executable(lab3 src/lab3/main.cpp src/common/common.cpp src/lab3/display.cpp
-                        src/lab3/model.cpp src/lab3/parser.cpp
-                        src/common/common.h src/lab3/display.h src/lab3/model.h
+    add_executable(lab3 src/lab3/main.cpp src/lab3/display.cpp src/lab3/model.cpp
+                        src/lab3/parser.cpp src/lab3/display.h src/lab3/model.h
                         src/lab3/parser.h src/lab3/parser_types.h src/common/sdl_text.h) 
     if(ENABLE_SDL)
         target_compile_definitions(lab3 PUBLIC __ENABLE_GRAPH__)
