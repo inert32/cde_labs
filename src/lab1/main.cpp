@@ -58,6 +58,20 @@ func_base* func_select(const cli_map& cli) {
     }
 }
 
+methods_base* method_select(const cli_map& cli) {
+    try {
+        const auto name = cli.at("method");
+
+        if (name == "quad") return new quadrants;
+        else if (name == "trapez") return new trapezoid;
+        else if (name == "simpson") return new simpson;
+        else throw std::exception();
+    }
+    catch (const std::exception&) {
+        return new monte_carlo;
+    }
+}
+
 int main(int argc, char** argv) {
     std::cout << "Lab1 " << build_version << " " << build_git << std::endl;
 
