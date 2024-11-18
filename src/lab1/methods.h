@@ -1,7 +1,7 @@
 #ifndef __METHODS_H__
 #define __METHODS_H__
 
-#include "../common.h"
+#include "../common/common.h"
 
 class func_base {
 public:

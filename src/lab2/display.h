@@ -16,7 +16,7 @@ enum class sdl_events {
 #include <SDL_render.h>
 #include <SDL_ttf.h>
 #include "mesh.h"
-#include "../common_display.h"
+#include "../common/sdl_text.h"
 
 class sdl_grid;
 

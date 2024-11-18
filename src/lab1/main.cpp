@@ -5,7 +5,7 @@
 #include <random>
 #include <cmath>
 #include "../build.h"
-#include "../common.h"
+#include "../common/common.h"
 #include "methods.h"
 
 // Функции

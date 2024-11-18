@@ -7,7 +7,7 @@
 #include <cmath>
 #include <fstream>
 #include "../build.h"
-#include "../common.h"
+#include "../common/common.h"
 #include "mesh.h"
 #include "display.h"
 

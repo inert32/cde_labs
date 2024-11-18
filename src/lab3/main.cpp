@@ -7,7 +7,7 @@
 #include <iomanip>
 #include <cstring>
 #include "../build.h"
-#include "../common.h"
+#include "../common/common.h"
 #include "display.h"
 #include "parser.h"
 #include "model.h"
