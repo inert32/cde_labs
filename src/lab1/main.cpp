@@ -87,5 +87,7 @@ int main(int argc, char** argv) {
     method = method_select(cli);
 
     std::cout << method->calc(fn, iter_count, from, to) << std::endl;
+    delete fn;
+    delete method;
     return 0;
 }

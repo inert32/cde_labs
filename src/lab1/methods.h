@@ -3,6 +3,7 @@
 
 class func_base {
 public:
+    virtual ~func_base() = default;
     virtual double calc(const double x) const = 0;
     static constexpr double limit = 0.0;
 };
@@ -10,6 +11,7 @@ public:
 // Методы
 class methods_base {
 public:
+    virtual ~methods_base() = default;
     virtual double calc(const func_base* fn, const size_t count, const double from, const double to) const = 0;
 };
 
