@@ -18,7 +18,7 @@ sdl_events handle_kbd();
 #include <map>
 #include <SDL.h>
 #include "model.h"
-#include "../common_display.h"
+#include "../common/sdl_text.h"
 
 struct color_t {
     Uint8 r = 0;

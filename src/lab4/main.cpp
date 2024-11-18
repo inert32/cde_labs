@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include "../build.h"
-#include "../common.h"
+#include "../common/common.h"
 
 int main(int argc, char** argv) {
     std::cout << "Lab4 " << build_version << " " << build_git << std::endl;

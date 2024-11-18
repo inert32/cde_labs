@@ -65,16 +65,3 @@ double simpson::calc(const func_base* fn, const size_t count, const double from,
     return step / 3.0 * (fn->calc(from) + fn->calc(to) + sum1 + sum2);
 }
 
-methods_base* method_select(const cli_map& cli) {
-    try {
-        const auto name = cli.at("method");
-
-        if (name == "quad") return new quadrants;
-        else if (name == "trapez") return new trapezoid;
-        else if (name == "simpson") return new simpson;
-        else throw std::exception();
-    }
-    catch (const std::exception&) {
-        return new monte_carlo;
-    }
-}
