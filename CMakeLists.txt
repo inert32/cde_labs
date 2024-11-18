@@ -25,7 +25,8 @@ function(configure_target target)
                           FORMAT tasklist
                           ANALYZE ${target}
                           MODE GA:1,2,3;OP:1,2,3
-                          LOG PVS_LOG )
+                          LOG PVS_LOG
+                          CONVERTER_ARGS --excludedCodes V1042)
     endif()
 endfunction()
 
