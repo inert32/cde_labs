@@ -22,39 +22,15 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include <iostream>
 #include <stdexcept>
-#include <SDL.h>
-#include <SDL_ttf.h>
 #include "display.h"
 
-// Очистка экрана
-#define clear_screen() SDL_SetRenderDrawColor(rend, 127, 127, 127, 255); SDL_RenderClear(rend)
-
-sdl_display::sdl_display() {
-    // Запуск SDL
-    if (SDL_Init(SDL_INIT_VIDEO) < 0) throw std::runtime_error(SDL_GetError());
-
-    // Создание окна
-    window = SDL_CreateWindow("Lab2", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, len_x, len_y, SDL_WINDOW_SHOWN);
-    if (window == nullptr) throw std::runtime_error(SDL_GetError());
-
-    // Запуск структуры отрисовки
-    rend = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-    if (rend == nullptr) throw std::runtime_error(SDL_GetError());
-
+sdl_display::sdl_display() : sdl_display_base("Lab2") {
     // Создание координатной сетки
-    text = new sdl_text(rend);
     coord_grid = new sdl_grid(10, 10, { area_x_start , area_y_start, area_x_end - area_x_start, area_y_end - area_y_start }, text);
-
-    clear_screen();
-    SDL_RenderPresent(rend);
 }
 
 sdl_display::~sdl_display() {
-    delete text;
     delete coord_grid;
-    SDL_DestroyRenderer(rend);
-    SDL_DestroyWindow(window);
-    SDL_Quit();
 }
 
 void sdl_display::show_frame(const mesh_t& mesh, const size_t curr, const double t_step) {
@@ -62,8 +38,8 @@ void sdl_display::show_frame(const mesh_t& mesh, const size_t curr, const double
 
     // Рисуем границы графика
     SDL_SetRenderDrawColor(rend, 0, 255, 0, 255);
-    SDL_Point area[6] = { {area_x_start, area_y_start}, {area_x_start, area_y_end}, {area_x_end, area_y_end}, {area_x_end, area_y_start}, {area_x_start, area_y_start}, {area_x_start, area_y_end}, };
-    if (SDL_RenderDrawLines(rend, area, 5) < 0) throw std::runtime_error(SDL_GetError());
+    SDL_FPoint area[6] = { {area_x_start, area_y_start}, {area_x_start, area_y_end}, {area_x_end, area_y_end}, {area_x_end, area_y_start}, {area_x_start, area_y_start}, {area_x_start, area_y_end}, };
+    if (SDL_RenderDrawLinesF(rend, area, 5) < 0) throw std::runtime_error(SDL_GetError());
 
     // Рисуем координатную сетку
     coord_grid->draw_axes(rend, mesh, curr);
@@ -76,7 +52,7 @@ void sdl_display::show_frame(const mesh_t& mesh, const size_t curr, const double
 
     // Вывести текущее время
     auto time = text->cut_number((double)curr * t_step, 3);
-    text->render_text("Time: " + time + "s", area_x_start, (int)(0.91 * len_y));
+    text->render_text("Time: " + time + "s", area_x_start, 0.91f * len_y);
 
     // Передаем на экран
     SDL_RenderPresent(rend);

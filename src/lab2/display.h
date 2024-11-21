@@ -33,39 +33,7 @@ enum class sdl_events {
 #include <SDL_render.h>
 #include <SDL_ttf.h>
 #include "mesh.h"
-#include "../common/sdl_text.h"
-
-class sdl_grid;
-
-// Отображение графика на экране
-class sdl_display {
-public:
-    sdl_display();
-    ~sdl_display();
-
-    // Выбор слоя сетки (curr) для отображения
-    void show_frame(const mesh_t& mesh, const size_t curr, const double t_step);
-
-private:
-    static constexpr int len_x = 1024, len_y = 768;
-    SDL_Window* window = nullptr;
-    SDL_Renderer* rend = nullptr;
-
-    SDL_FPoint* scale_graph(const mesh_t& mesh, const size_t curr);
-
-    // Настройки координатной сетки
-    sdl_grid* coord_grid = nullptr;
-
-    // Область рисования графика
-    static constexpr int area_x_start = (int)(0.1 * len_x);
-    static constexpr int area_x_end = (int)(0.9 * len_x);
-    static constexpr int area_x_diap = area_x_end - area_x_start; // Диапазон позиций поля вывода вдоль OX
-
-    static constexpr int area_y_start = (int)(0.1 * len_y);
-    static constexpr int area_y_end = (int)(0.9 * len_y);
-
-    sdl_text* text;
-};
+#include "../common/sdl_display.h"
 
 // Простая X-Y сетка для графика
 class sdl_grid {
@@ -84,6 +52,22 @@ private:
     size_t grid_size;
     SDL_FRect area_;
     sdl_text* text_;
+};
+
+// Отображение графика на экране
+class sdl_display : public sdl_display_base {
+public:
+    sdl_display();
+    ~sdl_display();
+
+    // Выбор слоя сетки (curr) для отображения
+    void show_frame(const mesh_t& mesh, const size_t curr, const double t_step);
+
+private:
+    SDL_FPoint* scale_graph(const mesh_t& mesh, const size_t curr);
+
+    // Настройки координатной сетки
+    sdl_grid* coord_grid = nullptr;
 };
 
 sdl_events handle_kbd();

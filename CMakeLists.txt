@@ -88,6 +88,7 @@ if(BUILD_LAB2)
     add_executable(lab2 src/lab2/main.cpp src/lab2/display.cpp
                         src/lab2/mesh.h src/lab2/display.h src/common/sdl_text.h)
     if(ENABLE_SDL)
+        target_sources(lab2 PRIVATE src/common/sdl_display.h src/common/sdl_text.h)
         target_compile_definitions(lab2 PUBLIC __ENABLE_GRAPH__)
         target_link_libraries(lab2 SDL2::SDL2 SDL2_ttf::SDL2_ttf)
     endif()
