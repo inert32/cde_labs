@@ -15,8 +15,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef __COMMON_DISPLAY_H__
-#define __COMMON_DISPLAY_H__
+#ifndef __COMMON_SDL_TEXT_H__
+#define __COMMON_SDL_TEXT_H__
 
 #ifdef __ENABLE_GRAPH__
 
@@ -72,4 +72,4 @@ private:
 
 #endif /* __ENABLE_GRAPH__ */
 
-#endif /* __COMMON_DISPLAY_H__ */
+#endif /* __COMMON_SDL_TEXT_H__ */
