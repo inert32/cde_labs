@@ -48,7 +48,7 @@ sdl_display::sdl_display(const simulation& sim) {
     try {
         text = new sdl_text(rend);
     }
-    catch (const std::exception &e) {
+    catch (const std::exception&) {
         std::cerr << "SDL: Warn: No font.ttf detected, disable text functions." << std::endl;
         text = new sdl_text(rend, true);
     }
