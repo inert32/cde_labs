@@ -29,9 +29,6 @@ enum class sdl_events {
 
 #ifdef __ENABLE_GRAPH__
 
-#include <stdexcept>
-#include <SDL_render.h>
-#include <SDL_ttf.h>
 #include "mesh.h"
 #include "../common/sdl_display.h"
 
