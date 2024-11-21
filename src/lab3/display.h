@@ -32,10 +32,8 @@ sdl_events handle_kbd();
 
 #ifdef __ENABLE_GRAPH__
 
-#include <map>
-#include <SDL.h>
+#include "../common/sdl_display.h"
 #include "model.h"
-#include "../common/sdl_text.h"
 
 struct color_t {
     Uint8 r = 0;
@@ -44,10 +42,10 @@ struct color_t {
 };
 
 // Отображение графика на экране
-class sdl_display {
+class sdl_display : public sdl_display_base {
 public:
     sdl_display(const simulation& sim);
-    ~sdl_display();
+    ~sdl_display() = default;
 
     // Вывести треки на экран
     // Треки должны быть масштабированы (translate_tracks) перед выводом на экран
@@ -60,19 +58,6 @@ public:
     SDL_FPoint calc_point_position(const float x, const float y) const;
     SDL_FPoint calc_point_position(const SDL_FPoint p) const;
 private:
-    static constexpr int len_x = 1024, len_y = 768; // Размер окна
-    SDL_Window* window = nullptr;
-    SDL_Renderer* rend = nullptr;
-
-    // Область рисования графика
-    static constexpr int area_x_start = (int)(0.1 * len_x);
-    static constexpr int area_x_end = (int)(0.9 * len_x);
-    static constexpr int area_x_diap = area_x_end - area_x_start;
-
-    static constexpr int area_y_start = (int)(0.1 * len_y);
-    static constexpr int area_y_end = (int)(0.9 * len_y);
-    static constexpr int area_y_diap = area_y_end - area_y_start;
-
     // Размеры главной области (main_area_t)
     float main_width = 0.0f;
     float main_height = 0.0f;
@@ -88,17 +73,16 @@ private:
 
     // Координаты источника
     SDL_FPoint emitter_pos = {0.0f, 0.0f};
-
-    sdl_text* text;
 };
 
 #else
 #include <exception>
+#include "../common/sdl_display.h"
 #include "model.h"
 
 class sdl_display {
 public:
-    sdl_display([[maybe_unused]] const simulation& sim)  { throw std::runtime_error("SDL disabled."); }
+    sdl_display([[maybe_unused]] const simulation& sim) { throw std::runtime_error("SDL disabled."); }
     ~sdl_display() = default;
 
     // Вывести треки на экран

@@ -97,8 +97,9 @@ endif()
 if(BUILD_LAB3)
     add_executable(lab3 src/lab3/main.cpp src/lab3/display.cpp src/lab3/model.cpp
                         src/lab3/parser.cpp src/lab3/display.h src/lab3/model.h
-                        src/lab3/parser.h src/lab3/parser_types.h src/common/sdl_text.h) 
+                        src/lab3/parser.h src/lab3/parser_types.h) 
     if(ENABLE_SDL)
+        target_sources(lab3 PRIVATE src/common/sdl_display.h src/common/sdl_text.h)
         target_compile_definitions(lab3 PUBLIC __ENABLE_GRAPH__)
         target_link_libraries(lab3 SDL2::SDL2 SDL2_ttf::SDL2_ttf)
     endif()

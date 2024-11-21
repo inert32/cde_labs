@@ -31,37 +31,8 @@ static constexpr Uint8 subareas_colors[3][3] = {
 // Очистка экрана
 #define clear_screen() SDL_SetRenderDrawColor(rend, 127, 127, 127, 255); SDL_RenderClear(rend)
 
-sdl_display::sdl_display(const simulation& sim) {
-    // Запуск SDL
-    if (SDL_Init(SDL_INIT_VIDEO) < 0) throw std::runtime_error(SDL_GetError());
-
-    // Создание окна
-    window = SDL_CreateWindow("Lab3", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, len_x, len_y, SDL_WINDOW_SHOWN);
-    if (window == nullptr) throw std::runtime_error(SDL_GetError());
-
-    // Запуск структуры отрисовки
-    rend = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-    if (rend == nullptr) throw std::runtime_error(SDL_GetError());
-    SDL_SetRenderDrawBlendMode(rend, SDL_BLENDMODE_BLEND);
-
+sdl_display::sdl_display(const simulation& sim) : sdl_display_base("Lab3") {
     setup_consts(sim);
-    try {
-        text = new sdl_text(rend);
-    }
-    catch (const std::exception &e) {
-        std::cerr << "SDL: Warn: No font.ttf detected, disable text functions." << std::endl;
-        text = new sdl_text(rend, true);
-    }
-
-    clear_screen();
-    SDL_RenderPresent(rend);
-}
-
-sdl_display::~sdl_display() {
-    delete text;
-    SDL_DestroyRenderer(rend);
-    SDL_DestroyWindow(window);
-    SDL_Quit();
 }
 
 void sdl_display::show_frame(const sim_output& tracks) {
@@ -129,7 +100,8 @@ void sdl_display::setup_consts(const simulation& sim) {
         // Сохраняем координаты
         SDL_FRect tmp; 
         tmp.x = start.x; tmp.y = start.y;
-        tmp.w = end.x - area_x_start; tmp.h = area_y_end - area_y_start;
+        tmp.w = end.x - (float)area_x_start;
+        tmp.h = (float)area_y_end - (float)area_y_start;
         subareas_.push_back(tmp);
     }
     names = sim.get_subarea_names();
@@ -145,17 +117,14 @@ void sdl_display::setup_consts(const simulation& sim) {
 }
 
 SDL_FPoint sdl_display::calc_point_position(const float x, const float y) const {
-    float ret_x = area_x_diap / main_width * x + area_x_start;
-    float ret_y = area_y_diap / main_height * y + area_y_start;
+    float ret_x = (float)area_x_diap / main_width * x + (float)area_x_start;
+    float ret_y = (float)area_y_diap / main_height * y + (float)area_y_start;
 
     return {ret_x, ret_y};
 }
 
 SDL_FPoint sdl_display::calc_point_position(const SDL_FPoint p) const {
-    float ret_x = area_x_diap / main_width * p.x + area_x_start;
-    float ret_y = area_y_diap / main_height * p.y + area_y_start;
-
-    return {ret_x, ret_y};
+    return calc_point_position(p.x, p.y);
 }
 
 #endif /* __ENABLE_GRAPH__ */
