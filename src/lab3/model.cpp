@@ -31,11 +31,13 @@ struct line_t {
     float C = 0.0f;
 };
 
+inline constexpr double MATH_PI = 3.14159265358979323846;
+
 particle emit_point::spawn_particle() {
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_real_distribution nums_y(90.0f - spread, spread + 90.0f);
-    auto angle = nums_y(gen) * M_PI / 180.0f; // Перевод в радианы
+    auto angle = nums_y(gen) * MATH_PI / 180.0f; // Перевод в радианы
 
     float dir_x = (float)sin(angle);
     float dir_y = (float)cos(angle);
@@ -108,7 +110,7 @@ void collide_carlson(particle& p, const float xi) {
 
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::uniform_real_distribution new_angle(0.0, 2.0 * M_PI);
+    std::uniform_real_distribution new_angle(0.0, 2.0 * MATH_PI);
     auto angle = new_angle(gen);
 
     float new_cos = (float)cos(angle);
