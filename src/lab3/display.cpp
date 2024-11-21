@@ -40,8 +40,8 @@ void sdl_display::show_frame(const sim_output& tracks) {
 
     // Рисуем границы графика
     SDL_SetRenderDrawColor(rend, 0, 0, 0, 255);
-    SDL_Point area[6] = { {area_x_start, area_y_start}, {area_x_start, area_y_end}, {area_x_end, area_y_end}, {area_x_end, area_y_start}, {area_x_start, area_y_start}, {area_x_start, area_y_end}, };
-    if (SDL_RenderDrawLines(rend, area, 5) < 0) throw std::runtime_error(SDL_GetError());
+    SDL_FPoint area[6] = { {area_x_start, area_y_start}, {area_x_start, area_y_end}, {area_x_end, area_y_end}, {area_x_end, area_y_start}, {area_x_start, area_y_start}, {area_x_start, area_y_end}, };
+    if (SDL_RenderDrawLinesF(rend, area, 5) < 0) throw std::runtime_error(SDL_GetError());
 
     // Источник
     SDL_SetRenderDrawColor(rend, 255, 255, 255, 255);
@@ -55,7 +55,7 @@ void sdl_display::show_frame(const sim_output& tracks) {
         SDL_RenderFillRectF(rend, &subareas_[i]);
 
         // Вывод названия материала
-        text->render_text(names[i], (int)subareas_[i].x, area_y_end + 10, (int)subareas_[i].w);
+        text->render_text(names[i], (int)subareas_[i].x, (int)area_y_end + 10, (int)subareas_[i].w);
     }
 
     // Треки

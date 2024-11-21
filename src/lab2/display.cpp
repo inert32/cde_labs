@@ -52,7 +52,7 @@ void sdl_display::show_frame(const mesh_t& mesh, const size_t curr, const double
 
     // Вывести текущее время
     auto time = text->cut_number((double)curr * t_step, 3);
-    text->render_text("Time: " + time + "s", area_x_start, 0.91f * len_y);
+    text->render_text("Time: " + time + "s", (int)area_x_start, (int)(0.91f * (float)len_y));
 
     // Передаем на экран
     SDL_RenderPresent(rend);
