@@ -58,12 +58,12 @@ const parser_line& find_config_line(const parser_data& conf, const std::string& 
         if (line == i.first)
             return i;
     }
-    throw std::runtime_error("No such line: " + line);
+    throw std::runtime_error("parser: Error: No such line: " + line);
 }
 
 parser_data parse_task_file(const std::string& path) {
     std::ifstream file(path);
-    if (!file.good()) throw std::runtime_error("Failed to read task file");
+    if (!file.good()) throw std::runtime_error("parser: Error: Failed to read task file");
 
     std::string line, command;
     parser_data ret;
@@ -86,11 +86,11 @@ parser_data parse_task_file(const std::string& path) {
                 args.emplace_back(line.substr(space_prev, space_pos - space_prev));
             }
             if (!checkout_args(command, args))
-                throw std::runtime_error("Not enough arguments for command " + command
+                throw std::runtime_error("parser: Error: Not enough arguments for command " + command
                 + " at line " + std::to_string(line_number));
             
             if (command == "energy" && !checkout_energy_args(args))
-                throw std::runtime_error("Bad energy distribution at line " + std::to_string(line_number));
+                throw std::runtime_error("parser: Error: Bad energy distribution at line " + std::to_string(line_number));
 
             ret.emplace_back(std::make_pair(command, args));
             args.clear();
@@ -133,7 +133,7 @@ std::vector<subarea_t> spawn_areas(const parser_data& src, main_area_t* main_are
                 sa.optics = materials.at(mat_id).sigma;
             }
             catch (const std::exception&) {
-                throw std::runtime_error("Unknown material: " + mat_id);
+                throw std::runtime_error("loader: Error: Unknown material: " + mat_id);
             }
             if (!(sa.optics > 0.0f)) throw std::runtime_error("loader: Error: Check subarea " + std::to_string(others.size() + 1) + " optical density");
             
@@ -167,7 +167,7 @@ emit_point* spawn_emitter(const parser_line& src, const parser_line& energy) {
         }
         return new emit_point(x, y, angle, dist);
     }
-    else throw std::runtime_error("loader: Unknown emitter type");
+    else throw std::runtime_error("loader: Error: Unknown emitter type");
 }
 
 size_t get_particles_count(const parser_line& src) {
