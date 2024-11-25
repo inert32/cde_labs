@@ -124,6 +124,32 @@ struct sim_output {
         energies = new SDL_FPoint[count];
     }
     sim_output(const sim_output& other) {
+        _copy_other(other);
+    }
+    sim_output& operator=(const sim_output& other) {
+        if (this == &other) return *this;
+
+        // Удаляем старые данные, если есть
+        if (track_len != nullptr || tracks != nullptr || energies != nullptr) {
+            if (tracks != nullptr)
+                for (size_t i = 0; i < particle_count; i++)
+                    delete[] tracks[i];
+            delete[] tracks;
+            delete[] track_len;
+            delete[] energies;
+        }
+        _copy_other(other);
+        return *this;
+    }
+    ~sim_output() {
+        for (size_t i = 0; i < particle_count; i++)
+            delete[] tracks[i];
+        delete[] tracks;
+        delete[] track_len;
+        delete[] energies;
+    }
+    private:
+    inline void _copy_other(const sim_output& other) {
         particle_count = other.particle_count;
         track_len = new size_t[particle_count];
         memcpy(track_len, other.track_len, sizeof(size_t) * particle_count);
@@ -137,29 +163,6 @@ struct sim_output {
 
         energies = new SDL_FPoint[particle_count];
         memcpy(energies, other.energies, sizeof(SDL_FPoint) * particle_count);
-    }
-    sim_output& operator=(const sim_output& other) {
-        if (this == &other) return *this;
-        particle_count = other.particle_count;
-        track_len = new size_t[particle_count]; //-V773
-        memcpy(track_len, other.track_len, sizeof(size_t) * particle_count);
-
-        tracks = new SDL_FPoint*[particle_count];
-        for (size_t i = 0; i < particle_count; i++) {
-            auto len = track_len[i];
-            tracks[i] = new SDL_FPoint[len];
-            memcpy(tracks[i], other.tracks[i], sizeof(SDL_FPoint) * len);
-        }
-
-        energies = new SDL_FPoint[particle_count];
-        memcpy(energies, other.energies, sizeof(SDL_FPoint) * particle_count);
-        return *this;
-    }
-    ~sim_output() {
-        for (size_t i = 0; i < particle_count; i++) delete[] tracks[i];
-        delete[] tracks;
-        delete[] track_len;
-        delete[] energies;
     }
 };
 
