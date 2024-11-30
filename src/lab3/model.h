@@ -41,17 +41,6 @@ struct main_area_t {
     float height = 0.0f;
 };
 
-// Подобласть внутри главной (вещество)
-struct subarea_t {
-    float x_start = 0.0f;
-    float width = 0.0f;
-    // Оптическая толщина
-    float optics = 0.0f;
-    // Вероятность поглощения
-    float consume_prob = 0.0f;
-    std::string name;
-};
-
 // Параметры материала.
 // Необходима во время настройки simulation
 struct material_t {
@@ -81,6 +70,54 @@ private:
     SDL_FPoint direction;
 
     float energy = 0.0f;
+};
+
+// Подобласть внутри главной (вещество)
+class subarea_t {
+public:
+    subarea_t(void) = delete;
+    subarea_t(const float start, const float wid, const float height,
+              const float opt, const float prob, const std::string& mat_name) :
+    x_start{start}, width{wid}, height{height}, optics{opt}, consume_prob{prob}, name{mat_name} {
+        grid = new float*[100];
+        for (size_t y = 0; y < 100; y++) {
+            grid[y] = new float[100];
+            for (size_t x = 0; x < 100; x++)
+                grid[y][x] = 0.0f;
+        }
+    }
+
+    bool is_hit(const particle& p) const {
+        auto c = p.get_position();
+        return c.x > x_start && c.x < width;
+    }
+    void process_hit(const SDL_FPoint at, const float energy) {
+        if (!(at.x > x_start && at.x < x_start + width)) return; // Эта частица не попала в вещество
+
+        // Переводим [x_0 ; x_0 + width] -> [0 ; 1]
+        float x = (at.x - x_start) / width;
+        float y = at.y / height;
+
+        // Координаты в сетке
+        size_t x_c = (size_t)floorf(x * 100.0f);
+        size_t y_c = (size_t)floorf(y * 100.0f);
+
+        grid[y_c][x_c] += energy;
+    }
+
+    float** get_grid(void) const { return grid; }
+
+    const float x_start = 0.0f;
+    const float width = 0.0f;
+    const float height = 0.0f;
+    // Оптическая толщина
+    const float optics = 0.0f;
+    // Вероятность поглощения
+    const float consume_prob = 0.0f;
+    const std::string name;
+
+private:
+    float** grid = nullptr;
 };
 
 struct energy_distr_t {
@@ -204,6 +241,12 @@ public:
 
     // Вывод статистики
     sim_stats get_stats() const;
+
+    std::vector<float**> get_grids(void) const {
+        std::vector<float**> ret;
+        for (auto &i : subareas) ret.push_back(i.get_grid());
+        return ret;
+    }
 private:
     std::vector<std::vector<SDL_FPoint>> tracks; // Треки частиц
 

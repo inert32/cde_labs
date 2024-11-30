@@ -123,23 +123,24 @@ std::vector<subarea_t> spawn_areas(const parser_data& src, main_area_t* main_are
     for (auto it = src.begin(); it != src.end(); ++it)
         if (it->first == "subarea") {
             auto& sa_raw = it->second;
-            subarea_t sa;
-            sa.x_start = std::stof(sa_raw[0]);
-            sa.width = std::stof(sa_raw[1]);
+            float x_start = std::stof(sa_raw[0]);
+            float width = std::stof(sa_raw[1]);
             auto mat_id = sa_raw[2];
-            sa.name = mat_id;
+            float optics;
 
             try {
-                sa.optics = materials.at(mat_id).sigma;
+                optics = materials.at(mat_id).sigma;
             }
             catch (const std::exception&) {
                 throw std::runtime_error("loader: Error: Unknown material: " + mat_id);
             }
-            if (!(sa.optics > 0.0f)) throw std::runtime_error("loader: Error: Check subarea " + std::to_string(others.size() + 1) + " optical density");
+            if (!(optics > 0.0f)) throw std::runtime_error("loader: Error: Check subarea " + std::to_string(others.size() + 1) + " optical density");
             
-            sa.consume_prob = materials.at(mat_id).consume_prob;
-            if (!(sa.consume_prob > 0.01f && sa.consume_prob < 1.0)) 
+            float consume_prob = materials.at(mat_id).consume_prob;
+            if (!(consume_prob > 0.01f && consume_prob < 1.0f))
                 throw std::runtime_error("loader: Error: Check subarea " + std::to_string(others.size() + 1) + " absorbtion probability");
+
+            subarea_t sa(x_start, width, main_copy.height, optics, consume_prob, mat_id);
 
             if (check_subarea(sa, main_copy)) others.push_back(sa);
             else throw std::runtime_error("loader: Error: Check subarea " + std::to_string(others.size() + 1) + " position and size");

@@ -188,10 +188,13 @@ bool simulation::process_particle() {
                 auto pre_consume = p.get_energy();
                 collide_carlson(p, 0.5f);
                 // Поглощение веществом энергии
-                stat_subarea_energy[sa_now - 1] += pre_consume - p.get_energy();
+                float absorbed = pre_consume - p.get_energy();
+                stat_subarea_energy[sa_now - 1] += absorbed;
+                subareas[sa_now - 1].process_hit(coord_now, absorbed);
             }
             else {
                 stat_subarea_energy[sa_now - 1] += p.get_energy();
+                subareas[sa_now - 1].process_hit(coord_now, p.get_energy());
                 is_absorbed = true;
                 break;
             }
@@ -235,6 +238,7 @@ std::vector<std::string> simulation::get_subarea_names() const {
 }
 
 size_t simulation::get_subarea_index(const SDL_FPoint p) const {
+    if (p.y < 0.0f || p.y > main_area.height) return 0; // Вылет за границы
     for (size_t id = 0; id < b_count; id++) {
         auto& bord = borders[id];
         if (p.x > bord.start && p.x < bord.end) return id + 1; // Одна из подобластей
