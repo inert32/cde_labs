@@ -20,7 +20,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include <string>
 #include "parser_types.h"
-#include "model.h"
+#include "model_types.h"
 
 const parser_line& find_config_line(const parser_data& conf, const std::string& line);
 

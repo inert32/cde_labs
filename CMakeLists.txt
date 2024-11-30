@@ -98,7 +98,7 @@ endif()
 if(BUILD_LAB3)
     add_executable(lab3 src/lab3/main.cpp src/lab3/display.cpp src/lab3/model.cpp
                         src/lab3/parser.cpp src/lab3/display.h src/lab3/model.h
-                        src/lab3/parser.h src/lab3/parser_types.h) 
+                        src/lab3/parser.h src/lab3/parser_types.h src/lab3/model_types.h)
     if(ENABLE_SDL)
         target_sources(lab3 PRIVATE src/common/sdl_display.h)
         target_compile_definitions(lab3 PUBLIC __ENABLE_GRAPH__)
