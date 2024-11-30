@@ -82,13 +82,11 @@ public:
         }
     }
 
-    bool is_hit(const particle& p) const {
-        auto c = p.get_position();
-        return c.x > x_start && c.x < width;
+    bool is_hit(const SDL_FPoint p) const {
+        return (p.x > x_start && p.x < x_start + width) && // По оси OX
+               (p.y > 0.0f && p.y < height); // По оси OY
     }
     void process_hit(const SDL_FPoint at, const float energy) {
-        if (!(at.x > x_start && at.x < x_start + width)) return; // Эта частица не попала в вещество
-
         // Переводим [x_0 ; x_0 + width] -> [0 ; 1]
         float x = (at.x - x_start) / width;
         float y = at.y / height;
@@ -98,7 +96,9 @@ public:
         size_t y_c = (size_t)floorf(y * 100.0f);
 
         grid[y_c][x_c] += energy;
+        total_absorbed += energy;
     }
+    float get_total_energy(void) const { return total_absorbed; }
 
     float** get_grid(void) const { return grid; }
 
@@ -113,6 +113,7 @@ public:
 
 private:
     float** grid = nullptr;
+    float total_absorbed = 0.0f;
 };
 
 struct energy_distr_t {

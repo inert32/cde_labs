@@ -168,38 +168,37 @@ bool simulation::process_particle() {
     stat_total_energy += start_energy;
 
     bool is_absorbed = false;
+    float optics = NAN; // "Нулевое" сечение взаимодействия
     do { // Движение частицы
-        auto sa_now = get_subarea_index(coord_now); // Текущая подобласть: вакуум(0) или вещество(>0)
-
         float move = nums(gen);
-        if (sa_now != 0) move /= subareas[sa_now - 1].optics;
+        if (!isnanf(optics)) move /= optics;
 
         // Транспортное ядро
         p.move_particle(move);
         coord_pre = coord_now;
         coord_now = p.get_position();
         tracks[current_part].push_back(coord_now);
-        sa_now = get_subarea_index(coord_now);
 
         // Ядро столкновений
-        if (sa_now > 0) {
-            std::uniform_real_distribution xi(0.0f, 1.0f);
-            if (xi(gen) > subareas[sa_now - 1].consume_prob) {
-                auto pre_consume = p.get_energy();
-                collide_carlson(p, 0.5f);
-                // Поглощение веществом энергии
-                float absorbed = pre_consume - p.get_energy();
-                stat_subarea_energy[sa_now - 1] += absorbed;
-                subareas[sa_now - 1].process_hit(coord_now, absorbed);
-            }
-            else {
-                stat_subarea_energy[sa_now - 1] += p.get_energy();
-                subareas[sa_now - 1].process_hit(coord_now, p.get_energy());
-                is_absorbed = true;
-                break;
+        for (auto &i : subareas) {
+            optics = NAN; // Если частица не попала в вещество
+            if (i.is_hit(coord_now)) {
+                std::uniform_real_distribution xi(0.0f, 1.0f);
+                if (xi(gen) > i.consume_prob) {
+                    auto pre_consume = p.get_energy();
+                    collide_carlson(p, 0.5f);
+                    // Поглощение веществом энергии
+                    float absorbed = pre_consume - p.get_energy();
+                    i.process_hit(coord_now, absorbed);
+                    optics = i.optics;
+                }
+                else {
+                    i.process_hit(coord_now, p.get_energy());
+                    is_absorbed = true;
+                }
             }
         }
-    } while (is_within_main(p.get_position()));
+    } while (!is_absorbed && is_within_main(p.get_position()));
     float end_energy = p.get_energy();
 
     if (!is_absorbed) {
@@ -237,15 +236,6 @@ std::vector<std::string> simulation::get_subarea_names() const {
     return ret;
 }
 
-size_t simulation::get_subarea_index(const SDL_FPoint p) const {
-    if (p.y < 0.0f || p.y > main_area.height) return 0; // Вылет за границы
-    for (size_t id = 0; id < b_count; id++) {
-        auto& bord = borders[id];
-        if (p.x > bord.start && p.x < bord.end) return id + 1; // Одна из подобластей
-    }
-    return 0; // Находимся в главной области
-}
-
 bool simulation::is_within_main(const SDL_FPoint p) const {
     if (p.x < 0.0f || p.y < 0.0f) return false;
     if (p.x > main_area.length || p.y > main_area.height) return false;
@@ -277,17 +267,16 @@ sim_stats simulation::get_stats() const {
 
     ret.subarea_energy.reserve(size);
     ret.subareas_count = size;
-    for (size_t i = 0 ; i < size; i++)
-        ret.subarea_energy.push_back(stat_subarea_energy[i]);
+    for (auto &i : subareas) {
+        ret.subarea_energy.push_back(i.get_total_energy());
+        ret.subarea_names.push_back(i.name);
+    }
 
     ret.screen_energy = stat_screen_energy;
     ret.screen_particles = stat_screen_particles;
 
     ret.total_energy = stat_total_energy;
     ret.total_particles = part_count;
-
-    for (size_t i = 0; i < size; i++)
-        ret.subarea_names.push_back(subareas[i].name);
 
     return ret;
 }
