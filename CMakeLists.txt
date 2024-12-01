@@ -30,7 +30,7 @@ function(configure_target target)
     endif()
 endfunction()
 
-project(cde_labs VERSION 0.3.2)
+project(cde_labs VERSION 0.4.0)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
