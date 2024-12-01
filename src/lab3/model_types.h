@@ -20,6 +20,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include <string>
 #include <map>
+#include <cmath>
 #ifndef __ENABLE_GRAPH__ // SDL отключен, копируем определение SDL_FPoint
 typedef struct SDL_FPoint
 {

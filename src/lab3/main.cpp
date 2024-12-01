@@ -100,6 +100,8 @@ int main(int argc, char** argv) {
             catch (const std::exception& e) {
                 if (!strcmp(e.what(), "SDL disabled"))
                     std::cerr << "SDL: Error: " << e.what() << std::endl;
+                else
+                    std::cerr << "SDL disabled" << std::endl;
             }
         }
     }

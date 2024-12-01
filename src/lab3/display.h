@@ -91,6 +91,8 @@ public:
     // Треки должны быть масштабированы (translate_tracks) перед выводом на экран
     void show_frame([[maybe_unused]] const sim_output& tracks) {}
 
+    void show_heatmap([[maybe_unused]] const std::vector<heatmap_t>& hm) {};
+
     // Масштабирование треков
     sim_output translate_tracks([[maybe_unused]] const sim_output& tracks) const {
         sim_output dummy(0);
