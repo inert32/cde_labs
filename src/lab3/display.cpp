@@ -68,6 +68,26 @@ void sdl_display::show_frame(const sim_output& tracks) {
     SDL_RenderPresent(rend);
 }
 
+void sdl_display::show_heatmap() {
+    clear_screen();
+
+    // Рисуем границы графика
+    SDL_SetRenderDrawColor(rend, 0, 0, 0, 255);
+    SDL_FPoint area[6] = { {area_x_start, area_y_start}, {area_x_start, area_y_end}, {area_x_end, area_y_end}, {area_x_end, area_y_start}, {area_x_start, area_y_start}, {area_x_start, area_y_end}, };
+    if (SDL_RenderDrawLinesF(rend, area, 5) < 0) throw std::runtime_error(SDL_GetError());
+
+    // Подобласти
+    for (size_t i = 0; i < subareas_count; i++) {
+        SDL_RenderFillRectF(rend, &subareas_[i]);
+
+        // Вывод названия материала
+        text->render_text(names[i], (int)subareas_[i].x, (int)area_y_end + 10, (int)subareas_[i].w);
+    }
+
+    // Передаем на экран
+    SDL_RenderPresent(rend);
+}
+
 sim_output sdl_display::translate_tracks(sim_output& tracks) const {
     for (size_t p = 0; p < tracks.particle_count; p++) {
         auto len = tracks.track_len[p];
@@ -116,14 +136,14 @@ void sdl_display::setup_consts(const simulation& sim) {
     }
 }
 
-SDL_FPoint sdl_display::calc_point_position(const float x, const float y) const {
+inline SDL_FPoint sdl_display::calc_point_position(const float x, const float y) const {
     float ret_x = (float)area_x_diap / main_width * x + (float)area_x_start;
     float ret_y = (float)area_y_diap / main_height * y + (float)area_y_start;
 
     return {ret_x, ret_y};
 }
 
-SDL_FPoint sdl_display::calc_point_position(const SDL_FPoint p) const {
+inline SDL_FPoint sdl_display::calc_point_position(const SDL_FPoint p) const {
     return calc_point_position(p.x, p.y);
 }
 

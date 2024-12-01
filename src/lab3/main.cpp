@@ -76,14 +76,19 @@ int main(int argc, char** argv) {
 
         if (run_sdl) {
             try {
+                // True - вывод треков, false - вывод тепловой карты
+                bool disp_mode = true;
                 sdl_display disp(sim);
                 auto tracks = sim.get_tracks();
                 tracks = disp.translate_tracks(tracks);
                 bool run = true;
 
                 while (run) {
-                    disp.show_frame(tracks);
+                    (disp_mode) ? disp.show_frame(tracks) : disp.show_heatmap();
                     switch (handle_kbd()) {
+                    case sdl_events::mode:
+                        disp_mode = !disp_mode;
+                        break;
                     case sdl_events::quit:
                         run = false;
                         break;
@@ -114,6 +119,7 @@ sdl_events handle_kbd() {
         if (e.type == SDL_KEYDOWN) {
             switch (SDL_GetKeyFromScancode(e.key.keysym.scancode)) {
             case 27:         return sdl_events::quit;     // Escape
+            case 13:         return sdl_events::mode;     // Смена режима вывода
 
             case 1073741904: [[fallthrough]];             // Стрелка влево
             case 1073741916: return sdl_events::previous; // Стрелка влево на числовой клавиатуре

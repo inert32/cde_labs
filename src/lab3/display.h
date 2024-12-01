@@ -24,7 +24,8 @@ enum class sdl_events {
     previous,
     next,
     start,
-    end
+    end,
+    mode
 };
 
 // Обработка нажатий клавиш
@@ -50,13 +51,14 @@ public:
     // Вывести треки на экран
     // Треки должны быть масштабированы (translate_tracks) перед выводом на экран
     void show_frame(const sim_output& tracks);
+    void show_heatmap();
 
     // Масштабирование треков
     sim_output translate_tracks(sim_output& tracks) const;
 
     // Расчет позиции точки внутри графика
-    SDL_FPoint calc_point_position(const float x, const float y) const;
-    SDL_FPoint calc_point_position(const SDL_FPoint p) const;
+    inline SDL_FPoint calc_point_position(const float x, const float y) const;
+    inline SDL_FPoint calc_point_position(const SDL_FPoint p) const;
 private:
     // Размеры главной области (main_area_t)
     float main_width = 0.0f;
@@ -96,11 +98,11 @@ public:
     }
 
     // Расчет позиции точки внутри графика
-    SDL_FPoint calc_point_position([[maybe_unused]] const float x, [[maybe_unused]] const float y) const {
+    inline SDL_FPoint calc_point_position([[maybe_unused]] const float x, [[maybe_unused]] const float y) const {
         SDL_FPoint dummy;
         return dummy;
     }
-    SDL_FPoint calc_point_position([[maybe_unused]] const SDL_FPoint p) const  {
+    inline SDL_FPoint calc_point_position([[maybe_unused]] const SDL_FPoint p) const  {
         SDL_FPoint dummy;
         return dummy;
     }
