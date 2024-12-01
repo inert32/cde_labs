@@ -127,9 +127,9 @@ public:
     // Вывод статистики
     sim_stats get_stats() const;
 
-    std::vector<float**> get_grids(void) const {
-        std::vector<float**> ret;
-        for (auto &i : subareas) ret.push_back(i.get_grid());
+    std::vector<flatmat<float>> get_grids(void) const {
+        std::vector<flatmat<float>> ret;
+        for (auto &i : subareas) ret.emplace_back(i.get_grid());
         return ret;
     }
 private:

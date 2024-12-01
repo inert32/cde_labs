@@ -29,6 +29,7 @@ typedef struct SDL_FPoint
 #else
 #include <SDL_rect.h>
 #endif /* __ENABLE_GRAPH__ */
+#include "flatmat.h"
 
 // Главная область моделирования
 struct main_area_t {
@@ -73,14 +74,8 @@ public:
     subarea_t(void) = delete;
     subarea_t(const float start, const float wid, const float height,
               const float opt, const float prob, const std::string& mat_name) :
-    x_start{start}, width{wid}, height{height}, optics{opt}, consume_prob{prob}, name{mat_name} {
-        grid = new float*[100];
-        for (size_t y = 0; y < 100; y++) {
-            grid[y] = new float[100];
-            for (size_t x = 0; x < 100; x++)
-                grid[y][x] = 0.0f;
-        }
-    }
+    x_start{start}, width{wid}, height{height}, optics{opt}, 
+    consume_prob{prob}, name{mat_name}, grid(100, 100) {}
 
     bool is_hit(const SDL_FPoint p) const {
         return (p.x > x_start && p.x < x_start + width) && // По оси OX
@@ -95,12 +90,12 @@ public:
         size_t x_c = (size_t)floorf(x * 100.0f);
         size_t y_c = (size_t)floorf(y * 100.0f);
 
-        grid[y_c][x_c] += energy;
+        grid(y_c, x_c) += energy;
         total_absorbed += energy;
     }
     float get_total_energy(void) const { return total_absorbed; }
 
-    float** get_grid(void) const { return grid; }
+    flatmat<float> get_grid(void) const { return grid; }
 
     const float x_start = 0.0f;
     const float width = 0.0f;
@@ -112,13 +107,13 @@ public:
     const std::string name;
 
 private:
-    float** grid = nullptr;
+    flatmat<float> grid;
     float total_absorbed = 0.0f;
 };
 
 struct energy_distr_t {
     float level = 0.0f;
-    float prob = 0.0;
+    float prob = 0.0f;
 };
 
 // Точечный источник частиц
