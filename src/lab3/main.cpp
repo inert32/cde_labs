@@ -81,7 +81,7 @@ int main(int argc, char** argv) {
                 sdl_display disp(sim);
                 auto tracks = sim.get_tracks();
                 tracks = disp.translate_tracks(tracks);
-                auto heatmap = sim.get_grids();
+                auto heatmap = disp.translate_heatmap(sim.get_grids());
                 bool run = true;
 
                 while (run) {

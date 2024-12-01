@@ -68,7 +68,7 @@ void sdl_display::show_frame(const sim_output& tracks) {
     SDL_RenderPresent(rend);
 }
 
-void sdl_display::show_heatmap(const std::vector<heatmap_t>& hm) {
+void sdl_display::show_heatmap(const std::vector<heatmap_converted>& hm) {
     clear_screen();
 
     // Рисуем границы графика
@@ -77,35 +77,9 @@ void sdl_display::show_heatmap(const std::vector<heatmap_t>& hm) {
     if (SDL_RenderDrawLinesF(rend, area, 5) < 0) throw std::runtime_error(SDL_GetError());
 
     // Подобласти
-    for (size_t i = 0; i < subareas_count; i++) {
-        auto sa = &subareas_[i];
-        SDL_RenderDrawRectF(rend, sa);
-
-        auto heat_max = hm[i].second;
-        auto heat_grid = hm[i].first;
-        // Отрисовка сетки внутри подобласти
-        const float step_x = sa->w / (float)sa_grid_x;
-        const float step_y = sa->h / (float)sa_grid_y;
-
-        for (size_t y = 0; y < sa_grid_y; y++)
-            for (size_t x = 0; x < sa_grid_x; x++) {
-                // Выбор цвета
-                Uint8 color = Uint8(255.0f * heat_grid(y, x) / heat_max);
-                SDL_SetRenderDrawColor(rend, color, 0, 0, 255);
-
-                // Расчет координат текущего участка сетки
-                SDL_FRect target;
-                target.x = sa->x + (float)(step_x * (float)x);
-                target.y = sa->y + (float)(step_y * (float)y);
-                target.w = step_x;
-                target.h = step_y;
-
-                // Отрисовка
-                SDL_RenderFillRectF(rend, &target);
-            }
-
-        // Вывод названия материала
-        text->render_text(names[i], (int)subareas_[i].x, (int)area_y_end + 10, (int)subareas_[i].w);
+    for (auto &i : hm) {
+        SDL_SetRenderDrawColor(rend, i.color, 0, 0, 255);
+        SDL_RenderFillRectF(rend, &i.pos);
     }
 
     // Передаем на экран
@@ -121,6 +95,39 @@ sim_output sdl_display::translate_tracks(sim_output& tracks) const {
     }
 
     return tracks;
+}
+
+std::vector<heatmap_converted> sdl_display::translate_heatmap(const std::vector<heatmap_t>& hm) const {
+    std::vector<heatmap_converted> ret;
+    ret.reserve(hm.size() * sa_grid_x * sa_grid_y);
+
+    // Поиск максимальной температуры во всех подобластях
+    float heat_max = 0.0f;
+    for (auto &i : hm) heat_max = std::max(heat_max, i.second);
+
+    for (size_t i = 0; i < subareas_count; i++) {
+        auto heat_grid = hm[i].first;
+        // Отрисовка сетки внутри подобласти
+        auto sa = &subareas_[i];
+        const float step_x = sa->w / (float)sa_grid_x;
+        const float step_y = sa->h / (float)sa_grid_y;
+
+        for (size_t y = 0; y < sa_grid_y; y++)
+            for (size_t x = 0; x < sa_grid_x; x++) {
+                // Выбор цвета
+                Uint8 color = Uint8(255.0f * heat_grid(y, x) / heat_max);
+
+                // Расчет координат текущего участка сетки
+                SDL_FRect target;
+                target.x = sa->x + (float)(step_x * (float)x);
+                target.y = sa->y + (float)(step_y * (float)y);
+                target.w = step_x;
+                target.h = step_y;
+
+                ret.push_back({target, color});
+            }
+    }
+    return ret;
 }
 
 void sdl_display::setup_consts(const simulation& sim) {

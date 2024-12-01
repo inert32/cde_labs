@@ -42,6 +42,11 @@ struct color_t {
     Uint8 b = 0;
 };
 
+struct heatmap_converted {
+    SDL_FRect pos = {0.0f, 0.0f, 0.0f, 0.0f};
+    Uint8 color = 0;
+};
+
 // Отображение графика на экране
 class sdl_display : public sdl_display_base {
 public:
@@ -51,10 +56,11 @@ public:
     // Вывести треки на экран
     // Треки должны быть масштабированы (translate_tracks) перед выводом на экран
     void show_frame(const sim_output& tracks);
-    void show_heatmap(const std::vector<heatmap_t>& hm);
+    void show_heatmap(const std::vector<heatmap_converted>& hm);
 
     // Масштабирование треков
     sim_output translate_tracks(sim_output& tracks) const;
+    std::vector<heatmap_converted> translate_heatmap(const std::vector<heatmap_t>& hm) const;
 
     // Расчет позиции точки внутри графика
     inline SDL_FPoint calc_point_position(const float x, const float y) const;
