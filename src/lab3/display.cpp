@@ -59,6 +59,8 @@ void sdl_display::show_frame(const sim_output& tracks) {
     for (size_t p = 0; p < tracks.particle_count; p++) {
         SDL_RenderDrawLinesF(rend, tracks.tracks[p], (int)tracks.track_len[p]);
     }
+    text->render_text("Press Enter to change mode to \"Heatmap\"", (int)area_x_start, (int)(0.03f * (float)len_y));
+    text->render_text("Press Right for next particle burst", (int)area_x_start, (int)(0.07f * (float)len_y));
 
     // Передаем на экран
     SDL_RenderPresent(rend);
@@ -77,6 +79,8 @@ void sdl_display::show_heatmap(const std::vector<heatmap_converted>& hm) {
         SDL_SetRenderDrawColor(rend, i.color, 0, 0, 255);
         SDL_RenderFillRectF(rend, &i.pos);
     }
+    text->render_text("Press Enter to change mode to \"Tracks\"", (int)area_x_start, (int)(0.03f * (float)len_y));
+    text->render_text("Press Right for next particle burst", (int)area_x_start, (int)(0.07f * (float)len_y));
 
     // Передаем на экран
     SDL_RenderPresent(rend);

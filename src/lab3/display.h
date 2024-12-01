@@ -63,7 +63,7 @@ public:
 
     // Масштабирование треков
     sim_output translate_tracks(sim_output& tracks) const;
-    // Расчет цветов для всех тепловых карт
+    // Расчет цвета для всех тепловых карт
     std::vector<heatmap_converted> translate_heatmap(const std::vector<heatmap_t>& hm) const;
 
     // Расчет позиции точки внутри графика
@@ -108,7 +108,7 @@ public:
         sim_output dummy(0);
         return dummy;
     }
-    // Расчет цветов для всех тепловых карт
+    // Расчет цвета для всех тепловых карт
     std::vector<heatmap_converted> translate_heatmap([[maybe_unused]] const std::vector<heatmap_t>& hm) const {
         std::vector<heatmap_converted> dummy;
         return dummy;
