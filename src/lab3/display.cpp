@@ -91,7 +91,7 @@ void sdl_display::show_heatmap(const std::vector<heatmap_t>& hm) {
             for (size_t x = 0; x < sa_grid_x; x++) {
                 // Выбор цвета
                 Uint8 color = Uint8(255.0f * heat_grid(y, x) / heat_max);
-                SDL_SetRenderDrawColor(rend, color, 0, 0, 100);
+                SDL_SetRenderDrawColor(rend, color, 0, 0, 255);
 
                 // Расчет координат текущего участка сетки
                 SDL_FRect target;
