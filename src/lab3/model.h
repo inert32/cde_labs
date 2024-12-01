@@ -150,10 +150,6 @@ private:
     std::vector<subarea_borders_t> borders;
     size_t b_count = 0;
 
-    // Изменяем направление частицы если мы перешли из одной подобласти в другую
-    // (get_subarea_index до перемещения != get_subarea_index после)
-    size_t get_subarea_index(const SDL_FPoint p) const;
-
     // Проверка на вылет частицы за пределы main_area
     bool is_within_main(const SDL_FPoint p) const;
 

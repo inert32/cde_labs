@@ -24,10 +24,6 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include <random>
 #include "display.h"
 
-static constexpr Uint8 subareas_colors[3][3] = {
-    {0, 255, 255}, {255, 0, 255}, {255, 255, 0}
-};
-
 // Очистка экрана
 #define clear_screen() SDL_SetRenderDrawColor(rend, 127, 127, 127, 255); SDL_RenderClear(rend)
 

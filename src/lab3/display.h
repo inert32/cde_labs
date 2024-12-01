@@ -36,12 +36,14 @@ sdl_events handle_kbd();
 #include "../common/sdl_display.h"
 #include "model.h"
 
+// Цвет подобласти
 struct color_t {
     Uint8 r = 0;
     Uint8 g = 0;
     Uint8 b = 0;
 };
 
+// Подготовленная для вывода тепловая карта
 struct heatmap_converted {
     SDL_FRect pos = {0.0f, 0.0f, 0.0f, 0.0f};
     Uint8 color = 0;
@@ -53,13 +55,15 @@ public:
     sdl_display(const simulation& sim);
     ~sdl_display() = default;
 
-    // Вывести треки на экран
+    // Вывод треков на экран
     // Треки должны быть масштабированы (translate_tracks) перед выводом на экран
     void show_frame(const sim_output& tracks);
+    // Вывод тепловой карты на экран
     void show_heatmap(const std::vector<heatmap_converted>& hm);
 
     // Масштабирование треков
     sim_output translate_tracks(sim_output& tracks) const;
+    // Расчет цветов для всех тепловых карт
     std::vector<heatmap_converted> translate_heatmap(const std::vector<heatmap_t>& hm) const;
 
     // Расчет позиции точки внутри графика
@@ -93,15 +97,20 @@ public:
     sdl_display([[maybe_unused]] const simulation& sim) { throw std::runtime_error("SDL disabled."); }
     ~sdl_display() = default;
 
-    // Вывести треки на экран
+    // Вывод треков на экран
     // Треки должны быть масштабированы (translate_tracks) перед выводом на экран
     void show_frame([[maybe_unused]] const sim_output& tracks) {}
-
-    void show_heatmap([[maybe_unused]] const std::vector<heatmap_t>& hm) {};
+    // Вывод тепловой карты на экран
+    void show_heatmap([[maybe_unused]] const std::vector<heatmap_converted>& hm) {}
 
     // Масштабирование треков
-    sim_output translate_tracks([[maybe_unused]] const sim_output& tracks) const {
+    sim_output translate_tracks([[maybe_unused]] sim_output& tracks) const {
         sim_output dummy(0);
+        return dummy;
+    }
+    // Расчет цветов для всех тепловых карт
+    std::vector<heatmap_converted> translate_heatmap([[maybe_unused]] const std::vector<heatmap_t>& hm) const {
+        std::vector<heatmap_converted> dummy;
         return dummy;
     }
 

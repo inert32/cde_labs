@@ -268,7 +268,7 @@ sim_stats simulation::get_stats() const {
     ret.subarea_energy.reserve(size);
     ret.subareas_count = size;
     for (auto &i : subareas) {
-        ret.subarea_energy.push_back(i.get_max_absorbed());
+        ret.subarea_energy.push_back(i.get_total_absorbed());
         ret.subarea_names.push_back(i.name);
     }
 

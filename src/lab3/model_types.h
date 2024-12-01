@@ -81,10 +81,13 @@ public:
     x_start{start}, width{wid}, height{height}, optics{opt}, 
     consume_prob{prob}, name{mat_name}, grid(sa_grid_y, sa_grid_x) {}
 
+    // Расчет попадания частицы по веществу
     bool is_hit(const SDL_FPoint p) const {
         return (p.x > x_start && p.x < x_start + width) && // По оси OX
                (p.y > 0.0f && p.y < height); // По оси OY
     }
+
+    // Запись полученной энергии
     void process_hit(const SDL_FPoint at, const float energy) {
         // Переводим [x_0 ; x_0 + width] -> [0 ; 1]
         float x = (at.x - x_start) / width;
@@ -100,6 +103,7 @@ public:
         if (grid(y_c, x_c) > max_absorbed) max_absorbed = grid(y_c, x_c);
     }
     float get_max_absorbed(void) const { return max_absorbed; }
+    float get_total_absorbed(void) const { return total_absorbed; }
 
     flatmat<float> get_grid(void) const { return grid; }
 
