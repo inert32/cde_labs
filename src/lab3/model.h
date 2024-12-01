@@ -127,9 +127,10 @@ public:
     // Вывод статистики
     sim_stats get_stats() const;
 
-    std::vector<flatmat<float>> get_grids(void) const {
-        std::vector<flatmat<float>> ret;
-        for (auto &i : subareas) ret.emplace_back(i.get_grid());
+    std::vector<heatmap_t> get_grids(void) const {
+        std::vector<heatmap_t> ret;
+        for (auto &i : subareas)
+            ret.emplace_back(i.get_grid(), i.get_max_absorbed());
         return ret;
     }
 private:

@@ -68,7 +68,7 @@ void sdl_display::show_frame(const sim_output& tracks) {
     SDL_RenderPresent(rend);
 }
 
-void sdl_display::show_heatmap() {
+void sdl_display::show_heatmap(const std::vector<heatmap_t>& hm) {
     clear_screen();
 
     // Рисуем границы графика
@@ -78,7 +78,31 @@ void sdl_display::show_heatmap() {
 
     // Подобласти
     for (size_t i = 0; i < subareas_count; i++) {
-        SDL_RenderFillRectF(rend, &subareas_[i]);
+        auto sa = &subareas_[i];
+        SDL_RenderDrawRectF(rend, sa);
+
+        auto heat_max = hm[i].second;
+        auto heat_grid = hm[i].first;
+        // Отрисовка сетки внутри подобласти
+        const float step_x = sa->w / (float)sa_grid_x;
+        const float step_y = sa->h / (float)sa_grid_y;
+
+        for (size_t y = 0; y < sa_grid_y; y++)
+            for (size_t x = 0; x < sa_grid_x; x++) {
+                // Выбор цвета
+                Uint8 color = Uint8(255.0f * heat_grid(y, x) / heat_max);
+                SDL_SetRenderDrawColor(rend, color, 0, 0, 100);
+
+                // Расчет координат текущего участка сетки
+                SDL_FRect target;
+                target.x = sa->x + (float)(step_x * (float)x);
+                target.y = sa->y + (float)(step_y * (float)y);
+                target.w = step_x;
+                target.h = step_y;
+
+                // Отрисовка
+                SDL_RenderFillRectF(rend, &target);
+            }
 
         // Вывод названия материала
         text->render_text(names[i], (int)subareas_[i].x, (int)area_y_end + 10, (int)subareas_[i].w);

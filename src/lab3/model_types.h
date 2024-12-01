@@ -68,6 +68,9 @@ private:
     float energy = 0.0f;
 };
 
+inline constexpr size_t sa_grid_x = 20;
+inline constexpr size_t sa_grid_y = 50;
+
 // Подобласть внутри главной (вещество)
 class subarea_t {
 public:
@@ -75,7 +78,7 @@ public:
     subarea_t(const float start, const float wid, const float height,
               const float opt, const float prob, const std::string& mat_name) :
     x_start{start}, width{wid}, height{height}, optics{opt}, 
-    consume_prob{prob}, name{mat_name}, grid(100, 100) {}
+    consume_prob{prob}, name{mat_name}, grid(sa_grid_y, sa_grid_x) {}
 
     bool is_hit(const SDL_FPoint p) const {
         return (p.x > x_start && p.x < x_start + width) && // По оси OX
@@ -87,13 +90,15 @@ public:
         float y = at.y / height;
 
         // Координаты в сетке
-        size_t x_c = (size_t)floorf(x * 100.0f);
-        size_t y_c = (size_t)floorf(y * 100.0f);
+        size_t x_c = (size_t)floorf(x * (float)sa_grid_x);
+        size_t y_c = (size_t)floorf(y * (float)sa_grid_y);
 
         grid(y_c, x_c) += energy;
         total_absorbed += energy;
+
+        if (grid(y_c, x_c) > max_absorbed) max_absorbed = grid(y_c, x_c);
     }
-    float get_total_energy(void) const { return total_absorbed; }
+    float get_max_absorbed(void) const { return max_absorbed; }
 
     flatmat<float> get_grid(void) const { return grid; }
 
@@ -109,7 +114,10 @@ public:
 private:
     flatmat<float> grid;
     float total_absorbed = 0.0f;
+    float max_absorbed = 0.0f;
 };
+
+typedef std::pair<flatmat<float>, float> heatmap_t;
 
 struct energy_distr_t {
     float level = 0.0f;

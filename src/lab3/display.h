@@ -51,7 +51,7 @@ public:
     // Вывести треки на экран
     // Треки должны быть масштабированы (translate_tracks) перед выводом на экран
     void show_frame(const sim_output& tracks);
-    void show_heatmap();
+    void show_heatmap(const std::vector<heatmap_t>& hm);
 
     // Масштабирование треков
     sim_output translate_tracks(sim_output& tracks) const;
