@@ -24,7 +24,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 bool is_known_command(const std::string& cmd) {
     return cmd == "area" || cmd == "subarea" || cmd == "source" ||
-    cmd == "particles" || cmd == "energy" || cmd == "material";
+    cmd == "particles" || cmd == "energy" || cmd == "material" ||
+    cmd == "burst";
 }
 
 // Проверка команд файла на нужное число аргументов
@@ -35,6 +36,7 @@ bool checkout_args(const std::string& command, const parser_opts& opts) {
     if (command == "particles") return opts.size() == 1;
     if (command == "energy") return opts.size() > 0;
     if (command == "material") return opts.size() == 3;
+    if (command == "burst") return opts.size() == 1;
 
     return false;
 }

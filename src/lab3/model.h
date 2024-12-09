@@ -116,6 +116,8 @@ public:
     // Возвращает false, если все частицы рассчитаны
     bool process_particle();
 
+    bool process_burst();
+
     const main_area_t get_main_area() const { return main_area; }
     const std::vector<subarea_t>& get_subarea() const { return subareas; }
     const emit_point* get_emitter() const { return emitter; }
@@ -144,6 +146,8 @@ private:
     emit_point* emitter;
     size_t part_count = 0; // Общее число частиц
     size_t current_part = 0; // Номер текущей частицы
+
+    size_t burst_count = 0; // Число частиц для взаимодействия перед расчетом энергии
 
     // Границы подобластей для простоты расчета столкновений
     struct subarea_borders_t {float start = 0.0f; float end = 0.0f;};

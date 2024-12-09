@@ -72,6 +72,12 @@ simulation::simulation(const parser_data& conf) {
 
     emitter = spawn_emitter(find_config_line(conf, "source"), find_config_line(conf, "energy"));
     part_count = get_particles_count(find_config_line(conf, "particles"));
+    try {
+        burst_count = std::stoul(find_config_line(conf, "burst").args[0]);
+    }
+    catch (const std::exception&) {
+        burst_count = part_count;
+    }
 
     // Выделение памяти под треки
     tracks.reserve(part_count);
@@ -223,6 +229,14 @@ bool simulation::process_particle() {
     std::cout << std::endl;
 
     current_part++;
+    return current_part < part_count;
+}
+
+bool simulation::process_burst(void) {
+    for (size_t i = 0; i < burst_count; i++) {
+        if (process_particle() == false) return false;
+    }
+    std::cout << "Burst processed." << std::endl;
     return current_part < part_count;
 }
 

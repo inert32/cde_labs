@@ -69,7 +69,7 @@ int main(int argc, char** argv) {
     try {
         simulation sim(conf);
         std::cout << "Start simulation..." << std::endl;
-        while (sim.process_particle());
+        while (sim.process_burst());
         std::cout << "Simulation complete." << std::endl;
 
         if (run_stats) print_stats(sim.get_stats());
