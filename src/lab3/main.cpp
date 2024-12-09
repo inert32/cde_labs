@@ -80,7 +80,7 @@ int main(int argc, char** argv) {
 
 #ifdef __ENABLE_GRAPH__
 
-sdl_events handle_kbd() {
+sdl_events handle_kbd(void) {
     SDL_Event e;
     while (SDL_PollEvent(&e)) {
         if (e.type == SDL_QUIT) return sdl_events::quit;
@@ -153,7 +153,7 @@ void main_cycle(const parser_data& conf, const bool run_stats) {
 
 #else
 
-sdl_events handle_kbd() {
+sdl_events handle_kbd(void) {
     return sdl_events::none;
 }
 

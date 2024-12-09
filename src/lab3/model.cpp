@@ -24,13 +24,6 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include "model.h"
 #include "parser.h"
 
-// Уравнение прямой
-struct line_t {
-    float A = 0.0f;
-    float B = 0.0f;
-    float C = 0.0f;
-};
-
 inline constexpr double MATH_PI = 3.14159265358979323846;
 
 particle emit_point::spawn_particle() {
@@ -128,19 +121,18 @@ void collide_carlson(particle& p, const float xi) {
 
 SDL_FPoint calc_real_end_pos(const SDL_FPoint start_pos, const SDL_FPoint end_pos, const main_area_t& consts) {
     // Уравнение последнего движения частицы
-    line_t track;
-    track.A = end_pos.y - start_pos.y;
-    track.B = start_pos.x - end_pos.x;
-    track.C = start_pos.y * (end_pos.x - start_pos.x);
-    track.C -= start_pos.x * (end_pos.y - start_pos.y);
-    track.C *= -1.0f;
+    float A = end_pos.y - start_pos.y;
+    float B = start_pos.x - end_pos.x;
+    float C = start_pos.y * (end_pos.x - start_pos.x);
+    C -= start_pos.x * (end_pos.y - start_pos.y);
+    C *= -1.0f;
 
     float len[4] = {HUGE_VALF, HUGE_VALF, HUGE_VALF, HUGE_VALF};
     SDL_FPoint rets[4];
-    rets[0] = { 0.0f, track.C / track.B };
-    rets[1] = { (track.C - track.B * consts.height) / track.A, consts.height };
-    rets[2] = { track.C / track.A, 0.0f };
-    rets[3] = { consts.length, (track.C - track.A * consts.length) / track.B };
+    rets[0] = { 0.0f, C / B };
+    rets[1] = { (C - B * consts.height) / A, consts.height };
+    rets[2] = { C / A, 0.0f };
+    rets[3] = { consts.length, (C - A * consts.length) / B };
 
     // Расчет расстояния
     for (int i = 0; i < 4; i++)
@@ -158,7 +150,7 @@ SDL_FPoint calc_real_end_pos(const SDL_FPoint start_pos, const SDL_FPoint end_po
     return rets[ind];
 }
 
-bool simulation::process_particle() {
+bool simulation::process_particle(void) {
     if (current_part >= part_count) return false; // Не рассчитываем частицы, если они не заданы
     std::random_device rd;
     std::mt19937 gen(rd());
@@ -240,7 +232,7 @@ bool simulation::process_burst(void) {
     return current_part < part_count;
 }
 
-std::vector<std::string> simulation::get_subarea_names() const {
+std::vector<std::string> simulation::get_subarea_names(void) const {
     std::vector<std::string> ret;
 
     const auto size = subareas.size();
@@ -257,7 +249,7 @@ bool simulation::is_within_main(const SDL_FPoint p) const {
     return true;
 }
 
-sim_output simulation::get_tracks() const {
+sim_output simulation::get_tracks(void) const {
     sim_output ret(part_count);
     for (size_t p = 0; p < part_count; p++) {
         auto len = tracks[p].size();
@@ -275,7 +267,7 @@ sim_output simulation::get_tracks() const {
     return ret;
 }
 
-sim_stats simulation::get_stats() const {
+sim_stats simulation::get_stats(void) const {
     sim_stats ret;
     const size_t size = subareas.size();
 

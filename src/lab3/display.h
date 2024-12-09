@@ -53,7 +53,7 @@ struct heatmap_converted {
 class sdl_display : public sdl_display_base {
 public:
     sdl_display(const simulation& sim);
-    ~sdl_display() = default;
+    ~sdl_display(void) = default;
 
     // Вывод треков на экран
     // Треки должны быть масштабированы (translate_tracks) перед выводом на экран
@@ -102,7 +102,7 @@ struct heatmap_converted {
 class sdl_display {
 public:
     sdl_display([[maybe_unused]] const simulation& sim) { throw std::runtime_error("SDL disabled."); }
-    ~sdl_display() = default;
+    ~sdl_display(void) = default;
 
     // Вывод треков на экран
     // Треки должны быть масштабированы (translate_tracks) перед выводом на экран

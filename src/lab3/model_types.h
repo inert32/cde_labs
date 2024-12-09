@@ -135,7 +135,7 @@ public:
     emit_point(const float pos_x, const float pos_y, const float angle, const std::vector<energy_distr_t>& dist) : energy(dist) {
         pos.x = pos_x; pos.y = pos_y; spread = angle;
     }
-    emit_point() = default;
+    emit_point() = delete;
 
     particle spawn_particle();
     SDL_FPoint get_position() const { return pos; }

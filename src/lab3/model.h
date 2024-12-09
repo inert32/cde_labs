@@ -63,7 +63,7 @@ struct sim_output {
         _copy_other(other);
         return *this;
     }
-    ~sim_output() {
+    ~sim_output(void) {
         for (size_t i = 0; i < particle_count; i++)
             delete[] tracks[i];
         delete[] tracks;
@@ -110,24 +110,26 @@ struct sim_stats {
 class simulation {
 public:
     simulation(const parser_data& conf);
-    ~simulation() { delete emitter; }
+    ~simulation(void) { delete emitter; }
 
     // Расчет пути частицы
     // Возвращает false, если все частицы рассчитаны
-    bool process_particle();
+    bool process_particle(void);
 
+    // Расчет пакета частиц
+    // Возвращает false, если все частицы рассчитаны
     bool process_burst();
 
-    const main_area_t get_main_area() const { return main_area; }
-    const std::vector<subarea_t>& get_subarea() const { return subareas; }
-    const emit_point* get_emitter() const { return emitter; }
-    std::vector<std::string> get_subarea_names() const;
+    const main_area_t get_main_area(void) const { return main_area; }
+    const std::vector<subarea_t>& get_subarea(void) const { return subareas; }
+    const emit_point* get_emitter(void) const { return emitter; }
+    std::vector<std::string> get_subarea_names(void) const;
 
     // Вывод данных о симуляции
-    sim_output get_tracks() const;
+    sim_output get_tracks(void) const;
 
     // Вывод статистики
-    sim_stats get_stats() const;
+    sim_stats get_stats(void) const;
 
     std::vector<heatmap_t> get_grids(void) const {
         std::vector<heatmap_t> ret;
