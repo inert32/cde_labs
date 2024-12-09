@@ -79,6 +79,10 @@ void sdl_display::show_heatmap(const std::vector<heatmap_converted>& hm) {
         SDL_SetRenderDrawColor(rend, i.color, 0, 0, 255);
         SDL_RenderFillRectF(rend, &i.pos);
     }
+    // Вывод названия материала
+    for (size_t i = 0; i < subareas_count; i++)
+        text->render_text(names[i], (int)subareas_[i].x, (int)area_y_end + 10, (int)subareas_[i].w);
+
     text->render_text("Press Enter to change mode to \"Tracks\"", (int)area_x_start, (int)(0.03f * (float)len_y));
     text->render_text("Press Right for next particle burst", (int)area_x_start, (int)(0.07f * (float)len_y));
 
