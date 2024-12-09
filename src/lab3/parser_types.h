@@ -24,7 +24,10 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 // Массив параметров задания
 // std::map не подходит, так как в файле может быть несколько subarea
 typedef std::vector<std::string> parser_opts;
-typedef std::pair<std::string, parser_opts> parser_line;
+struct parser_line {
+    std::string command;
+    parser_opts args;
+};
 typedef std::vector<parser_line> parser_data;
 
 #endif /* __PARSER_TYPES_H__ */

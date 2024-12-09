@@ -55,7 +55,7 @@ bool checkout_energy_args(const parser_opts& en) {
 // Поиск параметра в файле задания
 const parser_line& find_config_line(const parser_data& conf, const std::string& line) {
     for (auto &i : conf) {
-        if (line == i.first)
+        if (line == i.command)
             return i;
     }
     throw std::runtime_error("parser: Error: No such line: " + line);
@@ -67,7 +67,6 @@ parser_data parse_task_file(const std::string& path) {
 
     std::string line, command;
     parser_data ret;
-    parser_opts args;
     size_t line_number = 0;
     while (std::getline(file, line)) {
         line_number++;
@@ -79,6 +78,7 @@ parser_data parse_task_file(const std::string& path) {
         command = line.substr(space_prev, space_pos - space_prev);
 
         if (is_known_command(command)) {
+            parser_opts args;
             // Чтение аргументов
             while (space_pos < len) {
                 space_prev = space_pos + 1;
@@ -92,8 +92,7 @@ parser_data parse_task_file(const std::string& path) {
             if (command == "energy" && !checkout_energy_args(args))
                 throw std::runtime_error("parser: Error: Bad energy distribution at line " + std::to_string(line_number));
 
-            ret.emplace_back(std::make_pair(command, args));
-            args.clear();
+            ret.push_back({command, args});
         }
     }
 
@@ -112,7 +111,7 @@ std::vector<subarea_t> spawn_areas(const parser_data& src, main_area_t* main_are
     std::vector<subarea_t> others;
 
     // Ищем main_area
-    auto ma = find_config_line(src, "area").second;
+    auto ma = find_config_line(src, "area").args;
     main_area_t main_copy; // Локальная копия для проверок
     main_copy.length = std::stof(ma[0]);
     main_copy.height = std::stof(ma[1]);
@@ -121,8 +120,8 @@ std::vector<subarea_t> spawn_areas(const parser_data& src, main_area_t* main_are
     
     // Ищем остальные
     for (auto it = src.begin(); it != src.end(); ++it)
-        if (it->first == "subarea") {
-            auto& sa_raw = it->second;
+        if (it->command == "subarea") {
+            auto& sa_raw = it->args;
             float x_start = std::stof(sa_raw[0]);
             float width = std::stof(sa_raw[1]);
             auto mat_id = sa_raw[2];
@@ -152,14 +151,14 @@ std::vector<subarea_t> spawn_areas(const parser_data& src, main_area_t* main_are
 }
 
 emit_point* spawn_emitter(const parser_line& src, const parser_line& energy) {
-    auto& args = src.second;
+    auto& args = src.args;
     if (args[0] == "point") {
         float x = std::stof(args[1]);
         float y = std::stof(args[2]);
         float angle = std::stof(args[3]);
 
         std::vector<energy_distr_t> dist;
-        for (auto &i : energy.second) {
+        for (auto &i : energy.args) {
             energy_distr_t tmp;
             auto pos = i.find('=');
             tmp.level = std::stof(i.substr(0, pos));
@@ -172,15 +171,15 @@ emit_point* spawn_emitter(const parser_line& src, const parser_line& energy) {
 }
 
 size_t get_particles_count(const parser_line& src) {
-    return std::stoul(src.second[0]);
+    return std::stoul(src.args[0]);
 }
 
 mat_t load_materials(const parser_data& conf) {
     mat_t ret;
     for (auto &i : conf) {
-        if (i.first == "material") {
+        if (i.command == "material") {
             material_t m;
-            auto& args = i.second;
+            auto& args = i.args;
             std::string name = args[0];
             m.sigma = std::stof(args[1]);
             m.consume_prob = std::stof(args[2]);
