@@ -48,10 +48,11 @@ void print_stats(const sim_stats& stats) {
     }
 }
 
+void main_cycle(const parser_data& conf, const bool run_stats);
+
 int main(int argc, char** argv) {
     std::cout << "Lab3 " << build_version << " " << build_git << std::endl;
     auto cli = parse_cli(argc, argv);
-    const bool run_sdl = bool_from_cli_map(cli, "graph", true);
     const bool run_stats = bool_from_cli_map(cli, "stat", true);
 
     // Получаем параметры из файла задания
@@ -67,43 +68,7 @@ int main(int argc, char** argv) {
     }
     
     try {
-        simulation sim(conf);
-        std::cout << "Start simulation..." << std::endl;
-        while (sim.process_burst());
-        std::cout << "Simulation complete." << std::endl;
-
-        if (run_stats) print_stats(sim.get_stats());
-
-        if (run_sdl) {
-            try {
-                // True - вывод треков, false - вывод тепловой карты
-                bool disp_mode = true;
-                sdl_display disp(sim);
-                auto tracks = sim.get_tracks();
-                tracks = disp.translate_tracks(tracks);
-                auto heatmap = disp.translate_heatmap(sim.get_grids());
-                bool run = true;
-
-                while (run) {
-                    (disp_mode) ? disp.show_frame(tracks) : disp.show_heatmap(heatmap);
-                    switch (handle_kbd()) {
-                    case sdl_events::mode:
-                        disp_mode = !disp_mode;
-                        break;
-                    case sdl_events::quit:
-                        run = false;
-                        break;
-                    default: continue;
-                    }
-                }
-            }
-            catch (const std::exception& e) {
-                if (!strcmp(e.what(), "SDL disabled"))
-                    std::cerr << "SDL: Error: " << e.what() << std::endl;
-                else
-                    std::cerr << "SDL disabled" << std::endl;
-            }
-        }
+        main_cycle(conf, run_stats);
     }
     catch (const std::exception& e) {
         std::cout << "parse: " << e.what() << std::endl;
@@ -142,9 +107,62 @@ sdl_events handle_kbd() {
     }
     return sdl_events::none;
 }
+
+void main_cycle(const parser_data& conf, const bool run_stats) {
+    std::cout << "Start simulation..." << std::endl;
+    try {
+        simulation sim(conf);
+        bool disp_mode = true; // True - вывод треков, false - вывод тепловой карты
+        sdl_display disp(sim);
+        bool run = true;
+
+        next_burst:;
+        while (run) {
+            // Просчет следующего пакета частиц
+            if (sim.process_burst() == false)
+                std::cout << "Simulation complete." << std::endl;
+
+            auto tracks = sim.get_tracks();
+            tracks = disp.translate_tracks(tracks);
+            auto heatmap = disp.translate_heatmap(sim.get_grids());
+
+            while (run) {
+                (disp_mode) ? disp.show_frame(tracks) : disp.show_heatmap(heatmap);
+                switch (handle_kbd()) {
+                case sdl_events::mode:
+                    disp_mode = !disp_mode;
+                    break;
+                case sdl_events::next:
+                    goto next_burst;
+                case sdl_events::quit:
+                    run = false;
+                    break;
+                default: continue;
+                }
+            }
+        }
+        if (run_stats) print_stats(sim.get_stats());
+    }
+    catch (const std::exception& e) {
+        if (!strcmp(e.what(), "SDL disabled"))
+            std::cerr << "SDL: Error: " << e.what() << std::endl;
+        else
+            std::cerr << "SDL disabled" << std::endl;
+    }
+}
+
 #else
 
 sdl_events handle_kbd() {
     return sdl_events::none;
+}
+
+void main_cycle(const parser_data& conf, const bool run_stats) {
+    simulation sim(conf);
+    std::cout << "Start simulation..." << std::endl;
+    while (sim.process_burst());
+    std::cout << "Simulation complete." << std::endl;
+
+    if (run_stats) print_stats(sim.get_stats());
 }
 #endif /* __ENABLE_GRAPH__ */

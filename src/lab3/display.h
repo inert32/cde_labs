@@ -92,6 +92,13 @@ private:
 #include "../common/sdl_display.h"
 #include "model.h"
 
+// Подготовленная для вывода тепловая карта
+struct heatmap_converted {
+    struct SDL_FRect {float x; float y; float w; float h; }
+        pos = {0.0f, 0.0f, 0.0f, 0.0f};
+    unsigned char color = 0;
+};
+
 class sdl_display {
 public:
     sdl_display([[maybe_unused]] const simulation& sim) { throw std::runtime_error("SDL disabled."); }
