@@ -151,7 +151,6 @@ SDL_FPoint calc_real_end_pos(const SDL_FPoint start_pos, const SDL_FPoint end_po
 }
 
 bool simulation::process_particle(void) {
-    if (current_part >= part_count) return false; // Не рассчитываем частицы, если они не заданы
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_real_distribution nums(0.0f, main_area.length);
@@ -225,11 +224,46 @@ bool simulation::process_particle(void) {
 }
 
 bool simulation::process_burst(void) {
+    if (current_part >= part_count) return false; // Не рассчитываем частицы, если они не заданы
+
     for (size_t i = 0; i < burst_count; i++) {
         if (process_particle() == false) return false;
     }
+
+    process_heat();
+
     std::cout << "Burst processed." << std::endl;
     return current_part < part_count;
+}
+
+void simulation::process_heat(void) {
+    constexpr size_t passes = 1; // Число проходов
+
+    for (auto &i : subareas) {
+        auto heat = i.get_grid();
+
+        const auto Y = heat.get_height();
+        const auto X = heat.get_length();
+
+        for (size_t p = 0; p < passes; p++)
+            for (size_t y = 0; y < Y; y++)
+                for (size_t x = 0; x < X; x++) {
+                    // Сколько соседей?
+                    float neighbours = 4.0f;
+                    if (y == 0 || y == Y - 1) neighbours -= 1.0f;
+                    if (x == 0 || x == X - 1) neighbours -= 1.0f;
+
+                    const float onehalf = heat(y, x) / 2.0f;
+                    const float spread = onehalf / neighbours;
+
+                    heat(y, x) = onehalf;
+                    // Передача тепла
+                    if (y > 0) heat(y - 1, x) += spread;
+                    if (y < Y - 1) heat(y + 1, x) += spread;
+                    if (x > 0) heat(y, x - 1) += spread;
+                    if (x < X - 1) heat(y, x + 1) += spread;
+                }
+    }
 }
 
 std::vector<std::string> simulation::get_subarea_names(void) const {

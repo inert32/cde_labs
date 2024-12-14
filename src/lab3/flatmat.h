@@ -24,24 +24,29 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 template <class T>
 class flatmat {
 public:
-    flatmat(const size_t X, const size_t Y) :
-    arr{new T[Y * X]} {
+    flatmat(const size_t Y, const size_t X) {
         size_x = X; size_y = Y;
 
-        const size_t end = Y * X;
-        // shared_ptr имеет оператор [], который переведет size_t в ptrdiff_t.
-        // Это вызывает предупреждение -Wsign-conversion, поэтому берем указатель
-        // на массив самостоятельно и обнуляем элементы. То же для flatmat::operator().
-        auto ptr = arr.get();
-        for (size_t i = 0; i < end; i++) ptr[i] = (T)0;
+        arr = new T*[size_y];
+        for (size_t y = 0; y < size_y; y++) {
+            arr[y] = new T[size_x];
+            for (size_t x = 0; x < size_x; x++)
+                arr[y][x] = (T)0;
+        }
+
+        //const size_t end = Y * X;
+        //for (size_t i = 0; i < end; i++) arr[i] = (T)0;
     }
     size_t get_length(void) const { return size_x; }
     size_t get_height(void) const { return size_y; }
 
-    T& operator()(const size_t y, const size_t x) { return arr.get()[y * size_y + x]; }
+    T& operator()(const size_t y, const size_t x) {
+        //return arr[y * size_y + x];
+        return arr[y][x];
+    }
 
 private:
-    std::shared_ptr<T[]> arr;
+    T** arr = nullptr;
     size_t size_x = 0, size_y = 0;
 };
 

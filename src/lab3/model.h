@@ -120,6 +120,8 @@ public:
     // Возвращает false, если все частицы рассчитаны
     bool process_burst();
 
+    void process_heat(void);
+
     const main_area_t get_main_area(void) const { return main_area; }
     const std::vector<subarea_t>& get_subarea(void) const { return subareas; }
     const emit_point* get_emitter(void) const { return emitter; }
